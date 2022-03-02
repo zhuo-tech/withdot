@@ -4,5 +4,6 @@
     "pinia",
     "vite",
     "vitejs"
-  ]
+  ],
+  "volar.showWelcomePage": false
 }
