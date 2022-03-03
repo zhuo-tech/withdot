@@ -2,6 +2,13 @@
 import { Location, Document, Setting } from '@element-plus/icons-vue'
 import NavMenu from './menu.vue'
 import TopHeader from './header.vue'
+import { ref } from 'vue'
+
+const isMenuCollapsed = ref(false)
+window.addEventListener('resize', (ev) => {
+    const clientWidth = document.documentElement.clientWidth || document.body.clientWidth
+    isMenuCollapsed.value = clientWidth < 1024
+})
 </script>
 
 <template>
@@ -10,10 +17,10 @@ import TopHeader from './header.vue'
       <top-header />
     </div>
     <div class="main flex">
-      <div class="menu w-40 overflow-x-hidden overflow-y-auto">
-        <nav-menu />
+      <div class="menu hidden sm:block lg:w-40 overflow-x-hidden overflow-y-auto">
+        <nav-menu :collapse="isMenuCollapsed"/>
       </div>
-      <div class="page flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-1">
+      <div class="page flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 sm:p-4 p-2">
         <router-view />
       </div>
     </div>

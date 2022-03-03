@@ -1,17 +1,24 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import { Expand } from '@element-plus/icons-vue'
+import NavMenu from './menu.vue'
+const isOpenMenu = ref(false)
+function switchOpenMenu() {
+  isOpenMenu.value = !isOpenMenu.value
+}
 </script>
 
 <template>
   <div class="flex w-full h-full items-center">
-    <div class="brand w-40 flex items-center justify-center">
+    <div class="brand w-40 flex items-center justify-start ml-2">
       <img
         src="http://user-assets.sxlcdn.com/images/42894/FvhDgE1TIv5mVA-Y2lzouV5NhhqB.png?imageMogr2/strip/auto-orient/thumbnail/300x300%3E/quality/90!/format/png"
         alt="logo"
         class="w-8 h-8 align-middle"
       />
-      <div class="brand-text ml-2">微草轻课</div>
+      <div class="brand-text sm:block ml-2">微草轻课</div>
     </div>
-    <div class="menu flex-auto flex justify-end">
+    <div class="menu flex-auto sm:flex justify-end hidden">
       <el-menu default-active="0" mode="horizontal" :ellipsis="false">
         <el-sub-menu index="create">
           <template #title>新建</template>
@@ -27,12 +34,22 @@
         </el-sub-menu>
       </el-menu>
     </div>
+    <div class="menu flex-auto flex justify-end sm:hidden mr-2">
+      <el-button plain :icon="Expand" @click="switchOpenMenu"></el-button>
+    </div>
+    <el-drawer
+      modal-class="layout-header-drawer-hack"
+      :with-header="false"
+      v-model="isOpenMenu"
+      size="160px"
+    >
+      <nav-menu @select="isOpenMenu = false" />
+    </el-drawer>
   </div>
 </template>
 
-<style scoped lang="less">
-.brand {
-  border-right: 1px solid rgba(211, 211, 211, 0.5);
-  line-height: 32px;
+<style lang="less">
+.layout-header-drawer-hack .el-drawer .el-drawer__body {
+  padding: 0px !important;
 }
 </style>

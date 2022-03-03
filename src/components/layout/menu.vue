@@ -1,65 +1,79 @@
 <script setup lang="ts">
-import { Location, Document, Setting } from '@element-plus/icons-vue'
+import { Compass, Film, MagicStick, Files, UserFilled, ShoppingBag, Setting, Iphone } from '@element-plus/icons-vue'
+
+const emit = defineEmits(['select'])
+const props = defineProps({
+  collapse: Boolean
+})
+function onSelect(param: any) {
+  emit('select', param)
+}
 </script>
 
 <template>
-  <el-menu class="h-full" default-active="/" :router="true">
+  <el-menu
+    class="h-full"
+    default-active="/"
+    :collapse="props.collapse"
+    :router="true"
+    @select="onSelect"
+  >
     <el-menu-item index="/">
       <el-icon>
-        <location />
+        <compass />
       </el-icon>
       <span>数据看板</span>
     </el-menu-item>
-    <el-divider>
+    <el-divider v-if="!props.collapse">
       <span class="menu-label">创作</span>
     </el-divider>
     <el-menu-item index="/library">
       <el-icon>
-        <document />
+        <film />
       </el-icon>
       <span>素材库</span>
     </el-menu-item>
     <el-menu-item index="/work">
       <el-icon>
-        <setting />
+        <magic-stick />
       </el-icon>
-      <span>作品创作</span>
+      <span>作品中心</span>
     </el-menu-item>
     <el-menu-item index="/album">
       <el-icon>
-        <setting />
+        <files />
       </el-icon>
-      <span>合辑管理</span>
+      <span>专辑管理</span>
     </el-menu-item>
-    <el-divider>
+    <el-divider v-if="!props.collapse">
       <span class="menu-label">交易</span>
     </el-divider>
     <el-menu-item index="/member">
       <el-icon>
-        <setting />
+        <user-filled />
       </el-icon>
       <span>学员管理</span>
     </el-menu-item>
     <el-menu-item index="/order">
       <el-icon>
-        <setting />
+        <shopping-bag />
       </el-icon>
       <span>订单管理</span>
     </el-menu-item>
-    <el-divider>
+    <el-divider v-if="!props.collapse">
       <span class="menu-label">设置</span>
     </el-divider>
     <el-menu-item index="/setting">
       <el-icon>
-        <setting />
+        <iphone />
       </el-icon>
-      <span>店铺设置</span>
+      <span>应用设置</span>
     </el-menu-item>
     <el-menu-item index="/system">
       <el-icon>
         <setting />
       </el-icon>
-      <span>系统设置</span>
+      <span>开发配置</span>
     </el-menu-item>
   </el-menu>
 </template>
