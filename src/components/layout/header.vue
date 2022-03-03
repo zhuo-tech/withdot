@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Expand } from '@element-plus/icons-vue'
+import { Expand, CirclePlus, Bell, Avatar } from '@element-plus/icons-vue'
 import NavMenu from './menu.vue'
+import { useUserStore } from '../../store/user'
 const isOpenMenu = ref(false)
 function switchOpenMenu() {
   isOpenMenu.value = !isOpenMenu.value
 }
+
+const user = useUserStore()
 </script>
 
 <template>
@@ -21,17 +24,28 @@ function switchOpenMenu() {
     <div class="menu flex-auto sm:flex justify-end hidden">
       <el-menu default-active="0" mode="horizontal" :ellipsis="false">
         <el-sub-menu index="create">
-          <template #title>新建</template>
+          <template #title>
+            <el-icon>
+              <circle-plus />
+            </el-icon>
+            <span>新建</span>
+          </template>
           <el-menu-item index="create-material">添加素材</el-menu-item>
           <el-menu-item index="create-work">创建作品</el-menu-item>
           <el-menu-item index="create-album">创建专辑</el-menu-item>
         </el-sub-menu>
-        <el-menu-item index="message">消息</el-menu-item>
-        <el-sub-menu index="my">
-          <template #title>我的账户</template>
-          <el-menu-item index="profile">账户信息</el-menu-item>
-          <el-menu-item index="logout">退出登陆</el-menu-item>
-        </el-sub-menu>
+        <el-menu-item index="message">
+          <el-icon>
+            <bell />
+          </el-icon>
+          <span>消息</span>
+        </el-menu-item>
+        <el-menu-item>
+          <el-icon>
+            <avatar />
+          </el-icon>
+          <span>{{ user.username }}</span>
+        </el-menu-item>
       </el-menu>
     </div>
     <div class="menu flex-auto flex justify-end sm:hidden mr-2">
