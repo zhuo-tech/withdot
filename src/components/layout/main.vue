@@ -3,24 +3,25 @@ import { Location, Document, Setting } from '@element-plus/icons-vue'
 import NavMenu from './menu.vue'
 import TopHeader from './header.vue'
 import { ref } from 'vue'
+import { useSideMenuStore } from '../../store/sideMenu'
 
-const isMenuCollapsed = ref(false)
+const sideMenu = useSideMenuStore()
 window.addEventListener('resize', (ev) => {
     const clientWidth = document.documentElement.clientWidth || document.body.clientWidth
-    isMenuCollapsed.value = clientWidth < 1024
+    sideMenu.collapse = clientWidth < 1024
 })
 </script>
 
 <template>
   <div class="layout">
-    <div class="header border-b-2">
+    <div class="border-b-2 header">
       <top-header />
     </div>
-    <div class="main flex">
-      <div class="menu hidden sm:block lg:w-40 overflow-x-hidden overflow-y-auto">
-        <nav-menu :collapse="isMenuCollapsed"/>
+    <div class="flex main">
+      <div class="hidden overflow-x-hidden overflow-y-auto menu sm:block">
+        <nav-menu />
       </div>
-      <div class="page flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 sm:p-4 p-2">
+      <div class="flex-1 p-2 overflow-x-hidden overflow-y-auto page bg-slate-50 sm:p-4">
         <router-view />
       </div>
     </div>
