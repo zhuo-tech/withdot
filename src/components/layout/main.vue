@@ -3,11 +3,13 @@ import { Location, Document, Setting } from '@element-plus/icons-vue'
 import NavMenu from './menu.vue'
 import TopHeader from './header.vue'
 import { ref } from 'vue'
+import { DArrowLeft, DArrowRight } from '@element-plus/icons-vue'
 
 const isMenuCollapsed = ref(false)
+const isMenuHidden = ref(false)
 window.addEventListener('resize', (ev) => {
-    const clientWidth = document.documentElement.clientWidth || document.body.clientWidth
-    isMenuCollapsed.value = clientWidth < 1024
+  const clientWidth = document.documentElement.clientWidth || document.body.clientWidth
+  isMenuCollapsed.value = clientWidth < 1024
 })
 </script>
 
@@ -17,8 +19,21 @@ window.addEventListener('resize', (ev) => {
       <top-header />
     </div>
     <div class="main flex">
-      <div class="menu hidden sm:block lg:w-40 overflow-x-hidden overflow-y-auto">
-        <nav-menu :collapse="isMenuCollapsed"/>
+      <div class="menu hidden sm:block">
+        <div
+          class="collapse-btn flex justify-center items-center shadow-md"
+          @click="isMenuHidden = !isMenuHidden"
+        >
+          <el-icon v-if="isMenuHidden">
+            <d-arrow-right />
+          </el-icon>
+          <el-icon v-else>
+            <d-arrow-left />
+          </el-icon>
+        </div>
+        <Transition>
+          <nav-menu v-if="!isMenuHidden" class="md:w-40" :collapse="isMenuCollapsed" />
+        </Transition>
       </div>
       <div class="page flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 sm:p-4 p-2">
         <router-view />
@@ -37,6 +52,38 @@ window.addEventListener('resize', (ev) => {
 
   .main {
     height: calc(100vh - 60px);
+
+    .menu {
+      position: relative;
+
+      .collapse-btn {
+        position: absolute;
+        width: 20px;
+        height: 30px;
+        background-color: white;
+        top: 40%;
+        left: 100%;
+        z-index: 999;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out 0s;
+      }
+
+      .collapse-btn:hover {
+        background-color: lightgray;
+      }
+    }
+  }
+
+  /* we will explain what these classes do next! */
+  .v-enter-active,
+  .v-leave-active {
+    transition: width 0.2s ease;
+  }
+
+  .v-enter-from,
+  .v-leave-to {
+    width: 0;
+    opacity: 0;
   }
 }
 </style>

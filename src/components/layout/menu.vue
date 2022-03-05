@@ -99,4 +99,5 @@ function onSelect(param: any) {
   @apply font-light;
   @apply text-xs;
 }
+
 </style>
