@@ -27,19 +27,19 @@ function onSelect(param: any) {
     <el-divider v-if="!props.collapse">
       <span class="menu-label">创作</span>
     </el-divider>
-    <el-menu-item index="/library">
+    <el-menu-item index="/materials">
       <el-icon>
         <film />
       </el-icon>
       <span>素材库</span>
     </el-menu-item>
-    <el-menu-item index="/work">
+    <el-menu-item index="/works">
       <el-icon>
         <magic-stick />
       </el-icon>
       <span>作品中心</span>
     </el-menu-item>
-    <el-menu-item index="/album">
+    <el-menu-item index="/albums">
       <el-icon>
         <files />
       </el-icon>
@@ -48,13 +48,13 @@ function onSelect(param: any) {
     <el-divider v-if="!props.collapse">
       <span class="menu-label">交易</span>
     </el-divider>
-    <el-menu-item index="/member">
+    <el-menu-item index="/users">
       <el-icon>
         <user />
       </el-icon>
       <span>学员管理</span>
     </el-menu-item>
-    <el-menu-item index="/order">
+    <el-menu-item index="/orders">
       <el-icon>
         <shopping-bag />
       </el-icon>
@@ -63,13 +63,13 @@ function onSelect(param: any) {
     <el-divider v-if="!props.collapse">
       <span class="menu-label">设置</span>
     </el-divider>
-    <el-menu-item index="/setting">
+    <el-menu-item index="/settings/app">
       <el-icon>
         <iphone />
       </el-icon>
       <span>应用设置</span>
     </el-menu-item>
-    <el-menu-item index="/system">
+    <el-menu-item index="/settings/dev">
       <el-icon>
         <setting />
       </el-icon>
@@ -85,8 +85,8 @@ function onSelect(param: any) {
         </el-icon>
         <span>我的账户</span>
       </template>
-      <el-menu-item index="profile">账户信息</el-menu-item>
-      <el-menu-item index="logout">
+      <el-menu-item index="/my/profile">账户信息</el-menu-item>
+      <el-menu-item index="/logout">
         <span class="text-red-500">退出登陆</span>
       </el-menu-item>
     </el-sub-menu>
@@ -99,5 +99,4 @@ function onSelect(param: any) {
   @apply font-light;
   @apply text-xs;
 }
-
 </style>
