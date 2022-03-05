@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { Compass, Film, MagicStick, Files, User, ShoppingBag, Setting, Iphone, More } from '@element-plus/icons-vue'
+import { useSideMenuStore } from '../../store/sideMenu'
+
+const sideMenu = useSideMenuStore()
 
 const emit = defineEmits(['select'])
-const props = defineProps({
-  collapse: Boolean
-})
+
 function onSelect(param: any) {
   emit('select', param)
 }
@@ -12,9 +13,9 @@ function onSelect(param: any) {
 
 <template>
   <el-menu
-    class="h-full"
+    class="h-full lg:w-40"
     default-active="/"
-    :collapse="props.collapse"
+    :collapse="sideMenu.collapse"
     :router="true"
     @select="onSelect"
   >
@@ -24,7 +25,7 @@ function onSelect(param: any) {
       </el-icon>
       <span>数据看板</span>
     </el-menu-item>
-    <el-divider v-if="!props.collapse">
+    <el-divider v-if="!sideMenu.collapse">
       <span class="menu-label">创作</span>
     </el-divider>
     <el-menu-item index="/library">
@@ -45,7 +46,7 @@ function onSelect(param: any) {
       </el-icon>
       <span>专辑管理</span>
     </el-menu-item>
-    <el-divider v-if="!props.collapse">
+    <el-divider v-if="!sideMenu.collapse">
       <span class="menu-label">交易</span>
     </el-divider>
     <el-menu-item index="/member">
@@ -60,7 +61,7 @@ function onSelect(param: any) {
       </el-icon>
       <span>订单管理</span>
     </el-menu-item>
-    <el-divider v-if="!props.collapse">
+    <el-divider v-if="!sideMenu.collapse">
       <span class="menu-label">设置</span>
     </el-divider>
     <el-menu-item index="/setting">
@@ -75,7 +76,7 @@ function onSelect(param: any) {
       </el-icon>
       <span>开发配置</span>
     </el-menu-item>
-    <el-divider v-if="!props.collapse">
+    <el-divider v-if="!sideMenu.collapse">
       <span class="menu-label">账户</span>
     </el-divider>
     <el-sub-menu index="/my">
