@@ -18,9 +18,10 @@ export default class MaterialService extends BasisCrud<Material> {
     }
     protected createRequest: (data: Partial<Material>) => Promise<any> = async (data) => {
         this.page.list.push(data as any)
+        this.log.trace('新增数据...')
     }
     protected updateRequest: (data: Partial<Material>) => Promise<any> = async (data) => {
-        this.log.trace('更新:', data)
+        this.log.trace('更新数据...', data)
     }
     protected deleteByIdRequest: (id: (string | number)) => Promise<any> = async (id) => {
         this.log.trace('删除: ', id)

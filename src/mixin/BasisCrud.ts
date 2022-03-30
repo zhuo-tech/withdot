@@ -120,8 +120,8 @@ export default class BasisCrud<E> {
      */
     public formSubmit = () => {
         let submitData = this.beforeSubmit(this.formData)
-        this.basisLog.debug('表单提交: ', this.formIsAdd ? '新增' : '编辑', submitData)
-        const submitAction = () => (this.formIsAdd ? this.createRequest : this.updateRequest)
+        this.basisLog.debug('表单提交: ', this.formIsAdd.value ? '新增' : '编辑', submitData)
+        const submitAction = () => (this.formIsAdd.value ? this.createRequest : this.updateRequest)
 
         this.formIsLoading.value = true
         submitAction()(submitData)
@@ -132,7 +132,7 @@ export default class BasisCrud<E> {
 
                 this.formData = this.formDataDefault
             })
-            .catch(err => this.basisLog.debug('表单提交错误', err))
+            .catch(err => this.basisLog.warn('表单提交错误', err))
             .finally(() => this.formIsLoading.value = false)
     }
 
