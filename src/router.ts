@@ -8,6 +8,7 @@ import Orders from './pages/orders/index.vue'
 import AppSettings from './pages/settings/app.vue'
 import DevSettings from './pages/settings/dev.vue'
 import MyProfile from './pages/accounts/profile.vue'
+import Login from './pages/accounts/login.vue'
 
 const routes: RouteRecordRaw[] = [
     {
@@ -45,6 +46,10 @@ const routes: RouteRecordRaw[] = [
     {
         path: '/my/profile',
         component: MyProfile,
+    },
+    {
+        path: '/login',
+        component: Login,
     },
 ]
 
