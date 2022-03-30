@@ -48,10 +48,10 @@ onMounted(service.listUpdate)
     <el-table v-loading="service.tableIsLoading" :data="service.page.list" :row-key="service.rowKey" fit show-header stripe style="width: 100%">
         <el-table-column align="center" label="序号" prop="index" width="60" />
         <el-table-column align="center" label="标题" min-width="180" prop="title" />
-        <el-table-column align="center" label="预览" prop="title" width="180" />
-        <el-table-column align="center" label="大小" prop="title" width="180" />
-        <el-table-column align="center" label="标签" min-width="180" prop="title" />
-        <el-table-column align="center" label="上传时间" prop="title" width="180" />
+        <el-table-column align="center" label="预览" prop="href" width="180" />
+        <el-table-column align="center" label="大小" prop="size" width="180" />
+        <el-table-column align="center" label="标签" min-width="180" prop="tag" />
+        <el-table-column align="center" label="上传时间" prop="createTime" width="180" />
         <el-table-column align="center" fixed="right" label="操作" prop="Operate" width="180">
             <template v-slot="{row}">
                 <el-button :icon="Edit" type="text" @click="service.readyEdit(row)">编辑</el-button>
