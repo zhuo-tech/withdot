@@ -16,6 +16,7 @@ const routes: RouteRecordRaw[] = [
     },
     {
         path: '/materials',
+        name: '素材管理',
         component: Materials,
     },
     {
