@@ -7,31 +7,34 @@ const count = ref(0)
 </script>
 
 <template>
-  <h1 class="text-3xl font-bold underline">{{ msg }}</h1>
-  <p>
-    Recommended IDE setup:
+<h1 class="text-3xl font-bold underline">{{ msg }}</h1>
+<p>
+    推荐的 IDE 设置：
     <a href="https://code.visualstudio.com/" target="_blank">VSCode</a>
     +
     <a href="https://github.com/johnsoncodehk/volar" target="_blank">Volar</a>
-  </p>
+</p>
 
-  <p>See <code>README.md</code> for more information.</p>
+<p>See
+    <code>README.md</code>
+    for more information.
+</p>
 </template>
 
 <style scoped>
 a {
-  color: #42b983;
+    color: #42b983;
 }
 
 label {
-  margin: 0 0.5em;
-  font-weight: bold;
+    margin: 0 0.5em;
+    font-weight: bold;
 }
 
 code {
-  background-color: #eee;
-  padding: 2px 4px;
-  border-radius: 4px;
-  color: #304455;
+    background-color: #eee;
+    padding: 2px 4px;
+    border-radius: 4px;
+    color: #304455;
 }
 </style>
