@@ -89,7 +89,8 @@ const timerTicker = () => {
             <el-form ref="form" :model="registerForm" :rules="rules" label-width="0">
                 <el-form-item prop="phone">
                     <el-input v-model="registerForm.phone"
-                              :prefix-icon="UserFilled" clearable placeholder="请输入手机号">
+                              :prefix-icon="UserFilled"
+                              clearable placeholder="请输入手机号" type="number">
                     </el-input>
                 </el-form-item>
                 <el-form-item>
@@ -176,5 +177,19 @@ const timerTicker = () => {
     border-radius: 50%;
     background-color: #3A62D7;
     margin-bottom: 97px;
+}
+
+
+//去除number输入框的上下控制键
+:deep(input::-webkit-outer-spin-button ) {
+    -webkit-appearance: none !important;
+}
+
+:deep(input::-webkit-inner-spin-button ) {
+    -webkit-appearance: none !important;
+}
+
+:deep(input [type='number']) {
+    -moz-appearance: textfield !important;
 }
 </style>
