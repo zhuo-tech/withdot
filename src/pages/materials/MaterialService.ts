@@ -1,7 +1,8 @@
-import { getLogger } from '../../main'
-import Material from './Material'
-import BasisCrud from '../../mixin/BasisCrud'
-import Page from '../../model/Page'
+import { getLogger } from '@/main'
+import BasisCrud from '@/mixin/BasisCrud'
+import Page from '@/model/Page'
+import { StrUtil } from 'typescript-util'
+import Material, { FileInfo } from './Material'
 
 /**
  * 素材管理相关
@@ -9,6 +10,13 @@ import Page from '../../model/Page'
 export default class MaterialService extends BasisCrud<Material> {
 
     private log = getLogger(MaterialService.name)
+
+    protected get formDataDefault(): Material {
+        const material = new Material()
+        material.href = StrUtil.EMPTY
+        material.file = {} as FileInfo
+        return material;
+    }
 
     protected pageRequest: (page: Page<Material>, query: Partial<Material>) => Promise<Page<Material>> = async (page, query) => {
         this.log.trace('素材查询: ', {page, query})

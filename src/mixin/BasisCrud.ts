@@ -1,7 +1,7 @@
+import { getLogger } from '@/main'
+import Page from '@/model/Page'
 import { RuleItem } from 'async-validator'
-import { getLogger } from '../main'
 import { reactive, Ref, ref } from 'vue'
-import Page from '../model/Page'
 import { useRoute } from 'vue-router'
 
 /**
