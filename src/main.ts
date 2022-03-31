@@ -11,6 +11,7 @@ const loggerFactory = new LoggerFactory()
 export const getLogger = loggerFactory.getLogger
 
 // 屏蔽 vite 的重新加载日志
+const oldLog = console.log
 console.log = (...data: any[]) => {
     if (data && data.length === 1) {
         const first = data[0]
@@ -18,7 +19,7 @@ console.log = (...data: any[]) => {
             return
         }
     }
-    console.log(...data)
+    oldLog(...data)
 }
 
 createApp(App)
