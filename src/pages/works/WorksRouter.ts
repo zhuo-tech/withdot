@@ -1,4 +1,5 @@
 import Layout from '@/components/layout/main.vue'
+import { MagicStick } from '@element-plus/icons-vue'
 import { RouteRecordRaw } from 'vue-router'
 import Component from './index.vue'
 
@@ -8,8 +9,12 @@ const RouterConfigItem: RouteRecordRaw = {
     children: [
         {
             path: '',
-            name: 'works',
+            name: '作品中心',
             component: Component,
+            meta: {
+                icon: MagicStick,
+                isMenu: true,
+            },
         },
     ],
 }

@@ -5,7 +5,7 @@ import { getLogger } from '@/main'
 import { FileInfo } from '@/pages/materials/Material'
 import { UploadFile, UploadFiles, UploadProps, UploadUserFile } from 'element-plus'
 import { CollUtil, ObjectUtil, StrUtil } from 'typescript-util'
-import { defineEmits, defineProps, reactive, watchEffect } from 'vue'
+import { reactive, watchEffect } from 'vue'
 import { FileService } from './FileService'
 import { FileServiceImpl } from './FileServiceImpl'
 // noinspection ES6UnusedImports

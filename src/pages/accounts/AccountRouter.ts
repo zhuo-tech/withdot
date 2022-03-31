@@ -6,7 +6,11 @@ import MyProfile from './profile.vue'
 const RouterConfigItem: RouteRecordRaw[] = [
     {
         path: '/login',
+        name: '登录页',
         component: Component,
+        meta: {
+            isMenu: false,
+        },
     },
     {
         path: '/my',
@@ -14,10 +18,11 @@ const RouterConfigItem: RouteRecordRaw[] = [
         children: [
             {
                 path: 'profile',
+                name: '用户详情',
                 component: MyProfile,
                 meta: {
-
-                }
+                    isMenu: false,
+                },
             },
         ],
     },

@@ -1,6 +1,7 @@
+<!--suppress ES6UnusedImports -->
 <script setup lang="ts">
+import Aside from '@/components/layout/Aside.vue'
 import { Location, Document, Setting } from '@element-plus/icons-vue'
-import NavMenu from './menu.vue'
 import TopHeader from './header.vue'
 import { ref } from 'vue'
 import { DArrowLeft, DArrowRight } from '@element-plus/icons-vue'
@@ -32,7 +33,7 @@ window.addEventListener('resize', (ev) => {
                 </el-icon>
             </div>
             <Transition>
-                <nav-menu v-if="!isMenuHidden" class="md:w-40" :collapse="isMenuCollapsed" />
+                <Aside v-if="!isMenuHidden" class="md:w-40" :collapse="isMenuCollapsed" />
             </Transition>
         </div>
         <div class="page flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 sm:p-4 p-2">

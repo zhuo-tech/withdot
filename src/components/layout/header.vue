@@ -1,8 +1,9 @@
+<!--suppress ES6UnusedImports -->
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Expand, CirclePlus, Bell, Avatar } from '@element-plus/icons-vue'
-import NavMenu from './menu.vue'
-import { useUserStore } from '../../store/user'
+import Aside from '@/components/layout/Aside.vue'
+import { useUserStore } from '@/store/user'
 
 const isOpenMenu = ref(false)
 
@@ -57,9 +58,8 @@ const user = useUserStore()
         modal-class="layout-header-drawer-hack"
         :with-header="false"
         v-model="isOpenMenu"
-        size="160px"
-    >
-        <nav-menu @select="isOpenMenu = false" />
+        size="160px">
+        <Aside @select="isOpenMenu = false" />
     </el-drawer>
 </div>
 </template>

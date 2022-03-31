@@ -1,6 +1,7 @@
 import Layout from '@/components/layout/main.vue'
 import { RouteRecordRaw } from 'vue-router'
 import Component from './index.vue'
+import { Compass } from '@element-plus/icons-vue'
 
 const RouterConfigItem: RouteRecordRaw = {
     path: '/',
@@ -8,7 +9,12 @@ const RouterConfigItem: RouteRecordRaw = {
     children: [
         {
             path: '',
+            name: '数据看板',
             component: Component,
+            meta: {
+                icon: Compass,
+                isMenu: true,
+            },
         },
     ],
 }

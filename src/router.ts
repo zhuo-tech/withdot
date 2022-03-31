@@ -9,14 +9,14 @@ import WorksRouter from '@/pages/works/WorksRouter'
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 
 const routes: RouteRecordRaw[] = [
-    ...AccountRouter,
-    AlbumsRouter,
     HomeRouter,
     MaterialRouter,
+    WorksRouter,
+    AlbumsRouter,
+    UserRouter,
     OrderRouter,
     SettingRouter,
-    UserRouter,
-    WorksRouter,
+    ...AccountRouter,
 ]
 
 export const router = createRouter({
