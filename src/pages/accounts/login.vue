@@ -21,8 +21,8 @@ const loginFormRef = loginFormRefs
 
 <template>
     <!--登录页面-->
-    <el-row v-if="!whetherToRegister" class="loginBox">
-        <el-col :offset="17" :span="6">
+    <el-row v-if="!whetherToRegister" >
+        <el-col :offset="17" :span="6" class="loginBox">
             <div class="logo"></div>
             <el-form ref="loginFormRef" :model="formRefs" :rules="rules" label-width="55px">
                 <el-form-item label="账号:" prop="username">
@@ -44,8 +44,8 @@ const loginFormRef = loginFormRefs
     </el-row>
 
     <!--注册-->
-    <el-row v-else class="registerBox">
-        <el-col :offset="17" :span="6">
+    <el-row v-else >
+        <el-col :offset="17" :span="6" class="registerBox">
             <div class="logo"></div>
             <el-form ref="registerFormRef" :model="registerForm" :rules="rules" label-width="0">
                 <el-form-item prop="phone">
@@ -91,13 +91,13 @@ const loginFormRef = loginFormRefs
 
 
 .loginBox {
-    position: relative;
+    position: fixed;
     top: 50%;
     transform: translate(0, -50%);
 }
 
 .registerBox {
-    position: relative;
+    position: fixed;
     top: 50%;
     transform: translate(0, -50%);
 }
