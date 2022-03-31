@@ -1,6 +1,10 @@
 <script lang="ts" setup>
 import { Lock, Message, UserFilled } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import { reactive, ref } from 'vue'
+import { cloud } from '../../cloud'
+
+const DB = cloud.database()
 
 let whetherToRegister = ref(false)         //是否已经注册
 const formRefs = reactive({                //登录表单
@@ -40,6 +44,10 @@ const register = (): void => {
 获取验证码
  */
 const getVerificationCode = () => {
+    if (!registerForm.phone) {
+        ElMessage('请填写手机号')
+        return
+    }
     timerTicker()
 
 }
