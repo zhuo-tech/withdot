@@ -1,130 +1,22 @@
 <script lang="ts" setup>
-import { loginAccount, mobileSendCode, registerAccount } from '@/api/login'
-import { setToken } from '@/api/token'
 import { Lock, Message, UserFilled } from '@element-plus/icons-vue'
-import type { FormInstance } from 'element-plus'
-import { ElMessage } from 'element-plus'
-import { reactive, ref } from 'vue'
+import {
+    checkboxRefs,
+    formRefs,
+    getVerificationCode,
+    login,
+    loginFormRef as loginFormRefs,
+    register,
+    registerForm,
+    registerFormRef as registerFormRefs,
+    rules,
+    smsCounter,
+    toRegistered,
+    whetherToRegister,
+} from './loginFun'
 
-let whetherToRegister = ref(false)         //是否已经注册
-const formRefs = reactive({                //登录表单
-    username: null,
-    password: null,
-})
-const checkboxRefs = ref()                        //记住密码
-const formRef = ref<FormInstance>()
-/*
-登录按钮
- */
-const login = () => {
-    if (!formRef) {
-        return
-    }
-    formRef.value?.validate(valid => {
-        if (valid) {
-            const {username, password} = formRefs
-            loginAccount(username, password).then(response => {
-                if (response.code !== 0) {
-                    ElMessage.error(response.error)
-                    return
-                }
-                const {access_token, expire} = response.data
-                setToken(access_token, expire)
-                ElMessage.success('登录成功')
-            }).catch(err => {
-                ElMessage.error(err)
-            })
-        }
-    })
-
-}
-
-/*
-跳转至注册页
- */
-const toRegistered = (): void => {
-    whetherToRegister.value = true
-}
-
-/*注册页*/
-
-const registerForm = reactive({                //注册表单
-    phone: null,
-    verificationCode: null,
-    password: null,
-})
-const smsCounter = ref(0)                     // 倒计时
-const rules = reactive({
-    phone: [
-        {required: true, message: '手机号不能为空', trigger: 'blur'},
-        {pattern: /^1[356789]\d{9}$/, message: '手机号格式有误!', trigger: 'blur'},
-    ],
-    verificationCode: [
-        {required: true, message: '验证码不能为空', trigger: 'blur'},
-    ],
-    password: [
-        {required: true, message: '密码不能为空', trigger: 'blur'},
-    ],
-    username: [
-        {required: true, message: '用户名不能为空', trigger: 'blur'},
-    ],
-})
-const form = ref<FormInstance>()
-
-/*
-跳转至登录页
- */
-const register = () => {
-    if (!form) {
-        return
-    }
-    form.value?.validate(valid => {
-        if (valid) {
-            const {phone, verificationCode: code, password} = registerForm
-            registerAccount(phone, code, password).then(response => {
-                if (response.code !== 0) {
-                    ElMessage.error(response.error)
-                    return
-                }
-                ElMessage.success('注册成功')
-            }).catch(err => {
-                ElMessage.error(err)
-            })
-            whetherToRegister.value = false
-            smsCounter.value = 0
-        }
-    })
-
-}
-
-/*
-获取验证码
- */
-const getVerificationCode = () => {
-    if (!registerForm.phone) {
-        ElMessage('请填写手机号')
-        return
-    }
-    timerTicker()
-    mobileSendCode(registerForm.phone).then(response => {
-    }).catch(err => {
-        ElMessage.error(err)
-    })
-}
-
-/*
-倒计时
- */
-const timerTicker = () => {
-    smsCounter.value = 60
-    const timing = setInterval(() => {
-        if (smsCounter.value <= 0) {
-            clearInterval(timing)
-        }
-        smsCounter.value--
-    }, 1000)
-}
-
+const registerFormRef = registerFormRefs
+const loginFormRef = loginFormRefs
 </script>
 
 <template>
@@ -132,7 +24,7 @@ const timerTicker = () => {
     <el-row v-if="!whetherToRegister" class="loginBox">
         <el-col :offset="17" :span="6">
             <div class="logo"></div>
-            <el-form ref="formRef" :model="formRefs" :rules="rules" label-width="55px">
+            <el-form ref="loginFormRef" :model="formRefs" :rules="rules" label-width="55px">
                 <el-form-item label="账号:" prop="username">
                     <el-input v-model="formRefs.username" clearable placeholder="请输入账号"></el-input>
                 </el-form-item>
@@ -155,7 +47,7 @@ const timerTicker = () => {
     <el-row v-else class="registerBox">
         <el-col :offset="17" :span="6">
             <div class="logo"></div>
-            <el-form ref="form" :model="registerForm" :rules="rules" label-width="0">
+            <el-form ref="registerFormRef" :model="registerForm" :rules="rules" label-width="0">
                 <el-form-item prop="phone">
                     <el-input v-model="registerForm.phone"
                               :prefix-icon="UserFilled"
@@ -184,7 +76,7 @@ const timerTicker = () => {
                               placeholder="请输入密码"
                               type="password"></el-input>
                 </el-form-item>
-                <el-button round size="large" type="primary" @click="register()">注册</el-button>
+                <el-button round size="large" type="primary" @click="register">注册</el-button>
             </el-form>
         </el-col>
     </el-row>
