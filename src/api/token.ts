@@ -1,5 +1,5 @@
 const kToken = 'access_token'
-const kTokenExpire = 'access_token'
+const kTokenExpire = 'access_token_expire'
 
 export function getToken(): string {
     const expire = localStorage.getItem(kTokenExpire)

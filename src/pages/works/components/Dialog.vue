@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { reactive } from 'vue'
 
-const props=defineProps({
+defineProps({
     subassembly:Object                             //父组件传值参数  显示隐藏(visible)  抽屉名称(title)
 })
 
