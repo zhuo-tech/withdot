@@ -1,34 +1,51 @@
 <script lang="ts" setup>
 import { reactive } from 'vue'
+import Dialog from './components/Dialog.vue'
 
-const list:Array<any> = []
+const list: Array<any> = [{
+    name:'dsfa'
+}]                  //表格数据
 const data = reactive(list)
-const page=reactive({
-    current:1,
-    size:10,
-    total:1000,
+const page = reactive({               //分页器参数
+    current: 1,
+    size: 10,
+    total: 1000,
 })
-
+const subassembly = reactive({         //子组件抽屉参数
+    visible: false,
+    title: '',
+})
 /*
 分页器一页几条
  */
-const pageSizeChange=()=>{}
+const pageSizeChange = () => {
+}
 
 /*
 分页器 当前页
  */
-const currentPageChange=()=>{}
+const currentPageChange = () => {
+}
 
+/*
+创建作品
+ */
+const createWorks = () => {
+    subassembly.visible=true
+    subassembly.title='创建作品'
+}
 /*
 编辑
  */
-const handleEdit = () => {
+const handleEdit = (row:any) => {
+    subassembly.visible=true
+    subassembly.title='编辑'
 }
 
 /*
 删除
  */
-const handleDelete = () => {
+const handleDelete = (row:any) => {
 }
 </script>
 
@@ -43,18 +60,22 @@ const handleDelete = () => {
             <el-tag v-for="(item,index) in 4" :key="index" class="ml-2" type="success">Tag 2</el-tag>
         </div>
         <div>
-            <el-button type="primary" class="create">创建作品</el-button>
+            <el-button class="create" type="primary" @click="createWorks">创建作品</el-button>
         </div>
-        <el-table :data="data"  stripe style="width: 100%">
+        <el-table :data="data" stripe style="width: 100%">
             <el-table-column label="序号" type="index" width="80"></el-table-column>
             <el-table-column label="标题" prop="date" width="250"></el-table-column>
             <el-table-column label="素材" prop="name" width="300"></el-table-column>
             <el-table-column label="标签" prop="address" width="300"></el-table-column>
             <el-table-column label="创建时间" min-width="200" prop="address"></el-table-column>
-            <el-table-column label="操作" fixed="right" width="180">
+            <el-table-column fixed="right" label="操作" width="180">
                 <template #default="scope">
-                    <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                    <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                    <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
+                    <el-popconfirm title="确定删除此作品吗?">
+                        <template #reference>
+                            <el-button type="primary"  size="small" @click="handleDelete(scope.row)">删除</el-button>
+                        </template>
+                    </el-popconfirm>
                 </template>
             </el-table-column>
         </el-table>
@@ -74,7 +95,7 @@ const handleDelete = () => {
             </el-col>
         </el-row>
     </el-card>
-
+    <Dialog :subassembly="subassembly"></Dialog>
 </template>
 
 <style lang="less" scoped>
@@ -85,7 +106,8 @@ const handleDelete = () => {
         margin-left: 0;
     }
 }
-.create{
+
+.create {
     margin-bottom: 20px;
 }
 </style>
