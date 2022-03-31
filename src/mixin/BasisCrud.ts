@@ -1,7 +1,8 @@
+import { getLogger } from '@/main'
+import Page from '@/model/Page'
 import { RuleItem } from 'async-validator'
-import { getLogger } from '../main'
+import { FormInstance } from 'element-plus'
 import { reactive, Ref, ref } from 'vue'
-import Page from '../model/Page'
 import { useRoute } from 'vue-router'
 
 /**
@@ -75,6 +76,8 @@ export default class BasisCrud<E> {
      */
     public formRule: Partial<Record<keyof E, Array<RuleItem>>> = reactive({})
 
+    public formRef: Ref<FormInstance | undefined> = ref<FormInstance>()
+
     private basisLog = getLogger(BasisCrud.name)
 
     /**
@@ -121,17 +124,23 @@ export default class BasisCrud<E> {
     public formSubmit = () => {
         let submitData = this.beforeSubmit(this.formData)
         this.basisLog.debug('表单提交: ', this.formIsAdd.value ? '新增' : '编辑', submitData)
-        const submitAction = () => (this.formIsAdd.value ? this.createRequest : this.updateRequest)
+        const submitAction = async () => {
+            const valid = await this.formRef?.value?.validate
+            this.basisLog.debug('验证结果:', valid)
+            if (!valid) {
+                return
+            }
+
+            const res = (this.formIsAdd.value ? this.createRequest : this.updateRequest)(submitData)
+            this.basisLog.debug('表单提交完成')
+            this.close()
+            this.listUpdate()
+
+            this.formData = this.formDataDefault
+        }
 
         this.formIsLoading.value = true
-        submitAction()(submitData)
-            .then(() => {
-                this.basisLog.debug('表单提交完成')
-                this.close()
-                this.listUpdate()
-
-                this.formData = this.formDataDefault
-            })
+        submitAction()
             .catch(err => this.basisLog.warn('表单提交错误', err))
             .finally(() => this.formIsLoading.value = false)
     }

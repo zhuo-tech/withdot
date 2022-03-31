@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { Search, CirclePlusFilled, Edit, Delete, Refresh, Warning } from '@element-plus/icons-vue'
+import UploadFile from '@/components/Upload/UploadFile.vue'
 import { onMounted, reactive } from 'vue'
 import MaterialService from './MaterialService'
 
@@ -110,6 +111,12 @@ onMounted(service.listUpdate)
 
             <el-form-item label="标签" prop="tag">
                 <el-input v-model="service.formData.tag" :autosize="{ minRows: 5, maxRows: 20 }" placeholder="" type="textarea" />
+            </el-form-item>
+
+            <el-form-item label="文件上传" prop="file">
+                <UploadFile :drag="true" listType="picture"
+                            v-model:file-info="service.formData.file"
+                            v-model:href="service.formData.href"  />
             </el-form-item>
 
         </el-form>
