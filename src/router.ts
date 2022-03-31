@@ -1,57 +1,22 @@
+import AccountRouter from '@/pages/accounts/AccountRouter'
+import AlbumsRouter from '@/pages/albums/AlbumsRouter'
+import HomeRouter from '@/pages/home/HomeRouter'
+import MaterialRouter from '@/pages/materials/MaterialRouter'
+import OrderRouter from '@/pages/orders/OrderRouter'
+import SettingRouter from '@/pages/settings/SettingRouter'
+import UserRouter from '@/pages/users/UserRouter'
+import WorksRouter from '@/pages/works/WorksRouter'
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import HomePage from './pages/home/index.vue'
-import Materials from './pages/materials/index.vue'
-import Works from './pages/works/index.vue'
-import Albums from './pages/albums/index.vue'
-import Users from './pages/users/index.vue'
-import Orders from './pages/orders/index.vue'
-import AppSettings from './pages/settings/app.vue'
-import DevSettings from './pages/settings/dev.vue'
-import MyProfile from './pages/accounts/profile.vue'
-import Login from './pages/accounts/login.vue'
 
 const routes: RouteRecordRaw[] = [
-    {
-        path: '/',
-        component: HomePage,
-    },
-    {
-        path: '/materials',
-        name: '素材管理',
-        component: Materials,
-    },
-    {
-        path: '/works',
-        component: Works,
-    },
-    {
-        path: '/albums',
-        component: Albums,
-    },
-    {
-        path: '/users',
-        component: Users,
-    },
-    {
-        path: '/orders',
-        component: Orders,
-    },
-    {
-        path: '/settings/app',
-        component: AppSettings,
-    },
-    {
-        path: '/settings/dev',
-        component: DevSettings,
-    },
-    {
-        path: '/my/profile',
-        component: MyProfile,
-    },
-    {
-        path: '/login',
-        component: Login,
-    },
+    ...AccountRouter,
+    AlbumsRouter,
+    HomeRouter,
+    MaterialRouter,
+    OrderRouter,
+    SettingRouter,
+    UserRouter,
+    WorksRouter,
 ]
 
 export const router = createRouter({

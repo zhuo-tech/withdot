@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import HelloWorld from '../../components/hello-world.vue'
-import { useUserStore } from '../../store/user'
+import HelloWorld from './hello-world.vue'
+import { useUserStore } from '@/store/user'
 
 const user = useUserStore()
 user.$patch({nickname: '微草轻课'})
