@@ -25,7 +25,11 @@
         ],
         "types": [
             "element-plus/global"
-        ]
+        ],
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"]
+        }
     },
     "include": [
         "src/**/*.ts",

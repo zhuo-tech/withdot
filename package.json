@@ -14,10 +14,12 @@
         "laf-client-sdk": "^0.7.10",
         "npm": "^8.5.2",
         "pinia": "^2.0.11",
+        "typescript-util": "^1.0.22",
         "vue": "^3.2.25",
         "vue-router": "^4.0.13"
     },
     "devDependencies": {
+        "@types/node": "^17.0.23",
         "@vitejs/plugin-vue": "^2.2.0",
         "autoprefixer": "^10.4.2",
         "less": "^4.1.2",
