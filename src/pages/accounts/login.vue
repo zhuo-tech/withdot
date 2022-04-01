@@ -90,13 +90,8 @@ const loginFormRef = loginFormRefs
 }
 
 
-.loginBox {
-    position: fixed;
-    top: 50%;
-    transform: translate(0, -50%);
-}
-
-.registerBox {
+.loginBox,.registerBox {
+    width: 319px;
     position: fixed;
     top: 50%;
     transform: translate(0, -50%);
