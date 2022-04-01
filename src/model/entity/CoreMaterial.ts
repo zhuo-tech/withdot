@@ -27,6 +27,11 @@ export default class CoreMaterial implements BaseEntity {
      */
     public href: string
     /**
+     * 取自 file.type
+     * {@link FileInfo.type}
+     */
+    public type: string
+    /**
      * 标签
      * @type {Array<string>}
      */

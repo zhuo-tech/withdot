@@ -1,11 +1,28 @@
 <script lang="ts" setup>
-import { Search, CirclePlusFilled, Edit, Delete, Refresh, Warning } from '@element-plus/icons-vue'
+import ShowFile from '@/components/Upload/ShowFile.vue'
 import UploadFile from '@/components/Upload/UploadFile.vue'
+import { getLogger } from '@/main'
+import { CirclePlusFilled, Delete, Edit, Refresh, Search, Warning } from '@element-plus/icons-vue'
+import { ObjectUtil, StorageUnit, StrUtil } from 'typescript-util'
 import { onMounted, reactive } from 'vue'
 import MaterialService from './MaterialService'
 
+const log = getLogger('素材管理')
 const service = reactive<MaterialService>(new MaterialService())
 onMounted(service.listUpdate)
+
+const UploadFileOnInput = () => {
+    const {file, title} = service.formData
+    // 优化: 自动使用文件名填充标题
+    if (StrUtil.isNotEmpty(file?.name) && StrUtil.isEmpty(title)) {
+        service.formData.title = file?.name
+    }
+    // 必须: 填充 type href
+    if (ObjectUtil.isNotEmpty(file)) {
+        service.formData.href = file?.href
+        service.formData.type = file?.type
+    }
+}
 
 </script>
 
@@ -47,12 +64,28 @@ onMounted(service.listUpdate)
 
     <!-- 表格 -->
     <el-table v-loading="service.tableIsLoading" :data="service.page.list" :row-key="service.rowKey" fit show-header stripe style="width: 100%">
-        <el-table-column align="center" label="序号" prop="index" width="60" />
+        <el-table-column align="center" label="序号" type="index" width="60" />
         <el-table-column align="center" label="标题" min-width="180" prop="title" />
-        <el-table-column align="center" label="预览" prop="href" width="180" />
-        <el-table-column align="center" label="大小" prop="size" width="180" />
-        <el-table-column align="center" label="标签" min-width="180" prop="tag" />
-        <el-table-column align="center" label="上传时间" prop="createTime" width="180" />
+        <el-table-column align="center" label="预览" width="180">
+            <template v-slot="{row}">
+                <ShowFile :file="row.file" />
+            </template>
+        </el-table-column>
+        <el-table-column align="center" label="大小" prop="size" width="180">
+            <template v-slot="{row}">
+                <span>{{ StorageUnit.displayName(row.file?.size) }}</span>
+            </template>
+        </el-table-column>
+        <el-table-column align="center" label="标签" min-width="180" prop="tag">
+            <template v-slot="{row}">
+                <el-tag v-for="(tag, index) in row.tag" :key="index" type="success">{{ tag }}</el-tag>
+            </template>
+        </el-table-column>
+        <el-table-column align="center" label="上传时间" prop="createTime" width="180">
+            <template v-slot="{row}">
+                {{ new Date(row.createTime).toLocaleString() }}
+            </template>
+        </el-table-column>
         <el-table-column align="center" fixed="right" label="操作" prop="Operate" width="180">
             <template v-slot="{row}">
                 <el-button :icon="Edit" type="text" @click="service.readyEdit(row)">编辑</el-button>
@@ -74,8 +107,8 @@ onMounted(service.listUpdate)
         <el-col :span="6">
             <el-row justify="end" type="flex">
                 <el-pagination
-                    :current-page="service.page.current"
-                    :page-size="service.page.size"
+                    :current-page="service.page.currentPage"
+                    :page-size="service.page.pageSize"
                     :page-sizes="[10, 20, 50, 100]"
                     :total="service.page.total"
                     layout="total, sizes, prev, pager, next"
@@ -88,7 +121,6 @@ onMounted(service.listUpdate)
 
     <!--  编辑抽屉 -->
     <el-dialog
-        ref="dialogRef"
         v-model="service.isShow"
         :title="service.formIsAdd ? '新增' : '编辑' "
         append-to-body
@@ -98,7 +130,7 @@ onMounted(service.listUpdate)
         lock-scroll
         modal
         width="45%">
-        <el-form ref="formRef"
+        <el-form :ref="el => service.formRef = el"
                  v-loading="service.formIsLoading"
                  :model="service.formData"
                  :rules="service.formRule"
@@ -106,17 +138,28 @@ onMounted(service.listUpdate)
                  style="max-width: 1000px">
 
             <el-form-item label="标题" prop="title">
-                <el-input v-model="service.formData.title" placeholder="" />
+                <el-input v-model="service.formData.title" placeholder="素材标题" />
             </el-form-item>
 
             <el-form-item label="标签" prop="tag">
-                <el-input v-model="service.formData.tag" :autosize="{ minRows: 5, maxRows: 20 }" placeholder="" type="textarea" />
+                <el-select v-model="service.formData.tag"
+                           allow-create
+                           default-first-option
+                           filterable
+                           multiple
+                           placeholder="选择或输入"
+                           style="width: 100%;">
+                    <el-option v-for="(tag, index) in service.tagOption" :key="index" :label="tag" :value="tag" />
+                </el-select>
             </el-form-item>
 
             <el-form-item label="文件上传" prop="file">
-                <UploadFile :drag="true" listType="picture"
-                            v-model:file-info="service.formData.file"
-                            v-model:href="service.formData.href"  />
+                <UploadFile v-model:file-info="service.formData.file"
+                            v-model:href="service.formData.href"
+                            :drag="true"
+                            :limit="1"
+                            listType="picture"
+                            @input="UploadFileOnInput" />
             </el-form-item>
 
         </el-form>

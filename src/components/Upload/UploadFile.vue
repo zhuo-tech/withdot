@@ -36,6 +36,7 @@ const emit = defineEmits<{
     (event: 'update:hrefs', value: Array<string>): void
     (event: 'update:fileInfo', value: FileInfo): void
     (event: 'update:fileInfoList', value: Array<FileInfo>): void
+    (event: 'input', value: Array<UploadUserFile>): void
 }>()
 
 const log = getLogger('UploadFile')
@@ -110,6 +111,7 @@ function updateModel(fileList: UploadFiles, propValue: typeof propsValue) {
     emit('update:hrefs', value)
     emit('update:fileInfo', fileInfo[0])
     emit('update:fileInfoList', fileInfo)
+    emit('input', fileList)
 }
 
 

@@ -1441,6 +1441,13 @@ laf-client-sdk@^0.7.10:
     axios "^0.21.1"
     database-ql "^0.7.10"
 
+laf-db-query-wrapper@^1.0.21:
+  version "1.0.21"
+  resolved "https://registry.yarnpkg.com/laf-db-query-wrapper/-/laf-db-query-wrapper-1.0.21.tgz#30fd78f930639a4f733fa2d03cf10463b558aee2"
+  integrity sha512-GXU84w8sVpPcPu+QhhoQjXCQYS2VoNJdf3S09GeholPnKVxS5SE5N0t5xk4z5ptXZZ/faGuaFxWdCSKPqTbw0g==
+  dependencies:
+    typescript-util "^1.0.22"
+
 less@^4.1.2:
   version "4.1.2"
   resolved "https://registry.npmmirror.com/less/-/less-4.1.2.tgz#6099ee584999750c2624b65f80145f8674e4b4b0"

@@ -1,7 +1,8 @@
 import { getLogger } from '@/main'
-import Page from '@/model/Page'
 import { RuleItem } from 'async-validator'
 import { FormInstance } from 'element-plus'
+import { Page } from 'laf-db-query-wrapper'
+import { CollUtil, ObjectUtil } from 'typescript-util'
 import { reactive, Ref, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -124,13 +125,21 @@ export default class BasisCrud<E> {
     public formSubmit = () => {
         let submitData = this.beforeSubmit(this.formData)
         this.basisLog.debug('表单提交: ', this.formIsAdd.value ? '新增' : '编辑', submitData)
+
         const submitAction = async () => {
-            const valid = await this.formRef?.value?.validate
+            const valid = await this.formRef?.value?.validate()
+                .catch((err: Record<string, Array<any>>) => {
+                    CollUtil.flatMap(ObjectUtil.toArray(err), i => i.value)
+                        .forEach(i => {
+                            this.basisLog.warn('验证失败', i)
+                        })
+                })
             this.basisLog.debug('验证结果:', valid)
             if (!valid) {
                 return
             }
 
+            // noinspection JSUnusedLocalSymbols
             const res = (this.formIsAdd.value ? this.createRequest : this.updateRequest)(submitData)
             this.basisLog.debug('表单提交完成')
             this.close()
@@ -195,7 +204,7 @@ export default class BasisCrud<E> {
      * 分页: 页大小更改回调
      */
     public pageSizeChange = (size: number) => {
-        this.page.size = size
+        this.page.pageSize = size
         this.listUpdate()
     }
 
@@ -203,7 +212,7 @@ export default class BasisCrud<E> {
      * 分页: 当前页码更改回调
      */
     public currentPageChange = (current: number) => {
-        this.page.current = current
+        this.page.currentPage = current
         this.listUpdate()
     }
 }

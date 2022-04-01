@@ -7,6 +7,7 @@ import 'element-plus/dist/index.css'
 import App from './app.vue'
 import { router } from './router'
 
+// 初始化日志
 const loggerFactory = new LoggerFactory()
 export const getLogger = loggerFactory.getLogger
 
