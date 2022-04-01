@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import ShowFile from '@/components/Upload/ShowFile.vue'
+import ShowFile from '@/components/Upload/ShowFile'
 import UploadFile from '@/components/Upload/UploadFile.vue'
 import { getLogger } from '@/main'
 import { CirclePlusFilled, Delete, Edit, Refresh, Search, Warning } from '@element-plus/icons-vue'
@@ -68,9 +68,9 @@ const UploadFileOnInput = () => {
     <el-table v-loading="service.tableIsLoading" :data="service.page.list" :row-key="service.rowKey" fit show-header stripe style="width: 100%">
         <el-table-column align="center" label="序号" type="index" width="60" />
         <el-table-column align="center" label="标题" min-width="180" prop="title" />
-        <el-table-column align="center" label="预览" width="180">
+        <el-table-column align="center" label="预览">
             <template v-slot="{row}">
-                <ShowFile :file="row.file" />
+                <ShowFile :file="row.file" style="height: 50px; margin: 0 auto;" />
             </template>
         </el-table-column>
         <el-table-column align="center" label="大小" prop="size" width="180">
