@@ -1443,7 +1443,7 @@ laf-client-sdk@^0.7.10:
 
 laf-db-query-wrapper@^1.0.21:
   version "1.0.21"
-  resolved "https://registry.yarnpkg.com/laf-db-query-wrapper/-/laf-db-query-wrapper-1.0.21.tgz#30fd78f930639a4f733fa2d03cf10463b558aee2"
+  resolved "https://registry.npmmirror.com/laf-db-query-wrapper/-/laf-db-query-wrapper-1.0.21.tgz#30fd78f930639a4f733fa2d03cf10463b558aee2"
   integrity sha512-GXU84w8sVpPcPu+QhhoQjXCQYS2VoNJdf3S09GeholPnKVxS5SE5N0t5xk4z5ptXZZ/faGuaFxWdCSKPqTbw0g==
   dependencies:
     typescript-util "^1.0.22"

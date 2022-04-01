@@ -53,7 +53,8 @@ export default defineComponent({
         },
 
         renderVideo(src: string) {
-            return <video src={ src } controls muted  { ...this.$attrs } ></video>
+            return (<span>{ src }</span>)
+            // return <video src={ src } controls muted  { ...this.$attrs } ></video>
         },
 
         renderAudio(src: string) {
