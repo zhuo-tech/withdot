@@ -42,7 +42,9 @@ const UploadFileOnInput = () => {
                     <el-input v-model="service.queryData.title" clearable placeholder="标题" />
                 </el-form-item>
                 <el-form-item>
-                    <el-input v-model="service.queryData.tag" clearable placeholder="标签" />
+                    <el-select v-model="service.queryData.tag" default-first-option multiple placeholder="选择">
+                        <el-option v-for="(tag, index) in service.tagOption" :key="index" :label="tag" :value="tag" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item>
                     <el-button :icon="Search" type="primary" @click="service.queryFormSubmit" />
