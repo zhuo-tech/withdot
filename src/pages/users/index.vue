@@ -9,7 +9,7 @@ import Student from './components/Student.vue'
 
 const log = getLogger('学员管理')
 const activeName = ref('first')
-
+const　defaultType=ref()
 let tableData: Ref<{
     defaultData: Array<CoreStudent>,
     isPayList: Array<CoreStudent>,
@@ -20,6 +20,22 @@ let tableData: Ref<{
     noPayList: [],
 })
 
+const searchMessage=(query:string)=>{
+    const params={
+        type:defaultType.value,
+        name:query
+    }
+    getStudentListInit(params).then(response=>{
+        if (!response.ok) {
+            ElMessage.error(response.error)
+        }
+        console.log(response)
+        tableData.value.defaultData = response.data
+    }).catch(err=>{
+        console.log(err)
+        ElMessage.error(err)
+    })
+}
 /**
  * 切换tab
  * @param {TabsPaneContext} tab
@@ -29,16 +45,22 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
     const {isPayList, noPayList, defaultData} = tableData.value
     if (tab.props.label === '付费学员') {
         tableData.value.defaultData = isPayList
-        return
+        defaultType.value = studentType.isPay
+    }else{
+        tableData.value.defaultData = noPayList
+        defaultType.value=studentType.noPay
     }
-    tableData.value.defaultData = noPayList
+
 }
 
 /**
  * 获得学员数据
  */
 const getStudentList = async () => {
-    await getStudentListInit(studentType.isPay).then(response => {
+    let params={
+        type:studentType.isPay
+    }
+    await getStudentListInit(params).then(response => {
         if (!response.ok) {
             ElMessage.error(response.error)
         }
@@ -46,7 +68,8 @@ const getStudentList = async () => {
     }).catch(err => {
         ElMessage.error(err)
     })
-    await getStudentListInit(studentType.noPay).then(response => {
+    params.type=studentType.noPay
+    await getStudentListInit(params).then(response => {
         if (!response.ok) {
             ElMessage.error(response.error)
         }
@@ -59,6 +82,7 @@ const getStudentList = async () => {
 onMounted(async () => {
     await getStudentList()
     tableData.value.defaultData = tableData.value.isPayList
+    defaultType.value=studentType.isPay
 })
 </script>
 
@@ -71,10 +95,10 @@ onMounted(async () => {
         </template>
         <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
             <el-tab-pane label="付费学员" name="first">
-                <Student :tableData="tableData" />
+                <Student :tableData="tableData" :search-message="searchMessage"/>
             </el-tab-pane>
             <el-tab-pane label="未付费学员" name="second">
-                <Student :tableData="tableData" />
+                <Student :tableData="tableData" :search-message="searchMessage"/>
             </el-tab-pane>
         </el-tabs>
     </el-card>

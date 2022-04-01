@@ -4,12 +4,13 @@ import { Search } from '@element-plus/icons-vue'
 import { defineProps, reactive, ref } from 'vue'
 import Detail from './Detail.vue'
 
-defineProps<{
+const props = defineProps<{
     tableData: {
         defaultData: Array<CoreStudent>,
         isPayList: Array<CoreStudent>,
         noPayList: Array<CoreStudent>,
     },
+    searchMessage:(query:string)=>void
 }>()
 const detailMessage = reactive({
     visible: false,
@@ -22,10 +23,13 @@ const detailMessage = reactive({
         {date: '2016-05-04', name: '王小虎', address: '上海市普陀区金沙江路 1517 弄'},
     ],
 })
-let query = ref()
+let query = ref('')
 
 const detail = (): void => {
     detailMessage.visible = true
+}
+const searchList=()=>{
+    props.searchMessage(query.value)
 }
 </script>
 <template>
@@ -36,7 +40,7 @@ const detail = (): void => {
                 <el-input v-model="query"
                           clearable placeholder="请输入内容">
                     <template #append>
-                        <el-button>
+                        <el-button @click="searchList">
                             <el-icon>
                                 <search />
                             </el-icon>
