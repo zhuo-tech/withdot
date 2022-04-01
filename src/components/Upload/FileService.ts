@@ -1,5 +1,5 @@
 import { LafUploadResponse } from '@/components/Upload/Upload'
-import { FileInfo } from '@/pages/materials/Material'
+import { FileInfo } from '@/model/FileInfo'
 
 export interface FileService {
     /**

@@ -1,8 +1,9 @@
 import { getLogger } from '@/main'
 import BasisCrud from '@/mixin/BasisCrud'
+import { FileInfo } from '@/model/FileInfo'
 import Page from '@/model/Page'
 import { StrUtil } from 'typescript-util'
-import Material, { FileInfo } from './Material'
+import Material from '@/model/entity/Material'
 
 /**
  * 素材管理相关

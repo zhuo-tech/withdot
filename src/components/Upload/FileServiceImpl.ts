@@ -1,7 +1,7 @@
 import { LAF_BLASE_URL } from '@/cloud'
 import { LafUploadResponse } from '@/components/Upload/Upload'
 import { getLogger } from '@/main'
-import { FileInfo } from '@/pages/materials/Material'
+import { FileInfo } from '@/model/FileInfo'
 import { StorageUnit, StrUtil } from 'typescript-util'
 import type { FileService } from './FileService'
 

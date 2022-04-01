@@ -2,7 +2,7 @@
 <script lang="tsx" setup>
 import { LafUploadResponse } from '@/components/Upload/Upload'
 import { getLogger } from '@/main'
-import { FileInfo } from '@/pages/materials/Material'
+import { FileInfo } from '@/model/FileInfo'
 import { UploadFile, UploadFiles, UploadProps, UploadUserFile } from 'element-plus'
 import { CollUtil, ObjectUtil, StrUtil } from 'typescript-util'
 import { reactive, watchEffect } from 'vue'
