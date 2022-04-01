@@ -4,7 +4,7 @@ import { createPinia } from 'pinia'
 import ElementPlus from 'element-plus'
 import './index.css'  // 在 element-plus css 之前导入 tailwind css 以避免冲突
 import 'element-plus/dist/index.css'
-import App from '@/app.vue'
+import App from '@/App'
 import { router } from '@/router'
 
 // 初始化日志

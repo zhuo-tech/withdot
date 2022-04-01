@@ -65,7 +65,9 @@ export default defineComponent({
         return (
             <div>
                 <el-row justify="end" type={ 'flex' }>
-                    { this.renderQueryForm() }
+                    <el-collapse-transition>
+                        { this.renderQueryForm() }
+                    </el-collapse-transition>
                     <el-col span={ 6 }>
                         { this.renderFunctionButtons() }
                     </el-col>
