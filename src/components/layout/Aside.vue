@@ -1,6 +1,7 @@
 <script lang="tsx">
 import { getLogger } from '@/main'
 import { router } from '@/router'
+import { LoggerLevel } from '@/tool/log/LoggerLevel'
 import { CollUtil, StrUtil } from 'typescript-util'
 import { defineComponent } from 'vue'
 import { RouteRecordRaw } from 'vue-router'
@@ -23,7 +24,7 @@ export default defineComponent({
     },
     data() {
         return {
-            log: getLogger('侧边栏'),
+            log: getLogger('侧边栏', LoggerLevel.ALL),
         }
     },
     computed: {
@@ -34,7 +35,7 @@ export default defineComponent({
     methods: {
 
         onSelect(index: string) {
-            this.log.trace('Select => ', index)
+            this.log.debug('Select => ', index)
             // this.$router.push({path: param})
             this.$emit('select', index)
         },
@@ -89,6 +90,7 @@ export default defineComponent({
 
         /* 独立渲染一个菜单叶子节点 */
         renderMenuNode(key: string, index: string, menu: RouteRecordRaw): JSX.Element {
+            this.log.trace('渲染菜单', menu.name, index)
             const Icon = menu.meta?.icon
             return (
                 <el-menu-item key={ 'menu' + key } index={ index }>
