@@ -57,7 +57,7 @@ export default defineComponent({
         },
 
         renderAudio(src: string) {
-            this.log.info('接收到的样式', this.$attrs)
+            // this.log.info('接收到的样式', this.$attrs)
             return <audio src={ src } controls { ...this.$attrs } ></audio>
         },
 

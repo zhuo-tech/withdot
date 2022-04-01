@@ -99,12 +99,11 @@ export class LoggerConsoleImpl implements Logger {
     }
 
     private formatInfo(level: LoggerLevel): string[] {
-        // 开发期间 不输出时间
         return [
-            `%c ${ new Date().toLocaleString() } %c${ LoggerLevelDisplayName[level] }%c - [${ this.name }]: `,
-            'color: #717C86; background: #030307; padding: 5px 0;',
-            `color: ${ LoggerConsoleImpl.levelColor[level] }; background: #030307; padding: 5px 0;`,
-            'color: #ff66a5; background: #030307; padding: 5px 0;',
+            `%c ${ new Date().toLocaleTimeString() } %c${ LoggerLevelDisplayName[level] }%c - [${ this.name }]: `,
+            'color: #717C86; background: #030307;',
+            `color: ${ LoggerConsoleImpl.levelColor[level] }; background: #030307;`,
+            'color: #da30f5; background: #030307;',
         ]
     }
 
