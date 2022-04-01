@@ -24,7 +24,7 @@ export default defineComponent({
     },
     data() {
         return {
-            log: getLogger('侧边栏', LoggerLevel.ALL),
+            log: getLogger('侧边栏', LoggerLevel.DEBUG),
         }
     },
     computed: {
@@ -41,6 +41,10 @@ export default defineComponent({
         },
 
         expectStartWith(str: string, expect: string = StrUtil.PATH_INTEGRAL) {
+            // 二级路由有可能 path 留空
+            if (str === '') {
+                return str
+            }
             return str.startsWith(expect) ? str : expect + str
         },
 
@@ -60,6 +64,8 @@ export default defineComponent({
 
             // 父级节点要求展开
             if (menu.meta?.flatChildren) {
+                // 这里有个坑: 如果子路由配置错误/处理不当, 点击菜单导航时 vue router 直接爆炸"TypeError: api.now is not a function" 掩盖了真实错误
+                // 测试版本: vue-router@^4.0.13  element-plus@^2.1.7
                 return menu.children?.map(i => {
                     const index = path + this.expectStartWith(i.path)
                     return this.renderMenuNode(index, index, i)
