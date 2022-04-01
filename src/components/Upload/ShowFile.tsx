@@ -1,11 +1,19 @@
-<script lang="tsx">
+// noinspection JSXNamespaceValidation
+
 import { FileServiceImpl } from '@/components/Upload/FileServiceImpl'
 import { getLogger } from '@/main'
 import { FileInfo } from '@/model/FileInfo'
+import { FileType } from '@/model/FileType'
 import { Picture as IconPicture } from '@element-plus/icons-vue'
 import { ObjectUtil, StrUtil } from 'typescript-util'
 import { defineComponent } from 'vue'
 // import { ImageProps } from 'element-plus'
+
+const FileTypeRegular = {
+    IMAGE: new RegExp(FileType.IMAGE),
+    AUDIO: new RegExp(FileType.AUDIO),
+    VIDEO: new RegExp(FileType.VIDEO),
+}
 
 /**
  * 兼容多种类型的文件展示
@@ -23,8 +31,8 @@ export default defineComponent({
         },
         hrefType: {
             type: String,
-            default: 'image/*'
-        }
+            default: FileType.IMAGE,
+        },
     },
     data() {
         return {
@@ -37,31 +45,44 @@ export default defineComponent({
             const imageSlots = {
                 error: () => (
                     <div class="image-slot">
-                        <el-icon><IconPicture/></el-icon>
+                        <el-icon><IconPicture /></el-icon>
                     </div>
-                )
+                ),
             }
-            return (
-                <el-image src={this.fileService.showUrl(src)} {... this.$attrs} v-slots={imageSlots}></el-image>
-            )
+            return <el-image src={ src } { ...this.$attrs } v-slots={ imageSlots }></el-image>
         },
 
-        renderByType(src?: string, type?: string) {
+        renderVideo(src: string) {
+            return <video src={ src } controls muted  { ...this.$attrs } ></video>
+        },
+
+        renderAudio(src: string) {
+            this.log.info('接收到的样式', this.$attrs)
+            return <audio src={ src } controls { ...this.$attrs } ></audio>
+        },
+
+        renderByType(src: string, type: string) {
             if (!src) {
                 this.log.debug('地址不存在 src = ', src)
                 return <span></span>
             }
             this.log.debug('渲染类型', type)
+
+            src = this.fileService.showUrl(src)
             // 图片
-            if (type?.startsWith('image/')) {
+            if (FileTypeRegular.IMAGE.test(type)) {
                 return this.renderImage(src)
             }
-
-            // TODO: 视频, 音频 待支持
+            if (FileTypeRegular.VIDEO.test(type)) {
+                return this.renderVideo(src)
+            }
+            if (FileTypeRegular.AUDIO.test(type)) {
+                return this.renderAudio(src)
+            }
 
             return (
                 <span>
-                    不支持的文件类型 {type}
+                    不支持的类型 { type }
                 </span>
             )
         },
@@ -69,7 +90,7 @@ export default defineComponent({
     render() {
         const {file, href, hrefType} = this.$props
         if (StrUtil.isNotEmpty(href)) {
-            return this.renderByType(href, hrefType)
+            return this.renderByType(href as string, hrefType)
         }
 
         if (ObjectUtil.isNotEmpty(file)) {
@@ -79,4 +100,3 @@ export default defineComponent({
         return <span></span>
     },
 })
-</script>
