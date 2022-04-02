@@ -14,7 +14,7 @@ const RouterConfigItem: RouteRecordRaw = {
         {
             path: '',
             name: '菜单设置',
-            component: import('./setting/index.vue'),
+            component: () => import('./setting/index.vue'),
             meta: {
                 icon: Menu,
                 isMenu: true,
@@ -23,7 +23,7 @@ const RouterConfigItem: RouteRecordRaw = {
         {
             path: 'operation',
             name: '运营数据',
-            component: import('./operation/index.vue'),
+            component: () => import('./operation/index.vue'),
             meta: {
                 icon: Menu,
                 isMenu: true,
@@ -32,7 +32,7 @@ const RouterConfigItem: RouteRecordRaw = {
         {
             path: 'fan',
             name: '粉丝管理',
-            component: import('./fan/index.vue'),
+            component: () => import('./fan/index.vue'),
             meta: {
                 icon: Menu,
                 isMenu: true,
@@ -41,7 +41,7 @@ const RouterConfigItem: RouteRecordRaw = {
         {
             path: 'news',
             name: '消息管理',
-            component: import('./news/index.vue'),
+            component: () => import('./news/index.vue'),
             meta: {
                 icon: Menu,
                 isMenu: true,
@@ -50,7 +50,7 @@ const RouterConfigItem: RouteRecordRaw = {
         {
             path: 'account',
             name: '账号管理',
-            component: import('./account/index.vue'),
+            component: () => import('./account/index.vue'),
             meta: {
                 icon: Menu,
                 isMenu: true,
@@ -59,7 +59,7 @@ const RouterConfigItem: RouteRecordRaw = {
         {
             path: 'automaticResponse',
             name: '自动回复',
-            component: import('./automaticResponse/index.vue'),
+            component: () => import('./automaticResponse/index.vue'),
             meta: {
                 icon: Menu,
                 isMenu: true,
@@ -68,7 +68,7 @@ const RouterConfigItem: RouteRecordRaw = {
         {
             path: 'material',
             name: '素材管理',
-            component: import('./material/index.vue'),
+            component: () => import('./material/index.vue'),
             meta: {
                 icon: Menu,
                 isMenu: true,
@@ -77,7 +77,7 @@ const RouterConfigItem: RouteRecordRaw = {
         {
             path: 'graphics',
             name: '图文管理',
-            component: import('./graphics/index.vue'),
+            component: () => import('./graphics/index.vue'),
             meta: {
                 icon: Menu,
                 isMenu: true,
