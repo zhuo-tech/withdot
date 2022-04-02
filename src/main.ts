@@ -1,4 +1,5 @@
 import { LoggerFactory } from '@/tool/log/LoggerFactory'
+import { ObjectUtil } from 'typescript-util'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import ElementPlus from 'element-plus'
@@ -6,8 +7,7 @@ import './index.css'  // 在 element-plus css 之前导入 tailwind css 以避�
 import 'element-plus/dist/index.css'
 import App from '@/App'
 import { router } from '@/router'
-import zhCn from 'element-plus/es/locale/lang/zh-cn'
-import * as ElIconModules  from '@element-plus/icons-vue'
+import * as ElIconModules from '@element-plus/icons-vue'
 
 // 初始化日志
 const loggerFactory = new LoggerFactory()
@@ -25,18 +25,11 @@ console.log = (...data: any[]) => {
     oldLog(...data)
 }
 
-
 const app = createApp(App)
-    .use(ElementPlus, {
-        locale: zhCn
-    })
 
-Object.keys(ElIconModules).forEach(function(key) {
-    app.component(ElIconModules[key].name, ElIconModules[key])
-})
-
-createApp(App)
-    .use(router)
+app.use(router)
     .use(createPinia())
     .use(ElementPlus)
     .mount('#app')
+
+ObjectUtil.toArray(ElIconModules).forEach(kv => app.component(kv.value.name, kv.value))
