@@ -17,3 +17,9 @@ export enum FileType {
      */
     AUDIO = 'audio/*'
 }
+
+export const FileTypeRegExp = {
+    IMAGE: new RegExp(FileType.IMAGE),
+    AUDIO: new RegExp(FileType.AUDIO),
+    VIDEO: new RegExp(FileType.VIDEO),
+}

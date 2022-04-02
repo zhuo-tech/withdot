@@ -4,6 +4,7 @@ import BasisCrud from '@/mixin/BasisCrud'
 import CoreMaterial from '@/model/entity/CoreMaterial'
 import { RuleItem } from 'async-validator'
 import { LafClient, Page } from 'laf-db-query-wrapper'
+import { ObjectUtil } from 'typescript-util'
 import { ref, Ref } from 'vue'
 
 /**
@@ -33,6 +34,12 @@ export default class MaterialService extends BasisCrud<CoreMaterial> {
         const resPage = await this.client.queryWrapper()
             .likeNotEmpty('title', query?.title)
             .inNotEmpty('tag', query.tag)
+            .whereCmd((action) => {
+                if (ObjectUtil.isNotNull(query.type)) {
+                    action.type = new RegExp(`^${query.type}`)
+                }
+                return action;
+            })
             .hide('updateBy', 'updateTime', 'createBy')
             .orderByDesc('createTime')
             .page(page)

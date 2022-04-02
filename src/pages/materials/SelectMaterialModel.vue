@@ -1,11 +1,31 @@
 <script lang="ts" setup>
 import CrudPagination from '@/components/CrudPagination/CrudPagination'
+import { getLogger } from '@/main'
+import CoreMaterial from '@/model/entity/CoreMaterial'
+import { FileInfo } from '@/model/FileInfo'
+import { FileType } from '@/model/FileType'
 import MaterialDialogForm from '@/pages/materials/components/MaterialDialogForm.vue'
 import MaterialQuery from '@/pages/materials/components/MaterialQuery'
+import ShowMaterial from '@/pages/materials/components/ShowMaterial'
 import MaterialService from '@/pages/materials/MaterialService'
 import { FolderOpened } from '@element-plus/icons-vue'
 import { onMounted, reactive } from 'vue'
 
+const props = defineProps<{
+    id?: string
+    material?: CoreMaterial
+    file?: FileInfo
+    href?: string
+}>()
+
+const emit = defineEmits<{
+    (event: 'update:id', id: string): void
+    (event: 'update:material', material: CoreMaterial): void
+    (event: 'update:file', file: FileInfo): void
+    (event: 'update:href', href: string): void
+}>()
+
+const log = getLogger('SelectMaterialModel')
 const controlShow = reactive({
     isShow: false,
     show() {
@@ -17,8 +37,21 @@ const controlShow = reactive({
 })
 
 const service = reactive(new MaterialService())
+service.showQuery = true
+service.queryData.type = FileType.IMAGE
+
 onMounted(service.listUpdate)
 
+const onSelect = (item: CoreMaterial, index: number) => {
+    log.info('选择 =>',{item, index})
+
+    emit('update:id', item._id)
+    emit('update:file', item.file)
+    emit('update:href', item.href)
+    emit('update:material', item)
+
+    controlShow.close()
+}
 </script>
 
 <template>
@@ -39,14 +72,10 @@ onMounted(service.listUpdate)
     width="50%">
 
     <MaterialQuery :service="service" />
-
-    <!-- TODO: list 或者 table 展示 & 选择 -->
-    <div style="min-height: 600px">
-        <div v-for="(item, index) in service.page.list" :key="index" style="margin: 15px; color: #f478e3">
-            {{ item }}
-        </div>
-    </div>
-
+    <ShowMaterial :list="service.page.list"
+                  :query-type="service.queryData.type"
+                  :select="onSelect"
+                  style="min-height: 500px" />
     <CrudPagination :service="service" />
     <MaterialDialogForm :service="service" />
 

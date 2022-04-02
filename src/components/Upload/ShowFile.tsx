@@ -3,17 +3,11 @@
 import { FileServiceImpl } from '@/components/Upload/FileServiceImpl'
 import { getLogger } from '@/main'
 import { FileInfo } from '@/model/FileInfo'
-import { FileType } from '@/model/FileType'
+import { FileType, FileTypeRegExp } from '@/model/FileType'
 import { Picture as IconPicture } from '@element-plus/icons-vue'
 import { ObjectUtil, StrUtil } from 'typescript-util'
 import { defineComponent } from 'vue'
 // import { ImageProps } from 'element-plus'
-
-const FileTypeRegular = {
-    IMAGE: new RegExp(FileType.IMAGE),
-    AUDIO: new RegExp(FileType.AUDIO),
-    VIDEO: new RegExp(FileType.VIDEO),
-}
 
 /**
  * 兼容多种类型的文件展示
@@ -71,13 +65,13 @@ export default defineComponent({
 
             src = this.fileService.showUrl(src)
             // 图片
-            if (FileTypeRegular.IMAGE.test(type)) {
+            if (FileTypeRegExp.IMAGE.test(type)) {
                 return this.renderImage(src)
             }
-            if (FileTypeRegular.VIDEO.test(type)) {
+            if (FileTypeRegExp.VIDEO.test(type)) {
                 return this.renderVideo(src)
             }
-            if (FileTypeRegular.AUDIO.test(type)) {
+            if (FileTypeRegExp.AUDIO.test(type)) {
                 return this.renderAudio(src)
             }
 
