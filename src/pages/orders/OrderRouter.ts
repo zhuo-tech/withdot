@@ -9,7 +9,7 @@ const RouterConfigItem: RouteRecordRaw = {
     children: [
         {
             path: '',
-            name: '订单管理',
+            name: '财务管理',
             component: Component,
             meta: {
                 icon: ShoppingBag,
