@@ -1,7 +1,6 @@
 import Layout from '@/components/layout/main.vue'
 import { User } from '@element-plus/icons-vue'
 import { RouteRecordRaw } from 'vue-router'
-import Component from './index.vue'
 
 const RouterConfigItem: RouteRecordRaw = {
     path: '/user',
@@ -10,7 +9,7 @@ const RouterConfigItem: RouteRecordRaw = {
         {
             path: '',
             name: '学员管理',
-            component: Component,
+            component: import('./index.vue'),
             meta: {
                 icon: User,
                 isMenu: true,
