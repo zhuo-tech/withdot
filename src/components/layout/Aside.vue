@@ -108,8 +108,7 @@ export default defineComponent({
 
     },
     render() {
-        const {collapse} = this.$props
-        const {menuList} = this
+        const {menuList, $props: {collapse}} = this
         return (
             <el-menu
                 class="h-full"

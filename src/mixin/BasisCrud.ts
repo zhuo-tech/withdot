@@ -88,7 +88,8 @@ export default class BasisCrud<E> {
         this.tableIsLoading.value = true
         this.pageRequest(this.page as any, this.queryData as any)
             .then(page => {
-                this.page = page
+                this.page.total = page.total
+                this.page.list = page.list
             })
             .catch(err => this.basisLog.debug(err))
             .finally(() => this.tableIsLoading.value = false)
