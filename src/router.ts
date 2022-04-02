@@ -61,6 +61,9 @@ export function createVueRouterInstantiate(): Router {
         if (!judgmentLogin()) {
             return next('/login')
         }
+        if(to.path==='/login'){
+            return next('/')
+        }
         next()
     }
 
