@@ -6,13 +6,14 @@ const RouterConfigItem: RouteRecordRaw = {
     path: '/weixin',
     component: Layout,
     name: '微信管理',
+    redirect: '/weixin/setting',
     meta: {
         icon: Menu,
         isMenu: true,
     },
     children: [
         {
-            path: '',
+            path: 'setting',
             name: '菜单设置',
             component: () => import('./setting/index.vue'),
             meta: {
@@ -67,7 +68,7 @@ const RouterConfigItem: RouteRecordRaw = {
         },
         {
             path: 'material',
-            name: '素材管理',
+            name: '微信素材管理',
             component: () => import('./material/index.vue'),
             meta: {
                 icon: Menu,
