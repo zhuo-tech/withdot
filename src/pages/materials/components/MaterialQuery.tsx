@@ -60,7 +60,7 @@ export default defineComponent({
             const {service} = this
             return (
                 <el-row justify="end" type={ 'flex' }>
-                    <el-button icon={ CirclePlusFilled } type="primary" onClick={ service.readyAdd }>新增</el-button>
+                    <el-button icon={ CirclePlusFilled } type="primary" onClick={ service.readyAdd }>上传素材</el-button>
                     <el-button icon={ Search } type="primary" onClick={ () => {
                         // @ts-ignore
                         service.showQuery = !(service.showQuery)
