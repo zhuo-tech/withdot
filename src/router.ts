@@ -62,27 +62,11 @@ export function createVueRouterInstantiate(): Router {
         if (!judgmentLogin()) {
             return next('/login')
         }
-        if(to.path==='/login'){
-            return next('/')
-        }
         next()
     }
 
     const afterEach: NavigationHookAfter = (to, from) => {
         log.trace('导航完成: ', from.path, ' => ', to.path)
-
-        const MAX_SHOW_DEEP = 5
-        const title = to.matched.map(({meta, name}) => meta?.title || name)
-            .filter(str => StrUtil.isNotEmpty(str as string))
-            .reverse()
-            .filter((s, i) => i <= MAX_SHOW_DEEP)
-            .join(' - ')
-
-        if (StrUtil.isNotEmpty(title)) {
-            document.title = `${ title }`
-            // TODO: 缺一个站点名称
-            // document.title = `${title} - ${site_name}`
-        }
     }
 
     const beforeResolve: NavigationGuardWithThis<any> = () => {
