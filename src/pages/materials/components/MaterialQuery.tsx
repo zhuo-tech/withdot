@@ -84,7 +84,7 @@ export default defineComponent({
                     <el-collapse-transition>
                         { this.renderQueryForm() }
                     </el-collapse-transition>
-                    <el-col span={ 6 }>
+                    <el-col span={ 12 }>
                         { this.renderFunctionButtons() }
                     </el-col>
                 </el-row>

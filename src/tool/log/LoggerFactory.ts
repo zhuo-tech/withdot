@@ -21,7 +21,7 @@ export class LoggerFactory {
     public controller: (level: LoggerLevel, name: string) => boolean = (level, name) => {
         let debugLevel = this.loggerCache[name]?.getDebugLevel()
         if (debugLevel) {
-            return level > debugLevel
+            return level >= debugLevel
         }
         return level >= this.enableLevel
     }

@@ -1,5 +1,6 @@
 <!--suppress JSUnusedLocalSymbols -->
 <script lang="tsx" setup>
+import ShowFile from '@/components/Upload/ShowFile'
 import { LafUploadResponse } from '@/components/Upload/Upload'
 import { getLogger } from '@/main'
 import { FileInfo } from '@/model/FileInfo'
@@ -12,7 +13,8 @@ import { FileServiceImpl } from './FileServiceImpl'
 import { UploadFilled } from '@element-plus/icons-vue'
 /**
  * 对 el-upload 的包装,
- * 绝大部分 el-upload 的 props 通过props 透传给 el-upload 参考: {@link UploadProps}
+ * 绝大部分 props 透传给 el-upload;
+ * 参考: {@link UploadProps}
  * 提供四种 v-model:
  * - v-model:href 单URL, string
  * - v-model:hrefs string[]
@@ -20,7 +22,8 @@ import { UploadFilled } from '@element-plus/icons-vue'
  * - v-model:fileInfos 多个
  *
  * <h3>
- *     不要传递 action, headres 等 上传控制属性, 仅可以传递上传样式控制属性
+ *     不要传递 action, headres, on-success, fileList 等 上传控制属性,
+ *     仅可以传递上传样式控制属性, 如: drag, limit, listType 等 参考: {@link UploadProps}
  *</h3>
  * */
 const propsValue = defineProps<{
@@ -45,15 +48,14 @@ const fileService: FileService = new FileServiceImpl()
 let fileList = reactive<Array<UploadUserFile>>([])
 const {href, hrefs, fileInfo, fileInfoList} = propsValue
 
-function fileInfoToUploadFile() {
-    return (fileInfo: FileInfo) => {
+// 处理回显
+watchEffect(() => {
+    const fileInfoToUploadFile = (fileInfo: FileInfo) => {
         const {id, href, size, type, name} = fileInfo
         return {size, name, uid: id, url: fileService.showUrl(href), response: fileInfo, status: 'success',} as UploadUserFile
     }
-}
 
-function strToUploadFile() {
-    return (s: any) => ({
+    const strToUploadFile = (s: any) => ({
         response: {href: s},
         status: 'success',
         name: s,
@@ -61,29 +63,27 @@ function strToUploadFile() {
         url: fileService.showUrl(s),
         uid: s,
     } as UploadUserFile)
-}
 
-watchEffect(() => {
     if (CollUtil.isNotEmpty(fileList)) {
         return
     }
     if (CollUtil.isNotEmpty(fileInfoList)) {
         // @ts-ignore
-        fileList = fileInfoList?.map(fileInfoToUploadFile())
+        fileList = fileInfoList?.map(i => fileInfoToUploadFile(i))
         return
     }
     if (ObjectUtil.isNotEmpty(fileInfo)) {
         // @ts-ignore
-        fileList = [fileInfoToUploadFile()(fileInfo)]
+        fileList = [fileInfoToUploadFile(fileInfo)]
         return
     }
     if (CollUtil.isNotEmpty(hrefs)) {
         // @ts-ignore
-        fileList = hrefs?.map(strToUploadFile())
+        fileList = hrefs?.map(i => strToUploadFile(i))
     }
     if (StrUtil.isNotEmpty(href)) {
         // @ts-ignore
-        fileList = strToUploadFile()(href)
+        fileList = strToUploadFile(href)
     }
 })
 
@@ -92,12 +92,10 @@ const onUploadSuccess = (response: LafUploadResponse, uploadFile: UploadFile, up
     log.trace('上传完成, 格式化响应', uploadFile.response)
     updateModel(uploadFiles, propsValue)
 }
-
-const onRemove = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+const onRemove = (uploadFile: UploadFile) => {
     log.trace('移除文件', uploadFile.response)
-    updateModel(uploadFiles, propsValue)
+    updateModel(fileList as any, propsValue)
 }
-
 function updateModel(fileList: UploadFiles, propValue: typeof propsValue) {
     if (CollUtil.isEmpty(fileList)) {
         return
@@ -114,6 +112,30 @@ function updateModel(fileList: UploadFiles, propValue: typeof propsValue) {
     emit('input', fileList)
 }
 
+// 处理预览
+const previewControl = reactive<{
+    onPreview: UploadProps['onPreview']
+    isShow: boolean
+    file: FileInfo
+    show: () => void
+    close: () => void
+}>({
+    isShow: false,
+    file: {} as FileInfo,
+    show() {
+        this.isShow = true
+    },
+    close() {
+        this.isShow = false
+    },
+    onPreview(file) {
+        if (ObjectUtil.isEmpty(file)) {
+            return
+        }
+        this.file = file.response as FileInfo
+        this.show()
+    },
+})
 
 </script>
 
@@ -122,12 +144,13 @@ function updateModel(fileList: UploadFiles, propValue: typeof propsValue) {
            :headres="fileService.getActionUploadHeaders()"
            :on-remove="onRemove"
            :on-success="onUploadSuccess"
+           :on-preview="file => previewControl.onPreview(file)"
            :file-list="fileList"
            style="width: 100%;"
            v-bind="$attrs">
+    <!-- 上传控制区域 -->
     <slot>
-        <el-button v-if="!$attrs.drag" type="primary">点击上传</el-button>
-        <div v-if="$attrs.drag">
+        <div v-if="$attrs.drag && $attrs.listType !== 'picture-card'">
             <el-icon class="el-icon--upload">
                 <UploadFilled/>
             </el-icon>
@@ -135,14 +158,46 @@ function updateModel(fileList: UploadFiles, propValue: typeof propsValue) {
                 将文件拖放到此处或 <em>点击上传</em>
             </div>
         </div>
-
+        <el-icon v-else-if="$attrs.listType === 'picture-card'"><Plus /></el-icon>
+        <el-button v-else type="primary">点击上传</el-button>
     </slot>
 
+    <!-- TIPS -->
     <template #tip>
         <div class="el-upload__tip">
             {{ tips || 'jpg/png 小于 500KB 的文件。' }}
         </div>
     </template>
+
+    <!-- 文件列表 -->
+    <!--<template #file="{file}">-->
+    <!--    <div>-->
+    <!--        <ShowFile :file="file.response" style="height: 80px" />-->
+    <!--        <span class="el-upload-list__item-actions">-->
+    <!--            <span class="el-upload-list__item-preview" @click="previewControl.onPreview(file)">-->
+    <!--                <el-icon><zoom-in /></el-icon>-->
+    <!--            </span>-->
+    <!--            <span class="el-upload-list__item-delete">-->
+    <!--                <el-icon><Download /></el-icon>-->
+    <!--            </span>-->
+    <!--            <span class="el-upload-list__item-delete" @click="onRemove(file)">-->
+    <!--                <el-icon><Delete /></el-icon>-->
+    <!--            </span>-->
+    <!--        </span>-->
+    <!--    </div>-->
+    <!--</template>-->
+
+    <!-- 预览弹框 -->
+    <el-dialog v-model="previewControl.isShow"
+               append-to-body
+               close-on-click-modal
+               destroy-on-close
+               draggable
+               lock-scroll
+               modal
+               width="45%">
+        <ShowFile :file="previewControl.file" />
+    </el-dialog>
 
 </el-upload>
 </template>
