@@ -11,6 +11,7 @@ import UserRouter from '@/pages/users/UserRouter'
 import WeiXinConfigItem from '@/pages/weixin/weixinRouter'
 import WorksRouter from '@/pages/works/WorksRouter'
 import { LoggerLevel } from '@/tool/log/LoggerLevel'
+import { StrUtil } from 'typescript-util'
 
 const Login = () => import('@/pages/accounts/login.vue')
 import {
@@ -69,6 +70,19 @@ export function createVueRouterInstantiate(): Router {
 
     const afterEach: NavigationHookAfter = (to, from) => {
         log.trace('导航完成: ', from.path, ' => ', to.path)
+
+        const MAX_SHOW_DEEP = 5
+        const title = to.matched.map(({meta, name}) => meta?.title || name)
+            .filter(str => StrUtil.isNotEmpty(str as string))
+            .reverse()
+            .filter((s, i) => i <= MAX_SHOW_DEEP)
+            .join(' - ')
+
+        if (StrUtil.isNotEmpty(title)) {
+            document.title = `${ title }`
+            // TODO: 缺一个站点名称
+            // document.title = `${title} - ${site_name}`
+        }
     }
 
     const beforeResolve: NavigationGuardWithThis<any> = () => {

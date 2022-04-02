@@ -73,15 +73,7 @@ export default defineComponent({
 
             // 多个子菜单
             const titleSlot = {
-                title: () => {
-                    const Icon = menu.meta?.icon
-                    return (
-                        <div>
-                            <el-icon>{ Icon && <Icon></Icon> }</el-icon>
-                            <span>{ menu.name }</span>
-                        </div>
-                    )
-                },
+                title: () => this.renderMenuNode(menu.path, menu.path, menu, true),
             }
             return (
                 <el-sub-menu index={ path } v-slots={ titleSlot }>
@@ -94,13 +86,28 @@ export default defineComponent({
         },
 
         /* 独立渲染一个菜单叶子节点 */
-        renderMenuNode(key: string, index: string, menu: RouteRecordRaw): JSX.Element {
-            this.log.trace('渲染菜单', menu.name, index)
-            const Icon = menu.meta?.icon
+        renderMenuNode(key: string, index: string, menu: RouteRecordRaw, isTitle: boolean = false): JSX.Element {
+            const {name, path, meta} = menu
+            this.log.trace('渲染菜单', name, index)
+            const Icon = meta?.icon
+
+            if (!Icon) {
+                this.log.warn('图标 meta.icon 不存在: ', meta?.title || name, menu)
+            }
+
+            if (isTitle) {
+                return (
+                    <span>
+                        <el-icon>{ Icon && <Icon></Icon> }</el-icon>
+                        <span>{ meta?.title || name || path }</span>
+                    </span>
+                )
+            }
+
             return (
                 <el-menu-item key={ 'menu' + key } index={ index }>
                     <el-icon>{ Icon && <Icon></Icon> }</el-icon>
-                    <span>{ menu.name }</span>
+                    <span>{ meta?.title || name || path }</span>
                 </el-menu-item>
             )
         },

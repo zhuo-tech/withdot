@@ -125,15 +125,16 @@ export default class BasisCrud<E> {
      */
     public formSubmit = () => {
         let submitData = this.beforeSubmit(this.formData)
-        this.basisLog.debug('表单提交: ', this.formIsAdd.value ? '新增' : '编辑', submitData)
+
+        if (this.basisLog.isDebugEnable()) {
+            this.basisLog.debug('表单提交: ', this.formIsAdd.value ? '新增' : '编辑', submitData)
+        }
 
         const submitAction = async () => {
             const valid = await this.formRef?.value?.validate()
                 .catch((err: Record<string, Array<any>>) => {
                     CollUtil.flatMap(ObjectUtil.toArray(err), i => i.value)
-                        .forEach(i => {
-                            this.basisLog.warn('验证失败', i)
-                        })
+                        .forEach(i => this.basisLog.warn('验证失败', i))
                 })
             this.basisLog.debug('验证结果:', valid)
             if (!valid) {

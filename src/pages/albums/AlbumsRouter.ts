@@ -8,11 +8,11 @@ const RouterConfigItem: RouteRecordRaw = {
     children: [
         {
             path: '',
-            name: '专辑管理',
             component: () => import('./index.vue'),
             meta: {
                 icon: Files,
                 isMenu: true,
+                title: '专辑管理',
             },
         },
     ],

@@ -4,10 +4,10 @@ import { RouteRecordRaw } from 'vue-router'
 const RouterConfigItem: RouteRecordRaw[] = [
     {
         path: '/login',
-        name: '登录页',
         component: () => import('./login.vue'),
         meta: {
             isMenu: false,
+            title: '登录页',
         },
     },
     {
@@ -16,10 +16,10 @@ const RouterConfigItem: RouteRecordRaw[] = [
         children: [
             {
                 path: 'profile',
-                name: '用户详情',
                 component: () => import('./profile.vue'),
                 meta: {
                     isMenu: false,
+                    title: '用户详情',
                 },
             },
         ],

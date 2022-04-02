@@ -11,20 +11,20 @@ const RouterConfigItem: RouteRecordRaw = {
     children: [
         {
             path: 'app',
-            name: '应用设置',
             component: () => import('./app.vue'),
             meta: {
                 icon: Phone,
                 isMenu: true,
+                title: '应用设置',
             },
         },
         {
             path: 'dev',
-            name: '开发配置',
             component: () => import('./dev.vue'),
             meta: {
                 icon: Setting,
                 isMenu: true,
+                title: '开发配置',
             },
         },
     ],

@@ -8,11 +8,11 @@ const RouterConfigItem: RouteRecordRaw = {
     children: [
         {
             path: '',
-            name: '作品中心',
             component: () => import('./index.vue'),
             meta: {
                 icon: MagicStick,
                 isMenu: true,
+                title: '作品中心',
             },
         },
     ],

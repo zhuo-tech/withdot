@@ -5,83 +5,83 @@ import { RouteRecordRaw } from 'vue-router'
 const RouterConfigItem: RouteRecordRaw = {
     path: '/weixin',
     component: Layout,
-    name: '微信管理',
     redirect: '/weixin/setting',
     meta: {
         icon: Menu,
         isMenu: true,
+        title: '微信管理',
     },
     children: [
         {
             path: 'setting',
-            name: '菜单设置',
             component: () => import('./setting/index.vue'),
             meta: {
                 icon: Menu,
                 isMenu: true,
+                title: '菜单设置',
             },
         },
         {
             path: 'operation',
-            name: '运营数据',
             component: () => import('./operation/index.vue'),
             meta: {
                 icon: Menu,
                 isMenu: true,
+                title: '运营数据',
             },
         },
         {
             path: 'fan',
-            name: '粉丝管理',
             component: () => import('./fan/index.vue'),
             meta: {
                 icon: Menu,
                 isMenu: true,
+                title: '粉丝管理',
             },
         },
         {
             path: 'news',
-            name: '消息管理',
             component: () => import('./news/index.vue'),
             meta: {
                 icon: Menu,
                 isMenu: true,
+                title: '消息管理',
             },
         },
         {
             path: 'account',
-            name: '账号管理',
             component: () => import('./account/index.vue'),
             meta: {
                 icon: Menu,
                 isMenu: true,
+                title: '账号管理',
             },
         },
         {
             path: 'automaticResponse',
-            name: '自动回复',
             component: () => import('./automaticResponse/index.vue'),
             meta: {
                 icon: Menu,
                 isMenu: true,
+                title: '自动回复',
             },
         },
         {
             path: 'material',
-            name: '微信素材管理',
             component: () => import('./material/index.vue'),
             meta: {
                 icon: Menu,
                 isMenu: true,
+                title: '素材管理',
             },
         },
         {
             path: 'graphics',
-            name: '图文管理',
             component: () => import('./graphics/index.vue'),
             meta: {
                 icon: Menu,
                 isMenu: true,
+                title: '图文管理',
             },
         },
     ],
