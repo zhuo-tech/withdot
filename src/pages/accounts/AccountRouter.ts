@@ -5,7 +5,7 @@ const RouterConfigItem: RouteRecordRaw[] = [
     {
         path: '/login',
         name: '登录页',
-        component: import('./login.vue'),
+        component: () => import('./login.vue'),
         meta: {
             isMenu: false,
         },

@@ -9,7 +9,7 @@ const RouterConfigItem: RouteRecordRaw = {
         {
             path: '',
             name: '学员管理',
-            component: import('./index.vue'),
+            component: () => import('./index.vue'),
             meta: {
                 icon: User,
                 isMenu: true,

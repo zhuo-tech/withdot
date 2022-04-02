@@ -9,7 +9,7 @@ const RouterConfigItem: RouteRecordRaw = {
         {
             path: '',
             name: '专辑管理',
-            component: import('./index.vue'),
+            component: () => import('./index.vue'),
             meta: {
                 icon: Files,
                 isMenu: true,

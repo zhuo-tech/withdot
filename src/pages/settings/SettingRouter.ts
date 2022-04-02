@@ -12,7 +12,7 @@ const RouterConfigItem: RouteRecordRaw = {
         {
             path: 'app',
             name: '应用设置',
-            component: import('./app.vue'),
+            component: () => import('./app.vue'),
             meta: {
                 icon: Phone,
                 isMenu: true,
@@ -21,7 +21,7 @@ const RouterConfigItem: RouteRecordRaw = {
         {
             path: 'dev',
             name: '开发配置',
-            component: import('./dev.vue'),
+            component: () => import('./dev.vue'),
             meta: {
                 icon: Setting,
                 isMenu: true,
