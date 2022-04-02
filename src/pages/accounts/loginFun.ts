@@ -3,35 +3,13 @@ import { setToken } from '@/api/token'
 import { ElMessage, FormInstance } from 'element-plus'
 import { reactive, ref } from 'vue'
 
-
 export const formRefs = reactive({                //登录表单
     username: null,
     password: null,
 })
 export const checkboxRefs = ref()                        //记住密码
 export const loginFormRef = ref<FormInstance>()
-/*
-登录按钮
- */
-export const login = () => {
-    loginFormRef.value?.validate(valid => {
-        if (valid) {
-            const {username, password} = formRefs
-            loginAccount(username, password).then(response => {
-                if (response.code !== 0) {
-                    ElMessage.error(response.error)
-                    return
-                }
-                const {access_token, expire} = response.data
-                setToken(access_token, expire)
-                ElMessage.success('登录成功')
-            }).catch(err => {
-                ElMessage.error(err)
-            })
-        }
-    })
 
-}
 
 /*
 跳转至注册页

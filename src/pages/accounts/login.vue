@@ -1,10 +1,12 @@
 <script lang="ts" setup>
+import { loginAccount } from '@/api/login'
+import { setToken } from '@/api/token'
 import { Lock, Message, UserFilled } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import {
     checkboxRefs,
     formRefs,
     getVerificationCode,
-    login,
     loginFormRef as loginFormRefs,
     register,
     registerForm,
@@ -14,14 +16,47 @@ import {
     toRegistered,
     whetherToRegister,
 } from './loginFun'
+import { useRoute, useRouter } from 'vue-router'
+
+const route = useRoute()
+const router = useRouter()
 
 const registerFormRef = registerFormRefs
 const loginFormRef = loginFormRefs
+
+/*
+登录按钮
+ */
+const login = () => {
+    loginFormRef.value?.validate(valid => {
+        if (valid) {
+            const {username, password} = formRefs
+            loginAccount(username, password).then(response => {
+                if (response.code !== 0) {
+                    ElMessage.error(response.error)
+                    return
+                }
+                const {access_token, expire} = response.data
+                setToken(access_token, expire)
+                ElMessage.success('登录成功')
+            }).catch(err => {
+                ElMessage.error(err)
+            }).finally(() => {
+                if (!route.redirectedFrom) {
+                    router.push('/')
+                    return
+                }
+                router.push(route.redirectedFrom.path)
+            })
+        }
+    })
+
+}
 </script>
 
 <template>
     <!--登录页面-->
-    <el-row v-if="!whetherToRegister" >
+    <el-row v-if="!whetherToRegister">
         <el-col :offset="17" :span="6" class="loginBox">
             <div class="logo"></div>
             <el-form ref="loginFormRef" :model="formRefs" :rules="rules" label-width="55px">
@@ -44,7 +79,7 @@ const loginFormRef = loginFormRefs
     </el-row>
 
     <!--注册-->
-    <el-row v-else >
+    <el-row v-else>
         <el-col :offset="17" :span="6" class="registerBox">
             <div class="logo"></div>
             <el-form ref="registerFormRef" :model="registerForm" :rules="rules" label-width="0">
@@ -90,7 +125,7 @@ const loginFormRef = loginFormRefs
 }
 
 
-.loginBox,.registerBox {
+.loginBox, .registerBox {
     width: 319px;
     position: fixed;
     top: 50%;
