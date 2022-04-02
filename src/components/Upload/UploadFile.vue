@@ -9,8 +9,10 @@ import { CollUtil, ObjectUtil, StrUtil } from 'typescript-util'
 import { reactive, watchEffect } from 'vue'
 import { FileService } from './FileService'
 import { FileServiceImpl } from './FileServiceImpl'
+import { FileTypeRegExp } from '@/model/FileType'
 // noinspection ES6UnusedImports
 import { UploadFilled } from '@element-plus/icons-vue'
+
 /**
  * 对 el-upload 的包装,
  * 绝大部分 props 透传给 el-upload;
@@ -52,7 +54,7 @@ const {href, hrefs, fileInfo, fileInfoList} = propsValue
 watchEffect(() => {
     const fileInfoToUploadFile = (fileInfo: FileInfo) => {
         const {id, href, size, type, name} = fileInfo
-        return {size, name, uid: id, url: fileService.showUrl(href), response: fileInfo, status: 'success',} as UploadUserFile
+        return {size, name, uid: id, url: fileService.showUrl(href), response: fileInfo, status: 'success'} as UploadUserFile
     }
 
     const strToUploadFile = (s: any) => ({
@@ -96,6 +98,7 @@ const onRemove = (uploadFile: UploadFile) => {
     log.trace('移除文件', uploadFile.response)
     updateModel(fileList as any, propsValue)
 }
+
 function updateModel(fileList: UploadFiles, propValue: typeof propsValue) {
     if (CollUtil.isEmpty(fileList)) {
         return
@@ -140,64 +143,122 @@ const previewControl = reactive<{
 </script>
 
 <template>
-<el-upload :action="fileService.getActionUploadUrl()"
-           :headres="fileService.getActionUploadHeaders()"
-           :on-remove="onRemove"
-           :on-success="onUploadSuccess"
-           :on-preview="file => previewControl.onPreview(file)"
-           :file-list="fileList"
-           style="width: 100%;"
-           v-bind="$attrs">
-    <!-- 上传控制区域 -->
-    <slot>
-        <div v-if="$attrs.drag && $attrs.listType !== 'picture-card'">
-            <el-icon class="el-icon--upload">
-                <UploadFilled/>
-            </el-icon>
-            <div class="el-upload__text">
-                将文件拖放到此处或 <em>点击上传</em>
+    <el-upload :action="fileService.getActionUploadUrl()"
+               :file-list="fileList"
+               :headres="fileService.getActionUploadHeaders()"
+               :on-preview="file => previewControl.onPreview(file)"
+               :on-remove="onRemove"
+               :on-success="onUploadSuccess"
+               style="width: 100%;"
+               v-bind="$attrs">
+        <!-- 上传控制区域 -->
+        <slot>
+            <div v-if="$attrs.drag && $attrs.listType !== 'picture-card'">
+                <el-icon class="el-icon--upload">
+                    <UploadFilled />
+                </el-icon>
+                <div class="el-upload__text">
+                    将文件拖放到此处或
+                    <em>点击上传</em>
+                </div>
             </div>
-        </div>
-        <el-icon v-else-if="$attrs.listType === 'picture-card'"><Plus /></el-icon>
-        <el-button v-else type="primary">点击上传</el-button>
-    </slot>
+            <el-icon v-else-if="$attrs.listType === 'picture-card'">
+                <Plus />
+            </el-icon>
+            <el-button v-else type="primary">点击上传</el-button>
+        </slot>
 
-    <!-- TIPS -->
-    <template #tip>
-        <div class="el-upload__tip">
-            {{ tips || 'jpg/png 小于 500KB 的文件。' }}
-        </div>
-    </template>
+        <!-- TIPS -->
+        <template #tip>
+            <div class="el-upload__tip">
+                {{ tips || 'jpg/png 小于 500KB 的文件。' }}
+            </div>
+        </template>
 
-    <!-- 文件列表 -->
-    <!--<template #file="{file}">-->
-    <!--    <div>-->
-    <!--        <ShowFile :file="file.response" style="height: 80px" />-->
-    <!--        <span class="el-upload-list__item-actions">-->
-    <!--            <span class="el-upload-list__item-preview" @click="previewControl.onPreview(file)">-->
-    <!--                <el-icon><zoom-in /></el-icon>-->
-    <!--            </span>-->
-    <!--            <span class="el-upload-list__item-delete">-->
-    <!--                <el-icon><Download /></el-icon>-->
-    <!--            </span>-->
-    <!--            <span class="el-upload-list__item-delete" @click="onRemove(file)">-->
-    <!--                <el-icon><Delete /></el-icon>-->
-    <!--            </span>-->
-    <!--        </span>-->
-    <!--    </div>-->
-    <!--</template>-->
+        <!-- 文件列表 -->
+        <template #file="{file}">
+            <div class="fileStyle">
+                <ShowFile :file="file.response"></ShowFile>
+                <span class="el-upload-list__item-actions">
+                    <span class="el-upload-list__item-preview" @click="previewControl.onPreview(file)">
+                        <el-icon><zoom-in /></el-icon>
+                    </span>
+                    <!--<span class="el-upload-list__item-delete">-->
+                    <!--    <el-icon><Download /></el-icon>-->
+                    <!--</span>-->
+                    <span class="el-upload-list__item-delete" @click="onRemove(file)">
+                        <el-icon><Delete /></el-icon>
+                    </span>
+                </span>
+                <div class="cover"></div>
+            </div>
+        </template>
 
-    <!-- 预览弹框 -->
-    <el-dialog v-model="previewControl.isShow"
-               append-to-body
-               close-on-click-modal
-               destroy-on-close
-               draggable
-               lock-scroll
-               modal
-               width="45%">
-        <ShowFile :file="previewControl.file" />
-    </el-dialog>
+        <!-- 预览弹框 -->
+        <el-dialog v-model="previewControl.isShow"
+                   append-to-body
+                   close-on-click-modal
+                   destroy-on-close
+                   draggable
+                   lock-scroll
+                   modal
+                   width="45%">
+            <ShowFile :file="previewControl.file" />
+        </el-dialog>
 
-</el-upload>
+    </el-upload>
 </template>
+
+<style lang="less" scoped>
+.fileStyle{
+    position: relative;
+    display: flex;
+    align-items: center;
+    audio{
+        height: 50px;
+    }
+    .el-image{
+        height: 80px;
+    }
+    video{
+        height: 80px;
+    }
+    .el-upload-list__item-actions{
+        z-index: 10;
+        position: absolute;
+        top: 50%;
+        left: 85%;
+        transform: translate(-50%,-50%);
+        display: none;
+    }
+    .el-upload-list__item-delete{
+        z-index: 10;
+        position: absolute;
+        top: 50%;
+        left: 40px;
+        transform: translate(-50%,-50%);
+        display: none;
+    }
+    .cover{
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        opacity: 0.2;
+        display: none;
+        background-color: #675f5f;
+    }
+}
+ .fileStyle:hover {
+     .cover{
+         display: block;
+     }
+     .el-upload-list__item-actions{
+         display: block;
+     }
+     .el-upload-list__item-delete{
+         display: block;
+     }
+ }
+</style>
