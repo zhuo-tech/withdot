@@ -1,6 +1,5 @@
 <script lang="tsx">
-import { getLogger } from '@/main'
-import { router } from '@/router'
+import { getLogger, VueRouter } from '@/main'
 import { LoggerLevel } from '@/tool/log/LoggerLevel'
 import { CollUtil, StrUtil } from 'typescript-util'
 import { defineComponent } from 'vue'
@@ -29,7 +28,7 @@ export default defineComponent({
     },
     computed: {
         menuList() {
-            return router.options.routes.filter(i => i.meta?.isMenu !== false)
+            return VueRouter.options.routes.filter(i => i.meta?.isMenu !== false)
         },
     },
     methods: {

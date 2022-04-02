@@ -6,7 +6,7 @@ import ElementPlus from 'element-plus'
 import './index.css'  // 在 element-plus css 之前导入 tailwind css 以避免冲突
 import 'element-plus/dist/index.css'
 import App from '@/App'
-import { router } from '@/router'
+import { createVueRouterInstantiate } from '@/router'
 import * as ElIconModules from '@element-plus/icons-vue'
 
 // 初始化日志
@@ -25,11 +25,12 @@ console.log = (...data: any[]) => {
     oldLog(...data)
 }
 
-const app = createApp(App)
+export const VueApplication = createApp(App)
+export const VueRouter = createVueRouterInstantiate()
 
-app.use(router)
+VueApplication.use(VueRouter)
     .use(createPinia())
     .use(ElementPlus)
     .mount('#app')
 
-ObjectUtil.toArray(ElIconModules).forEach(kv => app.component(kv.value.name, kv.value))
+ObjectUtil.toArray(ElIconModules).forEach(kv => VueApplication.component(kv.value.name, kv.value))
