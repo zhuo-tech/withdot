@@ -1,8 +1,6 @@
 import Layout from '@/components/layout/main.vue'
 import { Phone, Setting } from '@element-plus/icons-vue'
 import { RouteRecordRaw } from 'vue-router'
-import App from './app.vue'
-import Dev from './dev.vue'
 
 const RouterConfigItem: RouteRecordRaw = {
     path: '/setting',
@@ -14,7 +12,7 @@ const RouterConfigItem: RouteRecordRaw = {
         {
             path: 'app',
             name: '应用设置',
-            component: App,
+            component: import('./app.vue'),
             meta: {
                 icon: Phone,
                 isMenu: true,
@@ -23,7 +21,7 @@ const RouterConfigItem: RouteRecordRaw = {
         {
             path: 'dev',
             name: '开发配置',
-            component: Dev,
+            component: import('./dev.vue'),
             meta: {
                 icon: Setting,
                 isMenu: true,

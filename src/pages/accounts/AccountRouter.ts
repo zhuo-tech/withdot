@@ -1,13 +1,11 @@
 import Layout from '@/components/layout/main.vue'
 import { RouteRecordRaw } from 'vue-router'
-import Component from './login.vue'
-import MyProfile from './profile.vue'
 
 const RouterConfigItem: RouteRecordRaw[] = [
     {
         path: '/login',
         name: '登录页',
-        component: Component,
+        component: import('./login.vue'),
         meta: {
             isMenu: false,
         },
@@ -19,7 +17,7 @@ const RouterConfigItem: RouteRecordRaw[] = [
             {
                 path: 'profile',
                 name: '用户详情',
-                component: MyProfile,
+                component: () => import('./profile.vue'),
                 meta: {
                     isMenu: false,
                 },
