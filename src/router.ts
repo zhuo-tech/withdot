@@ -1,5 +1,5 @@
-import { getToken } from '@/api/token'
-import { getLogger } from '@/main'
+import {getToken} from '@/api/token'
+import {getLogger} from '@/main'
 import AccountRouter from '@/pages/accounts/AccountRouter'
 import AlbumsRouter from '@/pages/albums/AlbumsRouter'
 import ErrorRouter from '@/pages/Error/ErrorRouter'
@@ -10,7 +10,7 @@ import SettingRouter from '@/pages/settings/SettingRouter'
 import UserRouter from '@/pages/users/UserRouter'
 import WeiXinConfigItem from '@/pages/weixin/weixinRouter'
 import WorksRouter from '@/pages/works/WorksRouter'
-import { LoggerLevel } from '@/tool/log/LoggerLevel'
+import {LoggerLevel} from '@/tool/log/LoggerLevel'
 
 const Login = () => import('@/pages/accounts/login.vue')
 import {
@@ -56,13 +56,13 @@ export function createVueRouterInstantiate(): Router {
     const beforeEach: NavigationGuard = (to, from, next) => {
         log.trace('导航之前: ', from.path, ' => ', to.path)
         if (to.path === '/login') {
-            return next()
+            if (judgmentLogin()) {
+                return next('/')
+            }
+           return  next()
         }
         if (!judgmentLogin()) {
             return next('/login')
-        }
-        if(to.path==='/login'){
-            return next('/')
         }
         next()
     }
