@@ -92,7 +92,7 @@ export default defineComponent({
             const Icon = meta?.icon
 
             if (!Icon) {
-                this.log.warn('图标 meta.icon 不存在: ', meta?.title || name, menu)
+                // this.log.warn('图标 meta.icon 不存在: ', meta?.title || name, menu)
             }
 
             if (isTitle) {

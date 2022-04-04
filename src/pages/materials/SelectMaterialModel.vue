@@ -9,7 +9,10 @@ import MaterialQuery from '@/pages/materials/components/MaterialQuery'
 import ShowMaterial from '@/pages/materials/components/ShowMaterial'
 import MaterialService from '@/pages/materials/MaterialService'
 import { FolderOpened } from '@element-plus/icons-vue'
-import { onMounted, reactive } from 'vue'
+import { CollUtil } from 'typescript-util'
+import { reactive } from 'vue'
+
+const log = getLogger('SelectMaterialModel')
 
 const props = defineProps<{
     id?: string
@@ -25,25 +28,8 @@ const emit = defineEmits<{
     (event: 'update:href', href: string): void
 }>()
 
-const log = getLogger('SelectMaterialModel')
-const controlShow = reactive({
-    isShow: false,
-    show() {
-        this.isShow = true
-    },
-    close() {
-        this.isShow = false
-    },
-})
-
-const service = reactive(new MaterialService())
-service.showQuery = true
-service.queryData.type = FileType.IMAGE
-
-onMounted(service.listUpdate)
-
 const onSelect = (item: CoreMaterial, index: number) => {
-    log.info('选择 =>',{item, index})
+    log.info('选择 =>', {item, index})
 
     emit('update:id', item._id)
     emit('update:file', item.file)
@@ -52,6 +38,23 @@ const onSelect = (item: CoreMaterial, index: number) => {
 
     controlShow.close()
 }
+
+const controlShow = reactive({
+    isShow: false,
+    show() {
+        if (CollUtil.isEmpty(service.page.list)) {
+            service.listUpdate()
+        }
+        this.isShow = true
+    },
+    close() {
+        this.isShow = false
+    },
+})
+const service = reactive(new MaterialService())
+service.showQuery = true
+service.queryData.type = FileType.IMAGE
+
 </script>
 
 <template>

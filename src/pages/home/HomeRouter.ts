@@ -1,6 +1,5 @@
 import Layout from '@/components/layout/main.vue'
 import { RouteRecordRaw } from 'vue-router'
-import Component from './index.vue'
 
 const RouterConfigItem: RouteRecordRaw = {
     path: '/',
@@ -8,9 +7,8 @@ const RouterConfigItem: RouteRecordRaw = {
     children: [
         {
             path: '',
-            component: Component,
+            component: () => import('./index.vue'),
             meta: {
-                icon: import('./index.vue'),
                 isMenu: true,
                 title: '数据看板',
             },
