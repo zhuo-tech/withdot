@@ -11,8 +11,7 @@ export default defineComponent({
         },
     },
     render() {
-        const {service} = this.$props
-        const {page} = service
+        const {page, pageSizeChange, currentPageChange} = this.$props.service
         return (
             <el-row justify="end" type={ 'flex' } { ...this.$attrs }>
                 <el-col span={ 6 }>
@@ -23,8 +22,8 @@ export default defineComponent({
                             page-sizes={ [10, 20, 50, 100] }
                             total={ page.total }
                             layout="total, sizes, prev, pager, next"
-                            onSizeChange={ service.pageSizeChange }
-                            onCurrentChange={ service.currentPageChange }>
+                            onSizeChange={ pageSizeChange }
+                            onCurrentChange={ currentPageChange }>
                         </el-pagination>
                     </el-row>
                 </el-col>
