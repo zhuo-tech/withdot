@@ -1,49 +1,23 @@
-<script lang="ts" setup>
-import { onMounted, reactive, watchEffect, ref } from 'vue'
-import { VideoPlayerScript } from './service/VideoPlayerScript'
+<script lang="ts">
+import { VideoPlayerScript } from '@/components/VideoPlay/service/VideoPlayerScript'
+import { defineComponent } from 'vue'
 
-const player = reactive(new VideoPlayerScript())
-const {videoElement, progress} = player
-
-const playStatus = reactive({
-    // 很危险, 如果 status 和 videoElement.paused 状态不一致, 这里切换始终是反的
-    status: false,
-    play() {
-        this.status = true
-        videoElement.play()
+export default defineComponent({
+    data() {
+        return {
+            player: new VideoPlayerScript(this),
+        }
     },
-    pause() {
-        this.status = false
-        videoElement.pause()
-    },
-    toggle() {
-        this.status = !this.status
-        videoElement.togglePlayState()
+    mounted() {
+        this.player.videoElement.isReady(() => this.player.initProgressMax())
     },
 })
-
-onMounted(() => {
-    // 初始化播放状态
-    playStatus.status = !videoElement.paused
-    // 待到资源就绪后, 初始化进度条长度
-    videoElement.isReady(() => {
-        const max = videoElement.videoDuration
-        progress.max = isNaN(max) ? 0 : max
-    })
-})
-// TODO: 播放状态, 播放进度, 音量; 数据响应
-// watchEffect(() => {
-//     console.debug('进度变化', player.progress.value)
-//     videoElement.currentTime = player.progress.value
-// }, {flush: 'post'})
-
 </script>
 
 <template>
 <div :ref="player.setPlayerBox" class="player-box">
     <div class="video-wrapper">
-        <!--suppress JSUndeclaredVariable -->
-        <video :ref="(e) => videoElement.setElement(e)" src="./resource/v1.mp4"></video>
+        <video :ref="(e) => player.videoElement.setElement(e)" src="./resource/独角.mp4"></video>
     </div>
     <div class="suspended-layer">
         <!-- 控制器 -->
@@ -68,13 +42,13 @@ onMounted(() => {
             <!-- 底部 -->
             <div class="footer">
                 <!--进度条-->
-                <el-slider v-model="player.progress.value" size="small" :max="progress.max" :min="progress.min" />
+                <el-slider v-model="player.progress.value" :max="player.progress.max" :min="player.progress.min" size="small" />
                 <!-- 控制按钮 -->
                 <div class="buttons">
                     <div class="left">
-                        <el-icon @click="playStatus.toggle()">
-                            <video-play v-show="!playStatus.status" />
-                            <video-pause v-show="playStatus.status" />
+                        <el-icon :key="player.playStatusKey" @click="player.togglePlaybackState()">
+                            <video-play v-show="player.videoElement.paused" />
+                            <video-pause v-show="!player.videoElement.paused" />
                         </el-icon>
                     </div>
                     <div class="right">
@@ -95,7 +69,6 @@ onMounted(() => {
         </div>
     </div>
 </div>
-
 </template>
 
 <style lang="sass" scoped src="./style.sass"></style>

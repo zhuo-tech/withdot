@@ -55,11 +55,10 @@ export class VideoWrapper {
         }
         if (this._element !== video) {
             this._element = video
-            this.log.trace('DOM 引用初始化', video)
+            this.log.trace('DOM 引用初始化')
 
-            this.element.addEventListener('loadeddata', () => {
-                this.log.trace('加载数据', this.element.readyState)
-                if (this.element.readyState >= MediaReadyState.HAVE_CURRENT_DATA) {
+            this.element.onloadeddata = () => {
+                if (this.element.readyState >= MediaReadyState.HAVE_ENOUGH_DATA) {
                     for (let cb of this.readyCallback) {
                         try {
                             cb?.()
@@ -68,7 +67,7 @@ export class VideoWrapper {
                         }
                     }
                 }
-            })
+            }
         }
     }
 
