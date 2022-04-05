@@ -52,6 +52,15 @@ export default defineComponent({
                         </el-icon>
                     </div>
                     <div class="right">
+                        <el-popover placement="top-start" :width="1" trigger="hover">
+                            <el-slider v-model="player.videoElement.volume" vertical height="200px" />
+                            <template #reference>
+                                <el-icon>
+                                    <headset />
+                                </el-icon>
+                            </template>
+                        </el-popover>
+
                         <!-- 放大缩小 -->
                         <el-icon>
                             <zoom-in />

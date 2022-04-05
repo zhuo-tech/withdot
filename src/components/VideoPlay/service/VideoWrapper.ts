@@ -248,11 +248,11 @@ export class VideoWrapper {
      * 音量
      */
     public get volume() {
-        return this.element.volume
+        return this.element.volume * 100
     }
 
     public set volume(volume: number) {
-        this.element.volume = volume
+        this.element.volume = volume / 100
     }
 
     /**
