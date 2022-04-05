@@ -20,7 +20,6 @@ const props = defineProps<{
     file?: FileInfo
     href?: string
 }>()
-
 const emit = defineEmits<{
     (event: 'update:id', id: string): void
     (event: 'update:material', material: CoreMaterial): void
@@ -55,6 +54,7 @@ const service = reactive(new MaterialService())
 service.showQuery = true
 service.queryData.type = FileType.IMAGE
 
+const {queryData, page} = service
 </script>
 
 <template>
@@ -75,8 +75,8 @@ service.queryData.type = FileType.IMAGE
     width="50%">
 
     <MaterialQuery :service="service" />
-    <ShowMaterial :list="service.page.list"
-                  :query-type="service.queryData.type"
+    <ShowMaterial :list="page.list"
+                  :query-type="queryData.type"
                   :select="onSelect"
                   style="min-height: 500px" />
     <CrudPagination :service="service" />

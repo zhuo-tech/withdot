@@ -6,13 +6,16 @@ import MaterialDialogForm from '@/pages/materials/components/MaterialDialogForm.
 import MaterialQuery from '@/pages/materials/components/MaterialQuery'
 import { Delete, Edit, Warning } from '@element-plus/icons-vue'
 import { StorageUnit } from 'typescript-util'
-import { onMounted, reactive } from 'vue'
+import { reactive, toRefs } from 'vue'
 import MaterialService from './MaterialService'
 
 const log = getLogger('素材管理')
 const service = reactive<MaterialService>(new MaterialService())
-onMounted(service.listUpdate)
 
+const {tableIsLoading} = toRefs(service)
+const {page, rowKey, readyEdit, readyDelete, listUpdate} = service
+
+listUpdate()
 </script>
 
 <template>
@@ -26,7 +29,7 @@ onMounted(service.listUpdate)
     <!-- 搜索区域 & 功能按钮 -->
     <MaterialQuery :service="service" />
     <!-- 表格 -->
-    <el-table v-loading="service.tableIsLoading" :data="service.page.list" :row-key="service.rowKey" fit show-header stripe style="width: 100%">
+    <el-table v-loading="tableIsLoading" :data="page.list" :row-key="rowKey" fit show-header stripe style="width: 100%">
         <el-table-column align="center" label="序号" type="index" width="60" />
         <el-table-column align="left" label="标题" min-width="100" prop="title" />
         <el-table-column align="center" label="预览" min-width="160">
@@ -51,15 +54,16 @@ onMounted(service.listUpdate)
         </el-table-column>
         <el-table-column align="center" fixed="right" label="操作" prop="Operate" width="180">
             <template v-slot="{row}">
-                <el-button :icon="Edit" type="text" @click="service.readyEdit(row)">编辑</el-button>
+                <el-button :icon="Edit" type="text" @click="readyEdit(row)">编辑</el-button>
                 <el-divider direction="vertical" />
                 <el-popconfirm :icon="Warning"
                                cancel-button-text="手滑了"
                                confirm-button-text="确认删除"
                                icon-color="red"
-                               title=" 操作无法撤销, 确定要删除吗 ？">
+                               title=" 操作无法撤销, 确定要删除吗 ？"
+                               @confirm="readyDelete(row)">
                     <template #reference>
-                        <el-button :icon="Delete" type="text" @click="service.readyDelete(row)">删除</el-button>
+                        <el-button :icon="Delete" type="text">删除</el-button>
                     </template>
                 </el-popconfirm>
             </template>
