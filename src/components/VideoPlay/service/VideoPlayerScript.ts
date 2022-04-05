@@ -54,6 +54,7 @@ export class VideoPlayerScript {
             this.isShow = true
         },
         close() {
+            this.clearTimeout()
             // @ts-ignore
             this.timeoutTimer = TimeUnit.SECOND.setTimeout(() => this.isShow = false, VideoPlayerScript.CONTROL_LAYER_HIDE_DELAY)
         },
@@ -99,7 +100,7 @@ export class VideoPlayerScript {
     /**
      * 切换到全屏模式
      */
-    public toggleFullScreen() {
+    public toggleFullScreen = () => {
         this.playerBoxElement.requestFullscreen({navigationUI: 'show'})
             .then(() => this.log.debug('切换到全屏'))
             .catch((err) => this.log.warn('切换到全屏失败', err))
@@ -108,7 +109,7 @@ export class VideoPlayerScript {
     /**
      * 初始化进度条长度
      */
-    public initProgressMax() {
+    public initProgressMax = () => {
         const max = this.videoElement.videoDuration
         this.progress.max = isNaN(max) ? 0 : max
     }
@@ -116,7 +117,7 @@ export class VideoPlayerScript {
     /**
      * 切换播放状态
      */
-    public togglePlaybackState() {
+    public togglePlaybackState = () => {
         const {paused} = this.videoElement
         if (paused) {
             this.videoElement.play()

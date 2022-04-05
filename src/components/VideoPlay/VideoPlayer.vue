@@ -4,24 +4,22 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
     data() {
-        return {
-            player: new VideoPlayerScript(this),
-        }
+        return new VideoPlayerScript(this)
     },
     mounted() {
-        this.player.videoElement.isReady(() => this.player.initProgressMax())
+        this.videoElement.isReady(() => this.initProgressMax())
     },
 })
 </script>
 
 <template>
-<div :ref="player.setPlayerBox" class="player-box">
+<div :ref="setPlayerBox" class="player-box">
     <div class="video-wrapper">
-        <video :ref="(e) => player.videoElement.setElement(e)" src="./resource/独角.mp4"></video>
+        <video :ref="(e) => videoElement.setElement(e)" src="./resource/独角.mp4"></video>
     </div>
-    <div class="suspended-layer" @mouseover="player.controlLayer.show()" @mouseout="player.controlLayer.close()">
+    <div class="suspended-layer" @mouseover="controlLayer.show()" @mouseout="controlLayer.close()">
         <!-- 控制器 -->
-        <div class="video-control" v-show="player.controlLayer.isShow">
+        <div class="video-control" v-show="controlLayer.isShow">
             <!-- 顶部 -->
             <div class="header">
                 <div class="buttons">
@@ -42,18 +40,18 @@ export default defineComponent({
             <!-- 底部 -->
             <div class="footer">
                 <!--进度条-->
-                <el-slider v-model="player.progress.value" :max="player.progress.max" :min="player.progress.min" size="small" />
+                <el-slider v-model="progress.value" :max="progress.max" :min="progress.min" size="small" />
                 <!-- 控制按钮 -->
                 <div class="buttons">
                     <div class="left">
-                        <el-icon :key="player.playStatusKey" @click="player.togglePlaybackState()">
-                            <video-play v-show="player.videoElement.paused" />
-                            <video-pause v-show="!player.videoElement.paused" />
+                        <el-icon :key="playStatusKey" @click="togglePlaybackState">
+                            <video-play v-show="videoElement.paused" />
+                            <video-pause v-show="!videoElement.paused" />
                         </el-icon>
                     </div>
                     <div class="right">
                         <el-popover placement="top-start" :width="1" trigger="hover">
-                            <el-slider v-model="player.videoElement.volume" vertical height="200px" />
+                            <el-slider v-model="videoElement.volume" vertical height="200px" />
                             <template #reference>
                                 <el-icon>
                                     <headset />
@@ -69,7 +67,7 @@ export default defineComponent({
                             <zoom-out />
                         </el-icon>
                         <!-- 全屏按钮 -->
-                        <el-icon @click="player.toggleFullScreen()">
+                        <el-icon @click="toggleFullScreen">
                             <full-screen />
                         </el-icon>
                     </div>
