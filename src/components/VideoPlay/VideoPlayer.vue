@@ -19,9 +19,9 @@ export default defineComponent({
     <div class="video-wrapper">
         <video :ref="(e) => player.videoElement.setElement(e)" src="./resource/独角.mp4"></video>
     </div>
-    <div class="suspended-layer">
+    <div class="suspended-layer" @mouseover="player.controlLayer.show()" @mouseout="player.controlLayer.close()">
         <!-- 控制器 -->
-        <div class="video-control">
+        <div class="video-control" v-show="player.controlLayer.isShow">
             <!-- 顶部 -->
             <div class="header">
                 <div class="buttons">

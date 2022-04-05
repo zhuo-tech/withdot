@@ -10,8 +10,7 @@ import { createVueRouterInstantiate } from '@/router'
 import * as ElIconModules from '@element-plus/icons-vue'
 
 // 初始化日志
-const loggerFactory = new LoggerFactory()
-export const getLogger = loggerFactory.getLogger
+export const getLogger = new LoggerFactory().getLogger
 
 // 屏蔽 vite 的重新加载日志
 const oldLog = console.log
@@ -33,4 +32,4 @@ VueApplication.use(VueRouter)
     .use(ElementPlus)
     .mount('#app')
 
-ObjectUtil.toArray(ElIconModules).forEach(kv => VueApplication.component(kv.value.name, kv.value))
+ObjectUtil.toArray(ElIconModules).forEach(({value}) => VueApplication.component(value.name, value))

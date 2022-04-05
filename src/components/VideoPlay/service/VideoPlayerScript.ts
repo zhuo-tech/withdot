@@ -1,6 +1,7 @@
 import { VideoWrapper } from '@/components/VideoPlay/service/VideoWrapper'
 import { getLogger } from '@/main'
 import { ComponentPublicInstance } from '@vue/runtime-core'
+import { TimeUnit } from 'typescript-util'
 import { reactive } from 'vue'
 
 /**
@@ -9,6 +10,16 @@ import { reactive } from 'vue'
  * @date 2022-04-04 下午 11:25
  **/
 export class VideoPlayerScript {
+    /**
+     * 强制刷新时间间隔 单位 毫秒 <br>
+     * 进度数据在 DOM 对象中, 播放时的更改无法响应式变更
+     */
+    private static readonly FORCE_REFRESH_TIME = 200
+    /**
+     * 控制层鼠标离开隐藏的延迟时间
+     */
+    private static readonly CONTROL_LAYER_HIDE_DELAY = 2
+
     private log = getLogger(VideoPlayerScript.name)
     /**
      * 当前组件实例
@@ -29,8 +40,36 @@ export class VideoPlayerScript {
      */
     public playStatusKey: number = 0
 
+    /**
+     * "控制按钮层" 是否显示
+     */
+    public controlLayer = {
+        isShow: false,
+        /**
+         * @private
+         */
+        timeoutTimer: null,
+        show() {
+            this.clearTimeout()
+            this.isShow = true
+        },
+        close() {
+            // @ts-ignore
+            this.timeoutTimer = TimeUnit.SECOND.setTimeout(() => this.isShow = false, VideoPlayerScript.CONTROL_LAYER_HIDE_DELAY)
+        },
+        clearTimeout() {
+            if (this.timeoutTimer) {
+                clearTimeout(this.timeoutTimer)
+            }
+        },
+    }
+
     constructor(_this: ComponentPublicInstance) {
         this._this = _this
+    }
+
+    public setPlayerBox = (element: HTMLDivElement) => {
+        this.playerBoxElement = element
     }
 
     public progress = reactive({
@@ -50,15 +89,11 @@ export class VideoPlayerScript {
         // @ts-ignore
         this.forceRefreshTimer = setInterval(() => {
             this._this.$forceUpdate()
-        }, 200)
+        }, VideoPlayerScript.FORCE_REFRESH_TIME)
     }
 
     private endForceRefresh() {
         clearInterval(this.forceRefreshTimer)
-    }
-
-    public setPlayerBox = (element: HTMLDivElement) => {
-        this.playerBoxElement = element
     }
 
     /**
