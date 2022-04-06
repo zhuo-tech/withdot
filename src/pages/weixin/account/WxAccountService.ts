@@ -1,4 +1,3 @@
-import { getUserInfo } from '@/api/token'
 import { getLogger } from '@/main'
 import BasisCrud from '@/mixin/BasisCrud'
 import { WxAccount } from '@/model/entity/WxAccount'
@@ -44,10 +43,6 @@ export default class WxAccountService extends BasisCrud<WxAccount> {
         data.updateTime = Date.now()
 
         return await this.client.insert(data)
-    }
-
-    private async getCurrentUid() {
-        return (await getUserInfo())?._id
     }
 
     protected updateRequest: (data: Partial<WxAccount>) => Promise<any> = async (data) => {
