@@ -64,21 +64,10 @@ export class CoreAlbumWork {
     public alias: string
 
     /**
-     * 是免费的吗?
+     * 是否免费默认否
      */
     public isFree: CommonEnum.NORMAL | CommonEnum.DISABLE
 
-    /**
-     * 是否试看默认否
-     */
-    public isTry: CommonEnum.NORMAL | CommonEnum.DISABLE
-
-    /**
-     * 试看时长
-     * 单位秒（s）
-     */
-    public tryDuration: number
-    
     /**
      * 排序
      */

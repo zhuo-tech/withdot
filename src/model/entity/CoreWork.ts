@@ -1,4 +1,5 @@
 import { BaseEntity } from '@/model/BaseEntity'
+import { CommonEnum } from '@/model/CommonEnum'
 
 /**
  * 作品信息表
@@ -34,6 +35,22 @@ export class CoreWork implements BaseEntity {
         { "key": "mc", "lable": string, "value": string },
         { "key": "pc", "lable": string, "value": string }
     ]
+
+    /**
+     * 是否试看默认否
+     */
+     public isTry: CommonEnum.NORMAL | CommonEnum.DISABLE
+
+     /**
+      * 试看时长
+      * 单位秒（s）
+      */
+     public tryDuration: number
+
+     /**
+     * 是否免费默认否
+     */
+    public isFree: CommonEnum.NORMAL | CommonEnum.DISABLE
 
     public createBy: string
     public createTime: number
