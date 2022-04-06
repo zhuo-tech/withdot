@@ -1,4 +1,3 @@
-import 'default-passive-events'
 import { LoggerFactory } from '@/tool/log/LoggerFactory'
 import { ObjectUtil } from 'typescript-util'
 import { createApp } from 'vue'

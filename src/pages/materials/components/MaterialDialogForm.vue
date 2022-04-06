@@ -19,8 +19,8 @@ const UploadFileOnInput = () => {
         service.formData.type = file?.type
     }
 }
-const {isShow, formIsAdd, formRef, formIsLoading} = toRefs(props.service)
-const {formData, formRule, tagOption, close, formSubmit} = props.service
+const {isShow, formIsAdd, formRef, formIsLoading, formData} = toRefs(props.service)
+const {formRule, tagOption, close, formSubmit} = props.service
 </script>
 
 <template>
