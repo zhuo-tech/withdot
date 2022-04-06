@@ -170,7 +170,7 @@ export default class BasisCrud<E> {
      * @param {E} data 一行数据
      */
     public readyEdit = (data: E) => {
-        this.formData = data
+        this.formData = ObjectUtil.copy(data)
         this.formIsAdd.value = false
         this.show()
     }

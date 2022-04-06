@@ -1,4 +1,4 @@
-import { getToken } from '@/api/token'
+import { getUserInfo } from '@/api/token'
 import { getLogger } from '@/main'
 import BasisCrud from '@/mixin/BasisCrud'
 import CoreMaterial from '@/model/entity/CoreMaterial'
@@ -56,13 +56,18 @@ export default class MaterialService extends BasisCrud<CoreMaterial> {
     protected createRequest: (data: Partial<CoreMaterial>) => Promise<any> = async (data) => {
         data.createTime = Date.now()
         data.updateTime = Date.now()
-        data.createBy = getToken()
+        data.createBy = await this.getCurrentUid()
 
         return await this.client.insert(data)
     }
+
+    private async getCurrentUid() {
+        return (await getUserInfo())?._id
+    }
+
     protected updateRequest: (data: Partial<CoreMaterial>) => Promise<any> = async (data) => {
         data.updateTime = Date.now()
-        data.updateBy = getToken()
+        data.updateBy = await this.getCurrentUid()
 
         return await this.client.updateById(data._id as string, data, '_id')
     }
