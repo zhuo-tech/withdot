@@ -69,6 +69,17 @@ export class CoreAlbumWork {
     public isFree: CommonEnum.NORMAL | CommonEnum.DISABLE
 
     /**
+     * 是否试看默认否
+     */
+    public isTry: CommonEnum.NORMAL | CommonEnum.DISABLE
+
+    /**
+     * 试看时长
+     * 单位秒（s）
+     */
+    public tryDuration: number
+    
+    /**
      * 排序
      */
     public sort: number
