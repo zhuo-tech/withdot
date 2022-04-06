@@ -57,7 +57,10 @@ export function createVueRouterInstantiate(): Router {
     const beforeEach: NavigationGuard = (to, from, next) => {
         log.trace('导航之前: ', from.path, ' => ', to.path)
         if (to.path === '/login') {
-            return next()
+            if (judgmentLogin()) {
+                return next('/')
+            }
+            return  next()
         }
         if (!judgmentLogin()) {
             return next('/login')
