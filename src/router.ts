@@ -53,6 +53,7 @@ export function createVueRouterInstantiate(): Router {
      * @param {NavigationGuardNext} next 必须调用
      */
     const beforeEach: NavigationGuard = (to, from, next) => {
+        console.groupCollapsed('Router')
         log.trace('导航之前: ', from.path, ' => ', to.path)
         if (to.path === '/login') {
             if (judgmentLogin()) {
@@ -68,7 +69,7 @@ export function createVueRouterInstantiate(): Router {
 
     const afterEach: NavigationHookAfter = (to, from) => {
         log.trace('导航完成: ', from.path, ' => ', to.path)
-
+        console.groupEnd()
         const MAX_SHOW_DEEP = 5
         const title = to.matched.map(({meta, name}) => meta?.title || name)
             .filter(str => StrUtil.isNotEmpty(str as string))
