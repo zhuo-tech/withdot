@@ -36,8 +36,9 @@ const login = () => {
                     ElMessage.error(response.error)
                     return
                 }
-                const {access_token, expire} = response.data
-                setToken(access_token, expire)
+                const {access_token, expire,user} = response.data
+                const userId = user._id
+                setToken(access_token, expire,userId)
                 ElMessage.success('登录成功')
             }).catch(err => {
                 ElMessage.error(err)
