@@ -13,10 +13,9 @@ import WorksRouter from '@/pages/works/WorksRouter'
 import { LoggerLevel } from '@/tool/log/LoggerLevel'
 import { StrUtil } from 'typescript-util'
 
-const Login = () => import('@/pages/accounts/login.vue')
 import {
     createRouter,
-    createWebHashHistory,
+    createWebHistory,
     NavigationGuard,
     NavigationGuardNext,
     NavigationGuardWithThis,
@@ -42,7 +41,7 @@ const routes: RouteRecordRaw[] = [
 
 export function createVueRouterInstantiate(): Router {
     const instantiate = createRouter({
-        history: createWebHashHistory(),
+        history: createWebHistory(),
         routes,
     })
     const log = getLogger('Router', LoggerLevel.ALL)
@@ -52,11 +51,13 @@ export function createVueRouterInstantiate(): Router {
      * @param {RouteLocationNormalized} to 目标路由
      * @param {RouteLocationNormalized} from 来源路由
      * @param {NavigationGuardNext} next 必须调用
-     * @return Function 返回一个删除当前导航的函数
      */
     const beforeEach: NavigationGuard = (to, from, next) => {
         log.trace('导航之前: ', from.path, ' => ', to.path)
         if (to.path === '/login') {
+            if (judgmentLogin()) {
+                return next('/')
+            }
             return next()
         }
         if (!judgmentLogin()) {
@@ -67,6 +68,19 @@ export function createVueRouterInstantiate(): Router {
 
     const afterEach: NavigationHookAfter = (to, from) => {
         log.trace('导航完成: ', from.path, ' => ', to.path)
+
+        const MAX_SHOW_DEEP = 5
+        const title = to.matched.map(({meta, name}) => meta?.title || name)
+            .filter(str => StrUtil.isNotEmpty(str as string))
+            .reverse()
+            .filter((s, i) => i <= MAX_SHOW_DEEP)
+            .join(' - ')
+
+        if (StrUtil.isNotEmpty(title)) {
+            document.title = `${ title }`
+            // TODO: 缺一个站点名称
+            // document.title = `${title} - ${site_name}`
+        }
     }
 
     const beforeResolve: NavigationGuardWithThis<any> = () => {
@@ -87,5 +101,4 @@ export function createVueRouterInstantiate(): Router {
 function judgmentLogin(): boolean {
     const token = getToken()
     return !!token
-
 }
