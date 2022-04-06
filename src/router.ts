@@ -15,7 +15,7 @@ import { StrUtil } from 'typescript-util'
 
 import {
     createRouter,
-    createWebHashHistory,
+    createWebHistory,
     NavigationGuard,
     NavigationGuardNext,
     NavigationGuardWithThis,
@@ -41,7 +41,7 @@ const routes: RouteRecordRaw[] = [
 
 export function createVueRouterInstantiate(): Router {
     const instantiate = createRouter({
-        history: createWebHashHistory(),
+        history: createWebHistory(),
         routes,
     })
     const log = getLogger('Router', LoggerLevel.ALL)
