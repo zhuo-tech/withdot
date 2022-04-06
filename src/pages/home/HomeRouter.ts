@@ -1,8 +1,10 @@
 import Layout from '@/components/layout/main.vue'
 import { RouteRecordRaw } from 'vue-router'
 
+export const ROUTER_PATH_HOME = '/'
+
 const RouterConfigItem: RouteRecordRaw = {
-    path: '/',
+    path: ROUTER_PATH_HOME,
     component: Layout,
     children: [
         {
