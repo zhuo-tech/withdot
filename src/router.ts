@@ -1,9 +1,9 @@
 import { getToken } from '@/api/token'
 import { getLogger } from '@/main'
-import AccountRouter from '@/pages/accounts/AccountRouter'
+import AccountRouter, { ROUTER_PATH_LOGIN } from '@/pages/accounts/AccountRouter'
 import AlbumsRouter from '@/pages/albums/AlbumsRouter'
 import ErrorRouter from '@/pages/Error/ErrorRouter'
-import HomeRouter from '@/pages/home/HomeRouter'
+import HomeRouter, { ROUTER_PATH_HOME } from '@/pages/home/HomeRouter'
 import MaterialRouter from '@/pages/materials/MaterialRouter'
 import OrderRouter from '@/pages/orders/OrderRouter'
 import SettingRouter from '@/pages/settings/SettingRouter'
@@ -53,22 +53,23 @@ export function createVueRouterInstantiate(): Router {
      * @param {NavigationGuardNext} next 必须调用
      */
     const beforeEach: NavigationGuard = (to, from, next) => {
+        console.groupCollapsed('Router')
         log.trace('导航之前: ', from.path, ' => ', to.path)
-        if (to.path === '/login') {
+        if (to.path === ROUTER_PATH_LOGIN) {
             if (judgmentLogin()) {
-                return next('/')
+                return next(ROUTER_PATH_HOME)
             }
             return next()
         }
         if (!judgmentLogin()) {
-            return next('/login')
+            return next(ROUTER_PATH_LOGIN)
         }
         next()
     }
 
     const afterEach: NavigationHookAfter = (to, from) => {
         log.trace('导航完成: ', from.path, ' => ', to.path)
-
+        console.groupEnd()
         const MAX_SHOW_DEEP = 5
         const title = to.matched.map(({meta, name}) => meta?.title || name)
             .filter(str => StrUtil.isNotEmpty(str as string))

@@ -45,9 +45,7 @@ export const registerFormRef = ref<FormInstance>()
 跳转至登录页
  */
 export const register = () => {
-    console.log(registerFormRef,'登录1')
     registerFormRef.value?.validate(valid => {
-        console.log(registerFormRef,'登录2')
         if (valid) {
             const {phone, verificationCode: code, password} = registerForm
             registerAccount(phone, code, password).then(response => {

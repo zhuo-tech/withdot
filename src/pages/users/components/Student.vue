@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { CoreStudent } from '@/model/entity/CoreStudent'
 import { Search } from '@element-plus/icons-vue'
-import { defineProps, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
 import Detail from './Detail.vue'
 
 const props = defineProps<{
