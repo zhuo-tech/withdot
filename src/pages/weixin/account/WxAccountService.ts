@@ -53,4 +53,10 @@ export default class WxAccountService extends BasisCrud<WxAccount> {
     protected deleteByIdRequest: (id: (string | number)) => Promise<any> = async (id) => {
         return await this.client.deleteById(id)
     }
+
+    public async listAll(): Promise<Array<Pick<WxAccount, 'account' | 'name' | 'appid' | '_id'>>> {
+        return await this.client.queryWrapper()
+            .show('account', 'name', 'appid', '_id')
+            .list(9999)
+    }
 }
