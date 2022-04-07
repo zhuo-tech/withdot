@@ -47,9 +47,6 @@ export class WxMpMenu implements SupportLogicDelete {
      */
     public delFlag: LogicDelete
 
-    /**
-     * 是否发布 0 未发布 1 已发布
-     */
     public pubFlag: string
 
 }

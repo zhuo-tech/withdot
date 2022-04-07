@@ -11,7 +11,7 @@ export enum LogicDelete {
     /**
      * 已删除
      */
-    DELETED = -1
+    DELETED = 1
 }
 
 export interface SupportLogicDelete {

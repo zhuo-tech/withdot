@@ -58,9 +58,6 @@ export class WxAccountTag implements SupportLogicDelete {
      */
     public updateTime: number
 
-    /**
-     * 是否删除 1：已删除 0：正常
-     */
     public delFlag: LogicDelete
 
 }

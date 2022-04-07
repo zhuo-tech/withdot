@@ -1,5 +1,6 @@
 import { BaseEntity } from '@/model/BaseEntity'
 import { CommonEnum } from '@/model/CommonEnum'
+import { FileInfo } from '@/model/FileInfo'
 
 /**
  * 作品信息表
@@ -31,10 +32,10 @@ export class CoreWork implements BaseEntity {
      * label: 文件名称
      * value: 文件地址
      */
-    public covers: [
-        { "key": "mc", "lable": string, "value": string },
-        { "key": "pc", "lable": string, "value": string }
-    ]
+    public covers: {
+        mp: FileInfo,
+        pc: FileInfo,
+    }
 
     /**
      * 是否试看默认否
