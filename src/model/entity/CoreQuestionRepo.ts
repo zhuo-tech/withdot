@@ -14,17 +14,12 @@ export class CoreQuestionRepo implements BaseEntity {
     /**
      * 题目名称
      */
-    public name: string
+    public label: string
 
     /**
      * 题目内容；富文本
      */
     public content?: string
-
-    /**
-     * 整题解析;富文本
-     */
-    public analysis: string
 
     /**
      * 题目类型
@@ -33,16 +28,10 @@ export class CoreQuestionRepo implements BaseEntity {
     public type: QuestionTypeEnum
 
     /**
-     * 排序
-     */
-    public sort: number
-
-
-    /**
      * 题目明细
      * @type {Array<any>}
      */
-    public items: Array<QuestionDetails>
+    public details: Details
 
     public _id: string
     public createTime: number
@@ -53,29 +42,13 @@ export class CoreQuestionRepo implements BaseEntity {
 }
 
 
-export class QuestionDetails {
-    /**
-     * 主键
-     */
-     public _id: string
+type Details = RadioQuestion | MultiQuestion
 
-     /**
-      * 题目ID
-      */
-     public questionId: string
 
-    /**
-     * 是否是答案
-     */
-     public isAnswer: CommonEnum.NORMAL | CommonEnum.DISABLE
+export interface RadioQuestion {
 
-     /**
-      * 答案内容
-      */
-     public content: string
+}
 
-     /**
-      * 答案分析
-      */
-     public analysis: string
+export interface MultiQuestion {
+
 }
