@@ -1,6 +1,6 @@
 import { BaseEntity } from "@/model/BaseEntity";
 import { CommonEnum } from "@/model/CommonEnum";
-import { FeedbackTypeEnum } from "../FeedbackTypeEnum";
+import { FeedbackTypeEnum } from "@/model/FeedbackTypeEnum";
 
 /**
  * 视频播放打点反馈组件
