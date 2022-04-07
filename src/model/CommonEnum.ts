@@ -25,20 +25,13 @@
 
      /**
       * 正常
+      * @deprecated
       */
      DELETE_N = "0",
 
      /**
       * 删除
+      * @deprecated
       */
      DELETE_Y = "1"
-}
-
-export const CommonRegExp = {
-    NORMAL: new RegExp(CommonEnum.NORMAL),
-    DISABLE: new RegExp(CommonEnum.DISABLE),
-    USEFUL: new RegExp(CommonEnum.USEFUL),
-    UNUSEFUL: new RegExp(CommonEnum.UNUSEFUL),
-    DELETE_N: new RegExp(CommonEnum.DELETE_N),
-    DELETE_Y: new RegExp(CommonEnum.DELETE_Y)
 }

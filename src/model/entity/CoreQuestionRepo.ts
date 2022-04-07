@@ -1,5 +1,4 @@
 import { BaseEntity } from '@/model/BaseEntity'
-import { CommonEnum } from '@/model/CommonEnum'
 import { QuestionTypeEnum } from '@/model/QuestionTypeEnum'
 
 /**
@@ -14,7 +13,7 @@ export class CoreQuestionRepo implements BaseEntity {
     /**
      * 题目名称
      */
-    public name: string
+    public label: string
 
     /**
      * 题目内容；富文本
@@ -22,26 +21,16 @@ export class CoreQuestionRepo implements BaseEntity {
     public content?: string
 
     /**
-     * 整题解析;富文本
-     */
-    public analysis: string
-
-    /**
      * 题目类型
      * RADIO 单选题; MULTI 多选题; JUDGE 判断题; SAQ 简单题
      */
-    public type: QuestionTypeEnum.JUDGE | QuestionTypeEnum.MULTI | QuestionTypeEnum.RADIO | QuestionTypeEnum.SAQ
-
-    /**
-     * 排序
-     */
-    public sort: number
+    public type: QuestionTypeEnum
 
     /**
      * 题目明细
      * @type {Array<any>}
      */
-    public items: Array<QuestionDetails>
+    public details: Details
 
     public _id: string
     public createTime: number
@@ -51,29 +40,14 @@ export class CoreQuestionRepo implements BaseEntity {
 
 }
 
-export class QuestionDetails {
-    /**
-     * 主键
-     */
-     public _id: string
 
-     /**
-      * 题目ID
-      */
-     public questionId: string
+type Details = RadioQuestion | MultiQuestion
 
-    /**
-     * 是否是答案
-     */
-     public isAnswer: CommonEnum.NORMAL | CommonEnum.DISABLE
 
-     /**
-      * 答案内容
-      */
-     public content: string
+export interface RadioQuestion {
 
-     /**
-      * 答案分析
-      */
-     public analysis: string
+}
+
+export interface MultiQuestion {
+
 }

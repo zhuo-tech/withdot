@@ -1,10 +1,12 @@
+import { LogicDelete, SupportLogicDelete } from '@/model/LogicDelete'
+
 /**
  * 微信公众号账号标签
  *
  * @author gms
  * @date 2021/12/31
  */
-export class WxAccountTag {
+export class WxAccountTag implements SupportLogicDelete {
     public static readonly TABLE_NAME = 'wx_account_tag'
     /**
      * 主键
@@ -56,9 +58,6 @@ export class WxAccountTag {
      */
     public updateTime: number
 
-    /**
-     * 是否删除 1：已删除 0：正常
-     */
-    public delFlag: number
+    public delFlag: LogicDelete
 
 }

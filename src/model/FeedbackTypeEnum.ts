@@ -14,8 +14,3 @@ export enum FeedbackTypeEnum {
      */
      VOTE = "vote"
 }
-
-export const FeedbackTypeRegExp = {
-    FEEDBACK: new RegExp(FeedbackTypeEnum.FEEDBACK),
-    VOTE: new RegExp(FeedbackTypeEnum.VOTE)
-}

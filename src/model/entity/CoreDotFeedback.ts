@@ -8,7 +8,7 @@ import { FeedbackTypeEnum } from "@/model/FeedbackTypeEnum";
  * @date 2022年04月01日 12点57分
  */
 export class CoreDotFeedback implements BaseEntity {
-    
+
     public static readonly TABLE_NAME = 'core_dot_feedback'
 
     /**
@@ -31,10 +31,10 @@ export class CoreDotFeedback implements BaseEntity {
      /**
       * 学生ids
       */
-     public studentIds?: Array<number>[]
-    
+     public studentIds?: Array<number>
+
      /**
-      * 描述 
+      * 描述
       */
      public profile?: string
 
@@ -43,5 +43,5 @@ export class CoreDotFeedback implements BaseEntity {
     updateTime: number
     createBy: string
     updateBy: string
-    
+
 }

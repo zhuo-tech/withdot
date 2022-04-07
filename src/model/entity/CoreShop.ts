@@ -1,4 +1,5 @@
 import { BaseEntity } from '@/model/BaseEntity'
+import { FileInfo } from '@/model/FileInfo'
 
 /**
  * 店铺
@@ -30,10 +31,10 @@ export class CoreShop implements BaseEntity {
      * label: 文件名称
      * value: 文件地址
      */
-    public logo: [
-        { "key": "mc", "lable": string, "value": string },
-        { "key": "pc", "lable": string, "value": string }
-    ]
+    public logo: {
+        mp: FileInfo,
+        pc: FileInfo,
+    }
 
     /**
      * 备案号
@@ -53,7 +54,7 @@ export class CoreShop implements BaseEntity {
     /**
      * 二维码
      */
-    public qrCode?: Array<any>[]
+    public qrCode?: Array<any>
 
     /**
      * 手机号码

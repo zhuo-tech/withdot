@@ -1,5 +1,6 @@
 import { BaseEntity } from '@/model/BaseEntity'
 import { CommonEnum } from '@/model/CommonEnum'
+import { FileInfo } from '@/model/FileInfo'
 
 /**
  * 作品信息表
@@ -13,7 +14,7 @@ export class CoreWork implements BaseEntity {
     /**
      * 作品名称
      */
-    public name:string
+    public name: string
 
     /**
      * 作品简介
@@ -31,26 +32,13 @@ export class CoreWork implements BaseEntity {
      * label: 文件名称
      * value: 文件地址
      */
-    public covers: [
-        { "key": "mc", "lable": string, "value": string },
-        { "key": "pc", "lable": string, "value": string }
-    ]
+    public covers: {
+        mp: FileInfo,
+        pc: FileInfo,
+    }
 
-    /**
-     * 是否试看默认否
-     */
-     public isTry: CommonEnum.NORMAL | CommonEnum.DISABLE
-
-     /**
-      * 试看时长
-      * 单位秒（s）
-      */
-     public tryDuration: number
-
-     /**
-     * 是否免费默认否
-     */
-    public isFree: CommonEnum.NORMAL | CommonEnum.DISABLE
+    // 素材
+    public material_id: string
 
     public createBy: string
     public createTime: number

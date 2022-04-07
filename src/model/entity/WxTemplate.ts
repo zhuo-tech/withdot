@@ -1,4 +1,6 @@
-export class WxTemplate {
+import { LogicDelete, SupportLogicDelete } from '@/model/LogicDelete'
+
+export class WxTemplate implements SupportLogicDelete {
     public static readonly TABLE_NAME = 'wx_template'
     /**
      * 模板id
@@ -45,9 +47,6 @@ export class WxTemplate {
      */
     public updateTime: number
 
-    /**
-     * 是否删除 -1：已删除 0：正常
-     */
-    public delFlag: number
+    public delFlag: LogicDelete
 
 }

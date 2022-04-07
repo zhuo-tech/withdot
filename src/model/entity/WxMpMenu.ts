@@ -1,9 +1,11 @@
+import { LogicDelete, SupportLogicDelete } from '@/model/LogicDelete'
+
 /**
  * 微信菜单表
  * @author gms
  * @date 2019-03-27 20:45:18
  */
-export class WxMpMenu {
+export class WxMpMenu implements SupportLogicDelete {
     public static readonly TABLE_NAME = 'wx_mp_menu'
     /**
      * 主键
@@ -43,11 +45,8 @@ export class WxMpMenu {
     /**
      * 是否删除 -1：已删除 0：正常
      */
-    public delFlag: number
+    public delFlag: LogicDelete
 
-    /**
-     * 是否发布 0 未发布 1 已发布
-     */
     public pubFlag: string
 
 }
