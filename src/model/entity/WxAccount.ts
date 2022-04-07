@@ -1,9 +1,11 @@
+import { LogicDelete, SupportLogicDelete } from '@/model/LogicDelete'
+
 /**
  * 公众号账户
  * @author gms
  * @date 2019-03-26 22:07:53
  */
-export class WxAccount {
+export class WxAccount implements SupportLogicDelete {
     public static readonly TABLE_NAME = 'wx_account'
     /**
      * 主键
@@ -63,6 +65,6 @@ export class WxAccount {
     /**
      * 是否删除 -1：已删除 0：正常
      */
-    public delFlag: number
+    public delFlag: LogicDelete
 
 }

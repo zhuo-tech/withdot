@@ -25,11 +25,13 @@
 
      /**
       * 正常
+      * @deprecated
       */
      DELETE_N = "0",
 
      /**
       * 删除
+      * @deprecated
       */
      DELETE_Y = "1"
 }

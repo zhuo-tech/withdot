@@ -1,4 +1,6 @@
-export class WxAccountFans {
+import { LogicDelete, SupportLogicDelete } from '@/model/LogicDelete'
+
+export class WxAccountFans implements SupportLogicDelete {
     public static readonly TABLE_NAME = 'wx_account_fans'
     /**
      * 主键
@@ -93,6 +95,6 @@ export class WxAccountFans {
     /**
      * 是否删除 -1：已删除 0：正常
      */
-    public delFlag: number
+    public delFlag: LogicDelete
 
 }
