@@ -1,0 +1,47 @@
+.progress-bar
+    width: 100%
+    position: relative
+
+    input
+        -webkit-appearance: none
+        width: 100%
+        height: 100%
+        position: absolute
+        background: none
+
+    .track
+        position: absolute
+        width: 100%
+        height: 100%
+        overflow: hidden
+
+        background-color: #fff
+
+    .tips-box
+        display: none
+        position: absolute
+        width: 50px
+        height: 50px
+        top: -55px
+        z-index: 10000
+
+
+        .tips
+            width: 50px
+            height: 30px
+            padding: 5px
+            border-radius: 5px
+            line-height: 30px
+            position: absolute
+            left: -20px
+            bottom: 0
+            background-color: rgba(104, 104, 104, 0.4)
+
+.progress-bar:hover .tips-box
+    display: block
+//background-color: rgba(104, 104, 104, 0.4)
+
+
+.vertical
+    transform-origin: 75px 75px
+    transform: rotate(-90deg)

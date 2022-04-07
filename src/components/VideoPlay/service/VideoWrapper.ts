@@ -1,4 +1,6 @@
 import { getLogger } from '@/main'
+import { LoggerLevel } from '@/tool/log/LoggerLevel'
+import { ref, Ref } from 'vue'
 
 /**
  * <h1>HtmlVideoWrapper</h1>
@@ -14,11 +16,6 @@ import { getLogger } from '@/main'
  * - 快速搜索 {@link HTMLMediaElement.fastSeek}
  * - 可能是字幕? {@link HTMLMediaElement.addTextTrack} {@link HTMLMediaElement.textTracks}
  *
- * <h3 color="yellow">
- *     注意: 全屏功能 不应该使用 video 实现
- * </h3>
- *
- *
  * 更多详细功能参考:
  * @see HTMLVideoElement
  * @see HTMLMediaElement
@@ -27,12 +24,56 @@ import { getLogger } from '@/main'
  * @date 2022-04-04 下午 11:25
  **/
 export class VideoWrapper {
-    private log = getLogger(VideoWrapper.name)
-    private _element: HTMLVideoElement
+    private log = getLogger(VideoWrapper.name, LoggerLevel.ALL)
+    /**
+     * DOM 引用
+     */
+    public _element: HTMLVideoElement
     /**
      * 等待就绪的回调函数
      */
     private readyCallback: Array<() => void> = []
+    /**
+     * 播放回调
+     */
+    private timeUpdateCallback: Array<(time: number) => void> = []
+
+    /**
+     * 内部维护的播放状态, 与 {@link paused} 区别在于 这个字段应该是响应式的
+     */
+    public playing: boolean = false
+    /**
+     * 内部维护的视频时长, 单位 秒;  与 {@link videoDuration} 的区别在于 这个字段应该是响应式的
+     */
+    public maxDuration: number = 0
+    /**
+     * 内部维护的视频当前播放时间, 单位 秒; <br>
+     * 与 {@link currentTime} 的区别在于, 这个字段应该是响应式的, 且这个字段的值应该被同步到 {@link currentTime}; <br>
+     * 不直接使用 {@link currentTime} 是为了避免 DOM 引用奇怪的响应式问题, 同时避免更新播放时间时的循环数据流
+     */
+    public playTime: Ref<number> = ref(0)
+
+    /**
+     * 一般在主动拖动进度条时调用, 同步播放时间最好直接设置 {@link playTime}
+     */
+    public setPlayTime(value: number) {
+        this.currentTime = value
+        this.log.trace('主动设置播放时间: ', value)
+    }
+
+    constructor() {
+        // 延迟初始化视频时长
+        this.pushReadyCallback(() => {
+            const max = this.videoDuration
+            this.maxDuration = isNaN(max) ? 0 : max
+        })
+
+        // 更新播放时间
+        this.pushTimeUpdateCallback((time) => {
+            this.playTime.value = time
+        })
+
+    }
 
     private get element(): HTMLVideoElement {
         if (!this._element) {
@@ -69,12 +110,15 @@ export class VideoWrapper {
                 }
             }
 
-            this.element.onplay = (event) => {
-                this.log.trace('play', event)
-            }
-
-            this.element.onplaying = (event) => {
-                this.log.trace('playing', event)
+            this.element.ontimeupdate = (event) => {
+                this.log.trace('timeupdate', event)
+                for (const cb of this.timeUpdateCallback) {
+                    try {
+                        cb(this.currentTime)
+                    } catch (e) {
+                        this.log.trace(e)
+                    }
+                }
             }
         }
     }
@@ -145,10 +189,17 @@ export class VideoWrapper {
         return this.readyState > MediaReadyState.HAVE_CURRENT_DATA
     }
 
+    /**
+     * 设置就绪回调
+     */
     public pushReadyCallback(callback?: () => void) {
         if (callback) {
             this.readyCallback.push(callback)
         }
+    }
+
+    public pushTimeUpdateCallback(callback: (time: number) => void) {
+        this.timeUpdateCallback.push(callback)
     }
 
     /* 以上, 只读属性 -----------------------------------------------------------------------------  */
@@ -281,19 +332,21 @@ export class VideoWrapper {
      */
     public play() {
         this.element.play()
-            .then(() => this.log.trace('开始播放'))
-            .catch((err) => this.log.trace('播放失败', err))
+            .then(() => this.log.debug('开始播放'))
+            .catch((err) => this.log.warn('播放失败', err))
     }
 
     /**
      * 切换播放状态
      */
     public togglePlayState() {
-        if (this.paused) {
-            this.play()
-        } else {
+        this.log.debug('切换播放状态: ', this.playing ? '暂停' : '播放')
+        if (this.playing) {
             this.pause()
+        } else {
+            this.play()
         }
+        this.playing = !this.playing
     }
 
 }

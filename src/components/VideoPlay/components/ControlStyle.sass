@@ -1,0 +1,53 @@
+// 浮层中的第一层: 自定义控制器组件
+.video-control
+    width: 100%
+    height: 100%
+    position: relative
+
+    .buttons
+        width: 100%
+        height: 40px
+        font-size: 30px
+        line-height: 40px
+        padding: 5px
+        box-sizing: border-box
+
+    // 控制层显隐渐变
+    .header,
+    .footer
+        filter: opacity(.5)
+        transition: all ease 1s
+
+    .header:hover,
+    .footer:hover
+        filter: opacity(1)
+
+    // 顶部控制栏
+    .header
+        width: 100%
+        height: 50px
+        position: absolute
+        top: 0
+        left: 0
+
+        .buttons
+            display: flex
+            justify-content: right
+
+
+    // 底部控制栏
+    .footer
+        background-color: rgba(163, 160, 161, 0.82)
+        width: 100%
+        height: 50px
+
+        position: absolute
+        bottom: 0
+        left: 0
+
+        .el-slider
+            height: 10px
+
+        .buttons
+            display: flex
+            justify-content: space-between
