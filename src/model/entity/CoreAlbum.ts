@@ -1,5 +1,6 @@
 import { BaseEntity } from '@/model/BaseEntity'
 import { FileInfo } from '@/model/FileInfo'
+import { CommonEnum } from '@/model/CommonEnum'
 
 /**
  * 专辑
@@ -63,9 +64,9 @@ export class CoreAlbumWork {
     public alias: string
 
     /**
-     * 是免费的吗?
+     * 是否免费默认否
      */
-    public IsItFree: boolean
+    public isFree: CommonEnum.NORMAL | CommonEnum.DISABLE
 
     /**
      * 排序

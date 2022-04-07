@@ -1,4 +1,5 @@
 import { cloud } from '@/cloud'
+import { SysUser } from '@/model/entity/SysUser'
 import { ElMessage } from 'element-plus'
 
 const kToken = 'access_token'
@@ -26,15 +27,15 @@ export function clearToken() {
     localStorage.removeItem(kTokenExpire)
 }
 
-export async function getUserInfo() {
+export async function getUserInfo(): Promise<SysUser | null> {
     const userId = localStorage.getItem('userId')
     if (!userId) {
-        return ElMessage.error('用户不存在')
+        ElMessage.error('用户不存在')
+        return null
     }
-    const res = await cloud.invokeFunction('get-user-info', {userId})
-    if(res.code!==0){
+    const res = await cloud.invokeFunction<{code: number, error: string, data: SysUser}>('get-user-info', {userId})
+    if (res.code !== 0) {
         ElMessage.error(res.error)
     }
     return res.data
 }
-

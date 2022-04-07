@@ -25,3 +25,4 @@ dist-ssr
 
 coverage
 package-lock.json
+./yarn.lock
