@@ -14,7 +14,7 @@ export class CoreWork implements BaseEntity {
     /**
      * 作品名称
      */
-    public name:string
+    public name: string
 
     /**
      * 作品简介
@@ -37,21 +37,8 @@ export class CoreWork implements BaseEntity {
         pc: FileInfo,
     }
 
-    /**
-     * 是否试看默认否
-     */
-     public isTry: CommonEnum.NORMAL | CommonEnum.DISABLE
-
-     /**
-      * 试看时长
-      * 单位秒（s）
-      */
-     public tryDuration: number
-
-     /**
-     * 是否免费默认否
-     */
-    public isFree: CommonEnum.NORMAL | CommonEnum.DISABLE
+    // 素材
+    public material_id: string
 
     public createBy: string
     public createTime: number

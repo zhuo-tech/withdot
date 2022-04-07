@@ -30,12 +30,13 @@ export class CoreQuestionRepo implements BaseEntity {
      * 题目类型
      * RADIO 单选题; MULTI 多选题; JUDGE 判断题; SAQ 简单题
      */
-    public type: QuestionTypeEnum.JUDGE | QuestionTypeEnum.MULTI | QuestionTypeEnum.RADIO | QuestionTypeEnum.SAQ
+    public type: QuestionTypeEnum
 
     /**
      * 排序
      */
     public sort: number
+
 
     /**
      * 题目明细
@@ -50,6 +51,7 @@ export class CoreQuestionRepo implements BaseEntity {
     public updateBy: string
 
 }
+
 
 export class QuestionDetails {
     /**

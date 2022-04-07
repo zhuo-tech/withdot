@@ -1,4 +1,4 @@
-import { BaseEntity } from "@/model/BaseEntity";
+import { BaseEntity } from '@/model/BaseEntity'
 
 /**
  * 视频播放打点
@@ -9,32 +9,40 @@ export class CoreDot implements BaseEntity {
 
     public static readonly TABLE_NAME = 'core_dot'
 
-    /**
-     * 打点名称
-     */
-    name: string
-
-    /**
-     * 打点描述
-     */
-    rmk: string
+    workId: string
 
     /**
      * 组件 打点对应的组件
      */
-    component: string
-
-    /**
-     * 时长
-     * 单位秒（s）
-     */
-    duration: number
+    type: string
 
     /**
      * 打点的开始时间和结束时间
      * 单位秒（s）
      */
-    range:[startTime:number, endTime?: number]
+    start: number
+
+    /**
+     * 结束时间
+     */
+    end?: number
+
+    /**
+     * 标签
+     */
+    label?: string
+
+    display: DotDisplayType
+
+    position?: {
+        x: number
+        y: number
+        z?: number
+        width?: number
+        height?: number
+    }
+
+    config: DotConfig
 
     _id: string
     createTime: number
@@ -42,4 +50,31 @@ export class CoreDot implements BaseEntity {
     createBy: string
     updateBy: string
 
+}
+
+export enum DotDisplayType {
+    BUTTON = 'button',
+    EXPANDED = 'expanded'
+}
+
+type DotConfig = CoreExamDotConfig | CoreTextDotConfig
+
+/**
+ * 测验(题目)
+ */
+export interface CoreExamDotConfig {
+    list: {
+        question: any
+        score: number
+    }[]
+
+    passLine: number
+    lock: boolean
+}
+
+/**
+ * 文本
+ */
+export interface CoreTextDotConfig {
+    text: string
 }

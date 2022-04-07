@@ -21,10 +21,3 @@ export enum QuestionTypeEnum {
      */
     SAQ = "saq"
 }
-
-export const QuestionTypeRegExp = {
-    RADIO: new RegExp(QuestionTypeEnum.RADIO),
-    MULTI: new RegExp(QuestionTypeEnum.MULTI),
-    JUDGE: new RegExp(QuestionTypeEnum.JUDGE),
-    SAQ: new RegExp(QuestionTypeEnum.SAQ),
-}
