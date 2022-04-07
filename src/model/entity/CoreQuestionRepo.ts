@@ -1,5 +1,4 @@
 import { BaseEntity } from '@/model/BaseEntity'
-import { CommonEnum } from '@/model/CommonEnum'
 import { QuestionTypeEnum } from '@/model/QuestionTypeEnum'
 
 /**
