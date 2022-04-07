@@ -7,19 +7,19 @@ export enum QuestionTypeEnum {
     /**
      * 单选题
      */
-    RADIO = "RADIO",
+    RADIO = "radio",
     /**
      * 多选题
      */
-    MULTI = "MULTI",
+    MULTI = "multi",
     /**
      * 判断题
      */
-    JUDGE = "JUDGE",
+    JUDGE = "judge",
     /**
      * 简单题
      */
-    SAQ = "SAQ"
+    SAQ = "saq"
 }
 
 export const QuestionTypeRegExp = {

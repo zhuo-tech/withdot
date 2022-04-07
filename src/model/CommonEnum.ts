@@ -7,14 +7,38 @@
     /**
      * 是
      */
-     NORMAL = "NORMAL",
+     NORMAL = "normal",
     /**
      * 否
      */
-     DISABLE = "DISABLE"
+     DISABLE = "disable",
+
+     /**
+      * 有用
+      */
+     USEFUL = "useful",
+
+     /**
+      * 无用
+      */
+     UNUSEFUL = "unuseful",
+
+     /**
+      * 正常
+      */
+     DELETE_N = "0",
+
+     /**
+      * 删除
+      */
+     DELETE_Y = "1"
 }
 
 export const CommonRegExp = {
     NORMAL: new RegExp(CommonEnum.NORMAL),
-    DISABLE: new RegExp(CommonEnum.DISABLE)
+    DISABLE: new RegExp(CommonEnum.DISABLE),
+    USEFUL: new RegExp(CommonEnum.USEFUL),
+    UNUSEFUL: new RegExp(CommonEnum.UNUSEFUL),
+    DELETE_N: new RegExp(CommonEnum.DELETE_N),
+    DELETE_Y: new RegExp(CommonEnum.DELETE_Y)
 }
