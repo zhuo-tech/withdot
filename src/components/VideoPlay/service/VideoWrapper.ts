@@ -58,7 +58,7 @@ export class VideoWrapper {
             this.log.trace('DOM 引用初始化')
 
             this.element.onloadeddata = () => {
-                if (this.element.readyState >= MediaReadyState.HAVE_ENOUGH_DATA) {
+                if (this.element.readyState >= MediaReadyState.HAVE_FUTURE_DATA) {
                     for (let cb of this.readyCallback) {
                         try {
                             cb?.()
@@ -67,6 +67,14 @@ export class VideoWrapper {
                         }
                     }
                 }
+            }
+
+            this.element.onplay = (event) => {
+                this.log.trace('play', event)
+            }
+
+            this.element.onplaying = (event) => {
+                this.log.trace('playing', event)
             }
         }
     }
@@ -133,11 +141,14 @@ export class VideoWrapper {
         return this.element.readyState
     }
 
-    public isReady(callback?: () => void): boolean {
+    public isReady(): boolean {
+        return this.readyState > MediaReadyState.HAVE_CURRENT_DATA
+    }
+
+    public pushReadyCallback(callback?: () => void) {
         if (callback) {
             this.readyCallback.push(callback)
         }
-        return this.readyState > MediaReadyState.HAVE_CURRENT_DATA
     }
 
     /* 以上, 只读属性 -----------------------------------------------------------------------------  */
