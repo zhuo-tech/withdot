@@ -25,7 +25,7 @@ export class WxAccountFans implements SupportLogicDelete {
     /**
      * 昵称
      */
-    public nickname: string
+    public nickname: string | RegExp
 
     /**
      * 性别，1男，2女，0未知
@@ -75,7 +75,7 @@ export class WxAccountFans implements SupportLogicDelete {
     /**
      * 微信公众号名
      */
-    public wxAccountName: string
+    public wxAccountName: string | RegExp
 
     /**
      * 标签ID列表
