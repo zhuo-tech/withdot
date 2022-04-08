@@ -1,11 +1,10 @@
 <script lang="ts" setup>
 import AlbumsService from '@/pages/albums/AlbumsService'
 
-defineProps({
-    service: {
-        type: AlbumsService,
-    },
-})
+const props = defineProps<{
+    service: AlbumsService
+}>()
+
 </script>
 <template>
     <el-dialog
@@ -18,7 +17,7 @@ defineProps({
         modal
         title="创建新专辑"
         width="45%">
-        <el-form ref="AddFormRef"
+        <el-form :ref="el => service.addFormRef = el"
                  v-loading="service.addFormData.addFormIsLoading"
                  :model="service.addFormData"
                  :rules="service.rules">

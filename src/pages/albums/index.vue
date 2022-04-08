@@ -36,10 +36,10 @@ const service = reactive(new AlbumsService())
                         prop="address">
                     </el-table-column>
                 </el-table>
-                <AddForm :service="service"></AddForm>
             </el-col>
         </el-row>
     </el-card>
+    <AddForm :service="service"></AddForm>
 </template>
 
 <style scoped lang="less"></style>
