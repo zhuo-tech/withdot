@@ -1,3 +1,8 @@
+/**
+ * 格式时间戳
+ * @param {number} v:时间戳
+ * @returns {string}
+ */
 export function filterTime(v: number) {
     let flag = !Number.isNaN(Number(new Date(v)))
     let date = null
