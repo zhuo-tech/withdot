@@ -45,7 +45,7 @@ type Details = RadioQuestion | MultiQuestion
 
 
 export interface RadioQuestion {
-
+  
 }
 
 export interface MultiQuestion {

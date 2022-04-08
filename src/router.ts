@@ -5,6 +5,8 @@ import AlbumsRouter from '@/pages/albums/AlbumsRouter'
 import ErrorRouter from '@/pages/Error/ErrorRouter'
 import HomeRouter, { ROUTER_PATH_HOME } from '@/pages/home/HomeRouter'
 import MaterialRouter from '@/pages/materials/MaterialRouter'
+import PayRouter from '@/pages/pay/PayRouter'
+
 import OrderRouter from '@/pages/orders/OrderRouter'
 import SettingRouter from '@/pages/settings/SettingRouter'
 import UserRouter from '@/pages/users/UserRouter'
@@ -28,6 +30,7 @@ import {
 
 const routes: RouteRecordRaw[] = [
     HomeRouter,
+    PayRouter,
     MaterialRouter,
     WorksRouter,
     AlbumsRouter,
