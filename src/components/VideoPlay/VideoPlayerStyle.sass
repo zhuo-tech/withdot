@@ -1,23 +1,31 @@
 .player-box
+    margin: 0 auto
+    max-width: 1200px
     position: relative
     z-index: 1
-    max-width: 1000px
+    max-height: 60vh
+    display: flex
+    justify-content: center
 
     .video-wrapper,
     .suspended-layer
-        width: 100%
-        height: 100%
+        flex: 1 1 auto
         z-index: 1
+        overflow: hidden
 
     .video-wrapper
         display: flex
+        justify-content: center
+        align-items: center
 
         video
-            flex: 1
+            flex: 0 1 auto
+            height: 100%
+            object-fit: contain
 
     // 浮层区域, 含控制器
     .suspended-layer
         position: absolute
-        top: 0
-        left: 0
         z-index: 2
+        width: 100%
+        height: 100%

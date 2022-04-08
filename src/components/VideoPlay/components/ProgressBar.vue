@@ -55,14 +55,14 @@ const inputProp = reactive({
     },
 
     get percentage() {
-        return (this.value / prop.max * 100).toFixed(2)
+        return (prop.value / prop.max * 100).toFixed(2)
     },
 
     get tipsDisplay() {
         if (prop.tipsFormat) {
-            return prop.tipsFormat(this.value)
+            return prop.tipsFormat(prop.value)
         }
-        return this.value
+        return prop.value
     },
 })
 

@@ -51,22 +51,13 @@ const {videoElement, playerBoxElement, minDuration} = service
                 </el-icon>
             </div>
             <div class="right">
-                <el-popover :width="1" placement="top-start" trigger="hover">
-                    <el-slider v-model="videoElement.volume" height="200px" vertical />
-                    <template #reference>
-                        <el-icon>
-                            <headset />
-                        </el-icon>
+                <el-tooltip class="box-item" placement="top">
+                    <el-icon><headset /></el-icon>
+                    <template #content>
+                        <el-slider v-model="videoElement.volume" height="200px" vertical />
                     </template>
-                </el-popover>
+                </el-tooltip>
 
-                <!-- 放大缩小 -->
-                <el-icon>
-                    <zoom-in />
-                </el-icon>
-                <el-icon>
-                    <zoom-out />
-                </el-icon>
                 <!-- 全屏按钮 -->
                 <el-icon @click="playerBoxElement.toggleFullScreen()">
                     <full-screen />
