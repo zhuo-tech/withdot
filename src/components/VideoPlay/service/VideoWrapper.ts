@@ -1,5 +1,6 @@
 import { getLogger } from '@/main'
 import { LoggerLevel } from '@/tool/log/LoggerLevel'
+import { TimeUnit } from 'typescript-util'
 import { ref, Ref } from 'vue'
 
 /**
@@ -115,7 +116,7 @@ export class VideoWrapper {
             }
 
             this.element.ontimeupdate = (event) => {
-                this.log.trace(event.type, '播放时间', this.currentTime, '播放结束: ', this.ended)
+                this.log.trace(event.type, '播放时间', this.currentTime, TimeUnit.SECOND.display(this.currentTime), '播放结束: ', this.ended)
                 for (const cb of this.timeUpdateCallback) {
                     try {
                         cb(this.currentTime)

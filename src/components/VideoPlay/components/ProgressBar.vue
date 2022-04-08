@@ -99,4 +99,4 @@ const inputProp = reactive({
 
 </style>
 
-<style lang="sass" scoped src="./ProgressBarStyle.sass" />
+<style lang="sass" scoped src="../style/ProgressBarStyle.sass" />

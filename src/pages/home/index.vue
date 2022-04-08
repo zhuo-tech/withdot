@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import VideoPlayer from '@/components/VideoPlay/VideoPlayer.vue'
+import VideoEditor from '@/components/VideoPlay/VideoEditor.vue'
+
 </script>
 
 <template>
@@ -7,5 +8,5 @@ import VideoPlayer from '@/components/VideoPlay/VideoPlayer.vue'
     Home ---
 </h1>
 
-<VideoPlayer />
+<VideoEditor />
 </template>

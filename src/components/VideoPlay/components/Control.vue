@@ -3,6 +3,7 @@ import ProgressBar from '@/components/VideoPlay/components/ProgressBar.vue'
 import { ControlLayer } from '@/components/VideoPlay/service/ControlLayer'
 import { VideoPlayer } from '@/components/VideoPlay/service/VideoPlayer'
 import { inject, reactive } from 'vue'
+import { TimeUnit } from 'typescript-util'
 
 const service = inject(VideoPlayer.INJECTION_KEY) as VideoPlayer
 
@@ -39,6 +40,7 @@ const {videoElement, playerBoxElement, minDuration} = service
         <ProgressBar v-model:value="videoElement.playTime"
                      :max="videoElement.maxDuration"
                      :min="minDuration"
+                     :tips-format="(t) => TimeUnit.SECOND.display(t)"
                      @change="(time) => videoElement.setPlayTime(time)">
             <slot></slot>
         </ProgressBar>
@@ -68,4 +70,4 @@ const {videoElement, playerBoxElement, minDuration} = service
 </div>
 </template>
 
-<style scoped src="./ControlStyle.sass" />
+<style scoped src="../style/ControlStyle.sass" />
