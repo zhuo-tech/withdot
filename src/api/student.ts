@@ -25,7 +25,7 @@ function verify(params: Record<string, any>) {
  */
 export async function getStudentListInit(params: Record<string, any>) {
     const query = verify(params)
-    return await DB.collection('core_student')
+    return await DB.collection(CoreStudent.TABLE_NAME)
         .where(query)
         .orderBy('createTime', 'desc')
         .get<CoreStudent>()

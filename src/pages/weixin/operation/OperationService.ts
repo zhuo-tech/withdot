@@ -16,7 +16,7 @@ export default class OperationService extends OperationApi {
         if (query) {
             whereAge.name = new RegExp(`.*${ query }.*`)
         }
-        return await this.DB.collection('wx_account')
+        return await this.DB.collection(WxAccount.TABLE_NAME)
             .where(whereAge)
             .get()
     }

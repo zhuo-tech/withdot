@@ -15,7 +15,7 @@ export default class WxFanService extends BasisCrud<WxAccountFans> {
     }
     // noinspection JSUnusedLocalSymbols
     private log = getLogger(WxFanService.name)
-    private DB = cloud.database().collection('wx_fans')
+    private DB = cloud.database().collection(WxAccountFans.TABLE_NAME)
 
     protected get formDataDefault(): WxAccountFans {
         return new WxAccountFans()

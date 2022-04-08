@@ -1,6 +1,7 @@
 import { BaseEntity } from '@/model/BaseEntity'
 
 export class CoreStudent implements BaseEntity {
+    public static readonly TABLE_NAME = 'core_student'
     public _id: string
     public createBy: string
     public createTime: number
