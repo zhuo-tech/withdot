@@ -37,6 +37,10 @@ export class VideoWrapper {
      * 播放回调
      */
     private timeUpdateCallback: Array<(time: number) => void> = []
+    /**
+     * 播放完成的回调
+     */
+    private onPlayFinished: () => void
 
     /**
      * 内部维护的播放状态, 与 {@link paused} 区别在于 这个字段应该是响应式的
@@ -45,7 +49,7 @@ export class VideoWrapper {
     /**
      * 内部维护的视频时长, 单位 秒;  与 {@link videoDuration} 的区别在于 这个字段应该是响应式的
      */
-    public maxDuration: number = 0
+    public maxDuration: Ref<number> = ref(0)
     /**
      * 内部维护的视频当前播放时间, 单位 秒; <br>
      * 与 {@link currentTime} 的区别在于, 这个字段应该是响应式的, 且这个字段的值应该被同步到 {@link currentTime}; <br>
@@ -65,7 +69,7 @@ export class VideoWrapper {
         // 延迟初始化视频时长
         this.pushReadyCallback(() => {
             const max = this.videoDuration
-            this.maxDuration = isNaN(max) ? 0 : max
+            this.maxDuration.value = isNaN(max) ? 0 : max
         })
 
         // 更新播放时间
@@ -111,13 +115,17 @@ export class VideoWrapper {
             }
 
             this.element.ontimeupdate = (event) => {
-                this.log.trace('timeupdate', event)
+                this.log.trace(event.type, '播放时间', this.currentTime, '播放结束: ', this.ended)
                 for (const cb of this.timeUpdateCallback) {
                     try {
                         cb(this.currentTime)
                     } catch (e) {
                         this.log.trace(e)
                     }
+                }
+                // 通知播放完成
+                if (this.ended) {
+                    this.onPlayFinished?.()
                 }
             }
         }
