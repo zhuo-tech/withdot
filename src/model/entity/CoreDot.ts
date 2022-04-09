@@ -14,7 +14,7 @@ export class CoreDot implements BaseEntity {
     /**
      * 组件 打点对应的组件
      */
-    type: string
+    type: CoreDotType
 
     /**
      * 打点的开始时间和结束时间

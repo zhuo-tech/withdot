@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import List from '@/components/VideoPlay/components/List.vue'
-import Stage from '@/components/VideoPlay/components/Stage.vue'
-import VideoPlayer from '@/components/VideoPlay/VideoPlayer.vue'
+import List from './components/List.vue'
+import VideoPlayer from '@/components/VideoPlayer/index.vue'
 import { CoreDot, CoreDotType } from '@/model/entity/CoreDot'
 import { ObjectUtil, TimeUnit } from 'typescript-util'
 import { reactive } from 'vue'
@@ -14,18 +13,12 @@ const actionList = reactive({
 
 const pointList = reactive<Array<CoreDot>>([])
 pointList.push(new CoreDot())
-pointList.push(new CoreDot())
-pointList.push(new CoreDot())
 </script>
 
 <template>
 <div class="video-editor-box">
     <!-- 编辑器工具栏 -->
     <VideoPlayer>
-        <!-- 浮层 -->
-        <template v-slot:stage="{service}">
-            <Stage :list="pointList.map(i => i.config)" />
-        </template>
 
         <!-- 功能区... -->
         <template v-slot="{service}">
@@ -55,4 +48,4 @@ pointList.push(new CoreDot())
 
 </template>
 
-<style lang="sass" scoped src="./style/VideoEditorStyle.sass" />
+<style lang="sass" scoped src="./VideoEditorStyle.sass" />

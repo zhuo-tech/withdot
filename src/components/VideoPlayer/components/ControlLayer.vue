@@ -1,15 +1,17 @@
 <script lang="ts" setup>
-import ProgressBar from '@/components/VideoPlay/components/ProgressBar.vue'
-import { ControlLayer } from '@/components/VideoPlay/service/ControlLayer'
-import { VideoPlayer } from '@/components/VideoPlay/service/VideoPlayer'
+import ProgressBar from '../components/ProgressBar.vue'
+import { ControlLayer } from '../context/ControlLayer'
+import { PlayerContext } from '../context/PlayerContext'
 import { inject, reactive } from 'vue'
 import { TimeUnit } from 'typescript-util'
 
-const service = inject(VideoPlayer.INJECTION_KEY) as VideoPlayer
-
-const controlLayer = reactive(new ControlLayer())
-
+/**
+ * 控制器层
+ * @inject service {@link PlayerContext}
+ */
+const service = inject(PlayerContext.INJECTION_KEY) as PlayerContext
 const {videoElement, playerBoxElement, minDuration} = service
+const controlLayer = reactive(new ControlLayer())
 
 </script>
 

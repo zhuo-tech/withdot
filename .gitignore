@@ -25,6 +25,6 @@ dist-ssr
 
 coverage
 package-lock.json
-./yarn.lock
+yarn.lock
 
 *.mp4

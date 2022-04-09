@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-
 import { reactive, ref } from 'vue'
 
+/**
+ * 自定义进度条
+ */
 const prop = defineProps({
     value: {
         type: Number,

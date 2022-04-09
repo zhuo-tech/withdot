@@ -1,3 +1,4 @@
+import { DomWrapper, DomWrapperInitializeError } from '@/components/VideoPlayer/service/DomWrapper'
 import { getLogger } from '@/main'
 import { LoggerLevel } from '@/tool/log/LoggerLevel'
 import { TimeUnit } from 'typescript-util'
@@ -24,7 +25,7 @@ import { ref, Ref } from 'vue'
  * @author LL
  * @date 2022-04-04 下午 11:25
  **/
-export class VideoWrapper {
+export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
     private log = getLogger(VideoWrapper.name, LoggerLevel.ALL)
     /**
      * DOM 引用
@@ -68,7 +69,7 @@ export class VideoWrapper {
 
     constructor() {
         // 延迟初始化视频时长
-        this.pushReadyCallback(() => {
+        this.onInitializeFinish(() => {
             const max = this.videoDuration
             this.maxDuration.value = isNaN(max) ? 0 : max
         })
@@ -82,17 +83,11 @@ export class VideoWrapper {
 
     private get element(): HTMLVideoElement {
         if (!this._element) {
-            throw new Error('Element 尚未初始化')
+            throw new DomWrapperInitializeError('Element 尚未初始化')
         }
         return this._element
     }
 
-    /**
-     * 延迟初始化 element
-     * <h3 color="yellow">如果此方法没有得到调用, 此类没有任何意义, 后续所有调用都会报错</h3>
-     * 允许重复多次调用, 忽略相同引用的赋值
-     * @param {HTMLVideoElement} video
-     */
     public setElement(video: HTMLVideoElement) {
         // vite 重载时候 video 为 null, 如果缺少此判断 直接设置 element 会导致循环渲染 堆栈溢出 (Wrapper 对象 在 script 中是响应式对象)
         if (!video) {
@@ -101,7 +96,7 @@ export class VideoWrapper {
         }
         if (this._element !== video) {
             this._element = video
-            this.log.trace('DOM 引用初始化')
+            this.log.trace('Video DOM 引用初始化')
 
             this.element.onloadeddata = () => {
                 if (this.element.readyState >= MediaReadyState.HAVE_FUTURE_DATA) {
@@ -130,6 +125,14 @@ export class VideoWrapper {
                 }
             }
         }
+    }
+
+    public onInitializeFinish(callback: () => void): number {
+        if (!callback) {
+            return -1
+        }
+        const length = this.readyCallback.push(callback)
+        return length - 1
     }
 
     /**
@@ -196,15 +199,6 @@ export class VideoWrapper {
 
     public isReady(): boolean {
         return this.readyState > MediaReadyState.HAVE_CURRENT_DATA
-    }
-
-    /**
-     * 设置就绪回调
-     */
-    public pushReadyCallback(callback?: () => void) {
-        if (callback) {
-            this.readyCallback.push(callback)
-        }
     }
 
     public pushTimeUpdateCallback(callback: (time: number) => void) {
