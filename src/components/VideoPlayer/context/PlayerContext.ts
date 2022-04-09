@@ -1,8 +1,8 @@
-import { EventCenter, EventRegistry, Event } from 'typescript-util'
+import { InjectionKey } from '@vue/runtime-core'
+import { Event, EventCenter, EventRegistry } from 'typescript-util'
 import { SimpleEventCenter } from 'typescript-util/lib/event/impl/SimpleEventCenter'
 import { DivWrapper } from '../service/DivWrapper'
 import { VideoWrapper } from '../service/VideoWrapper'
-import { InjectionKey } from '@vue/runtime-core'
 
 /**
  * 播放器上下文
@@ -25,6 +25,36 @@ export class PlayerContext {
      */
     public playerBoxElement: DivWrapper = new DivWrapper()
 
+    /**
+     * 调整大小
+     * @param {AspectRatio} aspectRatio 宽高比
+     */
+    public resizePlayer(aspectRatio: AspectRatio) {
+        const {width, height} = aspectRatio
+        this.playerBoxElement.resizeHeight(width, height)
+
+        const {width: w, height: h} = this.playerBoxElement.realWidthHeight
+        this.eventCenter.push(new PlayerResizeEvent(w, h))
+    }
+
+}
+
+/**
+ * 宽高比
+ */
+export class AspectRatio {
+    /**
+     * 默认 16:9
+     */
+    public static readonly DEFAULT = new AspectRatio(16, 9)
+
+    public width: number
+    public height: number
+
+    constructor(width: number, height: number) {
+        this.width = width
+        this.height = height
+    }
 }
 
 interface PlayerEventRegister extends EventRegistry {

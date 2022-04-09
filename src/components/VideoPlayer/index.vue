@@ -1,15 +1,14 @@
 <script lang="ts" setup>
-import StageLayer from './components/StageLayer.vue'
-import ControlLayer from './components/ControlLayer.vue'
-import { getLogger } from '@/main'
 import { onMounted, onUnmounted, provide, reactive } from 'vue'
+import ControlLayer from './components/ControlLayer.vue'
+import StageLayer from './components/StageLayer.vue'
 import VideoWrapperLayer from './components/VideoWrapperLayer.vue'
-import { PlayerContext, PlayerResizeEvent } from './context/PlayerContext'
+import { AspectRatio, PlayerContext } from './context/PlayerContext'
 
 /**
  * 播放器
- * @props aspectRatio {{width: number, height: number}} 播放器宽高比
- * @props pointList {Array<CoreDot>} 需要渲染的小组件列表
+ * @props aspectRatio 播放器宽高比 {@link AspectRatio}
+ * @props pointList 需要渲染的小组件列表 {@link Array<CoreDot>}
  * @provide {@link PlayerContext.INJECTION_KEY}
  */
 const service = reactive(new PlayerContext())
@@ -17,24 +16,16 @@ provide(PlayerContext.INJECTION_KEY, service as any)
 
 const props = defineProps({
     aspectRatio: {
-        type: Object,
-        default: () => ({width: 16, height: 9}),
+        type: AspectRatio,
+        default: () => AspectRatio.DEFAULT,
     },
     pointList: {
         type: Array,
         default: () => ([]),
     },
 })
-const log = getLogger('VideoPlayer')
 
-function resize() {
-    const {width, height} = props.aspectRatio
-    service.playerBoxElement.resizeHeight(width, height)
-    const rectangle = service.playerBoxElement.realWidthHeight
-    // log.trace('#player resize', rectangle)
-    service.eventCenter.push(new PlayerResizeEvent(rectangle.width, rectangle.height))
-}
-
+const resize = () => service.resizePlayer(props.aspectRatio)
 service.playerBoxElement.onInitializeFinish(() => window.addEventListener('resize', resize, {passive: true}))
 onMounted(resize)
 onUnmounted(() => window.removeEventListener('resize', resize))
