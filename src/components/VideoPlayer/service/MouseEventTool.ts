@@ -32,4 +32,36 @@ export class MouseEventTool {
         return res.join('\t')
     }
 
+    public static keyType(event: MouseEvent): MouseButtonKeyType | null {
+        switch (event.button) {
+            case MouseButtonKeyType.LEFT:
+                return MouseButtonKeyType.LEFT
+            case MouseButtonKeyType.CENTER:
+                return MouseButtonKeyType.CENTER
+            case MouseButtonKeyType.RIGHT:
+                return MouseButtonKeyType.RIGHT
+            case MouseButtonKeyType.BACK:
+                return MouseButtonKeyType.BACK
+            case MouseButtonKeyType.GOING:
+                return MouseButtonKeyType.GOING
+            default:
+                return null
+        }
+    }
+
+    public static isKey(event: MouseEvent, type: MouseButtonKeyType) {
+        return this.keyType(event) === type
+    }
+
+}
+
+/**
+ * @see MouseEvent.button
+ */
+export enum MouseButtonKeyType {
+    LEFT = 0,
+    CENTER = 1,
+    RIGHT = 2,
+    BACK = 3,
+    GOING = 4
 }

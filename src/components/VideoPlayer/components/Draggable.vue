@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { getLogger } from '@/main'
-import { inject, onMounted, onUnmounted, reactive, Ref, ref } from 'vue'
+import { DraggableContext } from '@/components/VideoPlayer/context/DraggableContext'
+import { CoreDot } from '@/model/entity/CoreDot'
+import { inject, onMounted, onUnmounted, reactive } from 'vue'
 import { PlayerContext } from '../context/PlayerContext'
 
 /**
@@ -14,10 +15,9 @@ import { PlayerContext } from '../context/PlayerContext'
  */
 const service = inject(PlayerContext.INJECTION_KEY) as PlayerContext
 
-const log = getLogger('draggable')
 const prop = defineProps({
     item: {
-        type: [Object],
+        type: CoreDot,
         required: false,
         default: () => ({}),
     },
@@ -27,81 +27,33 @@ const prop = defineProps({
     },
 })
 
-const divRef: Ref<HTMLDivElement> = ref({} as any)
-
-const data = reactive({
-    adsorption: false,
-    // 父级盒子 offset 坐标
-    px: 0,
-    py: 0,
-
-    // 百分比定位
-    scaleX: 0.5,
-    scaleY: 0.5,
-})
+const context = reactive(new DraggableContext())
 
 onMounted(() => {
     const listenerKey = service.eventCenter
-        .addEventListener('PlayerResizeEvent', (event) => {
-            const {width, height} = event
-            // 使用新的容器大小计算相对位置
-            const {scaleX, scaleY} = data
-            const left = width * scaleX
-            const top = height * scaleY
-            setLocation(top, left)
-            if (log.isTraceEnable()) {
-                log.trace('重新计算位置, 父盒子变化: ', {width, height}, '相对位置: ', {scaleX, scaleY}, '定位: ', {top, left})
-            }
-        })
+        .addEventListener('PlayerResizeEvent', context.resizeRelocate)
 
     onUnmounted(() => {
-        service.eventCenter
-            .removeEventListener('PlayerResizeEvent', listenerKey)
+        service.eventCenter.removeEventListener('PlayerResizeEvent', listenerKey)
     })
 })
 
-function onMouseMove(event: MouseEvent) {
-    const {adsorption: ads} = data
-    if (!ads) {
-        return
-    }
-    const {x, y} = event
-    const {px, py} = data
-    const {width, height} = service.playerBoxElement.realWidthHeight
-
-    const top = Math.max(Math.min(y - py, height), 0)
-    const left = Math.max(Math.min(x - px, width), 0)
-
-    // 重设百分比
-    data.scaleX = left / width
-    data.scaleY = top / height
-
-    setLocation(top, left)
-}
-
-function setLocation(top: number, left: number) {
-    divRef.value.style.top = top + 'px'
-    divRef.value.style.left = left + 'px'
-}
-
-function onMouseDown(event: MouseEvent) {
-    data.adsorption = true
-    // 点击位置
-    const {x, y} = event
-    const {offsetTop, offsetLeft} = divRef.value
-    data.px = x - offsetLeft
-    data.py = y - offsetTop
-
-    log.trace('父级盒子大小', service.playerBoxElement.realWidthHeight)
-}
-
-function onMouseUp(event: MouseEvent) {
-    data.adsorption = false
-}
-
 </script>
 <template>
-<div ref="divRef" class="draggable" @mousedown="onMouseDown" @mousemove="onMouseMove" @mouseup="onMouseUp">
+<div :ref="el => context.divRef = el"
+     class="draggable"
+     @mousemove="event => context.dragReLocate(event)"
+     @mouseup="context.closeAdsorption()"
+     @mousedown.prevent="event => context.onMouseDown(event)">
+
+    <div v-show="context.rightClickMenuIsShow" :ref="el => context.rightMenuRef = el" class="draggable-right-menu">
+        <ul>
+            <li>上移一层</li>
+            <li>下移一层</li>
+            <li>置于顶层</li>
+            <li>置于底层</li>
+        </ul>
+    </div>
     {{ item }}
 </div>
 </template>
@@ -113,8 +65,24 @@ function onMouseUp(event: MouseEvent) {
     background-color: rgba(65, 71, 77, 0.47)
     border: 1px solid
 
-    width: 100px
-    height: 100px
+    width: 300px
+    height: 300px
 
     cursor: pointer
+
+    .draggable-right-menu
+        position: absolute
+        width: 100px
+        height: auto
+        list-style: none
+        background-color: rgba(65, 71, 77, .7)
+
+        box-shadow: 0 0 5px rgba(65, 71, 77, .7)
+
+        li
+            padding: 3px 10px
+            border-bottom: 1px solid rgba(16, 16, 16, .5)
+
+        li:last-child
+            border: none
 </style>
