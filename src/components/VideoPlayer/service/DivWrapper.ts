@@ -71,7 +71,7 @@ export class DivWrapper implements DomWrapper<HTMLDivElement> {
         this.element.focus({preventScroll: false})
     }
 
-    public getBoundingClientRect() {
+    public getBoundingClientRect(): DOMRect {
         return this.element.getBoundingClientRect()
     }
 

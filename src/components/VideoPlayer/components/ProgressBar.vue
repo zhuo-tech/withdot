@@ -1,104 +1,69 @@
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
+import { ProgressBarContext } from '../context/ProgressBarContext'
 
 /**
  * 自定义进度条
+ * @props value {number} 进度条当前值 默认0
+ * @props bufferValue {number} 进度条缓冲值 默认 0
+ * @props min {number}
+ * @props max {number}
+ * @props formatTips {(value: number) => string} 格式化函数
  */
-const prop = defineProps({
+const props = defineProps({
     value: {
         type: Number,
-        default: 0,
+        default: 20,
     },
-    disabled: {
-        type: Boolean,
-        default: false,
-    },
-    max: {
+    bufferValue: {
         type: Number,
-        default: 0,
+        default: 50,
     },
     min: {
         type: Number,
         default: 0,
     },
-    height: {
+    max: {
         type: Number,
-        default: 5,
+        default: 100,
     },
-    tipsFormat: {
+    formatTips: {
         type: Function,
         required: false,
-    },
-    vertical: {
-        type: Boolean,
-        default: false,
     },
 })
 
 const emits = defineEmits<{
-    (event: 'update:value', value: number): void
-    (event: 'change', value: number): void
+    (event: 'update:value', value: number): void,
+    (event: 'change', value: number): void,
 }>()
 
-const rangeRef = ref<HTMLInputElement>()
-
-const inputProp = reactive({
-    onInput() {
-        let value = rangeRef.value?.valueAsNumber as number
-        const {max, min} = prop
-        if (value > max) {
-            value = max
-        }
-        if (value < min) {
-            value = min
-        }
-        emits('change', value)
-        emits('update:value', value)
-    },
-
-    get percentage() {
-        return (prop.value / prop.max * 100).toFixed(2)
-    },
-
-    get tipsDisplay() {
-        if (prop.tipsFormat) {
-            return prop.tipsFormat(prop.value)
-        }
-        return prop.value
-    },
-})
+const data = reactive(new ProgressBarContext(props as any, (value) => {
+    emits('update:value', value)
+    emits('change', value)
+}))
 
 </script>
 
 <template>
-<div :class="{'vertical': vertical}" class="progress-bar">
-    <!-- TIPS -->
-    <div :style="`left: ${inputProp.percentage}%`" class="tips-box">
-        <div class="tips">
-            {{ inputProp.tipsDisplay }}
+<div class="progress-bar" @mousemove="data.trackMouseMove">
+    <div :ref="el => data.trackRef.setElement(el)" class="track" @click="data.trackOnClick">
+        <div :ref="el => data.tipsRef.setElement(el)" class="tips">
+            {{ data.showTipsValue }}
         </div>
     </div>
-    <div class="track">
-        <slot></slot>
+    <!-- 缓冲进度层 -->
+    <div :style="`width: ${data.bufferPercentage};`" class="buffer-layer linear-animation"></div>
+    <!-- 着色层 -->
+    <div :class="{'linear-animation': !data.buttonAdsorption}" :style="`width: ${data.percentage};`" class="display-layer">
+        <!-- 控制按钮 -->
+        <div :ref="el => data.progressButtonRef = el" class="progress-button" @mousedown="data.buttonMouseDown" @mouseup="data.buttonMouseUp"></div>
     </div>
-    <input ref="rangeRef"
-           :disabled="disabled"
-           :max="max"
-           :min="min"
-           :value="value"
-           alt="alt"
-           placeholder="placeholder"
-           type="range"
-           @input="inputProp.onInput">
+    <!-- 扩展内容 -->
+    <div class="other">
+
+    </div>
 </div>
 </template>
 
-<style scoped>
-.progress-bar {
-    /*noinspection CssInvalidFunction*/
-    height: v-bind(height+ "px")
-}
-
-</style>
-
-<style lang="sass" scoped src="../style/ProgressBarStyle.sass" />
+<style lang="sass" scoped src="../style/ProgressBarStyle.sass"></style>

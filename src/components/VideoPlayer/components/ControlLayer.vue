@@ -46,7 +46,7 @@ const controlLayer = reactive(new ControlLayer())
         <ProgressBar v-model:value="videoElement.playTime"
                      :max="videoElement.maxDuration"
                      :min="minDuration"
-                     :tips-format="(t) => TimeUnit.SECOND.display(t)"
+                     :format-tips="(t) => TimeUnit.SECOND.display(t)"
                      @change="(time) => videoElement.setPlayTime(time)">
             <slot></slot>
         </ProgressBar>

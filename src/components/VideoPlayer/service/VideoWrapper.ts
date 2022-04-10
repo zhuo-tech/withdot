@@ -26,7 +26,7 @@ import { ref, Ref } from 'vue'
  * @date 2022-04-04 下午 11:25
  **/
 export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
-    private log = getLogger(VideoWrapper.name, LoggerLevel.ALL)
+    private log = getLogger(VideoWrapper.name, LoggerLevel.DEBUG)
     /**
      * DOM 引用
      */
@@ -64,7 +64,7 @@ export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
      */
     public setPlayTime(value: number) {
         this.currentTime = value
-        this.log.trace('主动设置播放时间: ', value)
+        this.log.debug('主动设置播放时间: ', value)
     }
 
     constructor() {
@@ -96,7 +96,7 @@ export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
         }
         if (this._element !== video) {
             this._element = video
-            this.log.trace('Video DOM 引用初始化')
+            this.log.debug('Video DOM 引用初始化')
 
             this.element.onloadeddata = () => {
                 if (this.element.readyState >= MediaReadyState.HAVE_FUTURE_DATA) {
