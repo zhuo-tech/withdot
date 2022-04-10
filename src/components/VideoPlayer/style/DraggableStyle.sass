@@ -1,13 +1,22 @@
 .draggable
     pointer-events: auto
     display: inline-block
-    background-color: rgba(65, 71, 77, 0.47)
-    border: 1px solid
-
-    width: 200px
-    height: 200px
-
     cursor: pointer
+
+    .label-mode,
+    .details-mode
+        padding: 5px 10px
+        border-radius: 5px
+        box-shadow: 0 0 5px rgba(112, 121, 133, .4)
+
+    // 收起模式
+    .label-mode
+        background-color: rgba(255, 255, 255, .5)
+
+    // 展开模式 海报
+    .details-mode
+        width: 200px
+        min-height: 100px
 
     .draggable-right-menu
         position: absolute

@@ -1,6 +1,12 @@
 import { getLogger } from '@/main'
+import { CoreDot, DotDisplayType } from '@/model/entity/CoreDot'
 import { MouseButtonKeyType, MouseEventTool } from '../service/MouseEventTool'
 import { PlayerResizeEvent } from '../service/PlayerResizeEvent'
+
+export type PropsType = {
+    item: CoreDot
+    index: number
+}
 
 /**
  * DraggableContext
@@ -11,6 +17,9 @@ export class DraggableContext {
     private log = getLogger(DraggableContext.name)
     public divRef: HTMLDivElement
     public rightMenuRef: HTMLDivElement
+
+    private readonly props: PropsType
+    private _expectToExpand: boolean
 
     /**
      * 拖动吸附
@@ -30,11 +39,28 @@ export class DraggableContext {
     private scaleX = 0.5
     private scaleY = 0.5
 
+    constructor(props: PropsType) {
+        this.props = props
+        this._expectToExpand = props.item.display === DotDisplayType.EXPANDED
+    }
+
+    public get expectToExpand(): boolean {
+        return this._expectToExpand
+    }
+
     /**
      * 取消吸附
      */
     public closeAdsorption() {
         this.adsorption = false
+    }
+
+    public showDetail() {
+        this._expectToExpand = true
+    }
+
+    public showLabel() {
+        this._expectToExpand = false
     }
 
     /**

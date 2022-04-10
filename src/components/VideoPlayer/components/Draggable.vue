@@ -27,7 +27,7 @@ const prop = defineProps({
     },
 })
 
-const context = reactive(new DraggableContext())
+const context = reactive(new DraggableContext(prop))
 
 onMounted(() => {
     const listenerKey = service.eventCenter
@@ -46,7 +46,6 @@ onMounted(() => {
      @mousemove.prevent="event => context.dragReLocate(event)"
      @mouseup.prevent="context.closeAdsorption()"
      @mousedown.prevent="event => context.onMouseDown(event)">
-
     <div v-show="context.rightClickMenuIsShow" :ref="el => context.rightMenuRef = el" class="draggable-right-menu">
         <ul>
             <li>上移一层</li>
@@ -55,7 +54,17 @@ onMounted(() => {
             <li>置于底层</li>
         </ul>
     </div>
-    {{ item }}
+
+    <!-- 收起模式: button -->
+    <div v-show="!context.expectToExpand" class="label-mode" @click.stop="context.showDetail()">
+        {{ item.label }}
+    </div>
+
+    <!-- 展开模式: 又称"海报" -->
+    <div v-show="context.expectToExpand" class="details-mode" @dblclick.stop="context.showLabel()">
+        {{ item }}
+    </div>
+
 </div>
 </template>
 
