@@ -1,9 +1,9 @@
 <script lang="ts" setup>
+import { TimeUnit } from 'typescript-util'
+import { inject, reactive } from 'vue'
 import ProgressBar from '../components/ProgressBar.vue'
 import { ControlLayer } from '../context/ControlLayer'
 import { PlayerContext } from '../context/PlayerContext'
-import { inject, reactive } from 'vue'
-import { TimeUnit } from 'typescript-util'
 
 /**
  * 控制器层
@@ -56,7 +56,9 @@ const controlLayer = reactive(new ControlLayer())
             </div>
             <div class="right">
                 <el-tooltip class="box-item" placement="top">
-                    <el-icon><headset /></el-icon>
+                    <el-icon>
+                        <headset />
+                    </el-icon>
                     <template #content>
                         <el-slider v-model="videoElement.volume" height="200px" vertical />
                     </template>

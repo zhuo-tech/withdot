@@ -1,6 +1,6 @@
-import { MouseButtonKeyType, MouseEventTool } from '../service/MouseEventTool'
 import { getLogger } from '@/main'
-import { PlayerResizeEvent } from '../context/PlayerContext'
+import { MouseButtonKeyType, MouseEventTool } from '../service/MouseEventTool'
+import { PlayerResizeEvent } from '../service/PlayerResizeEvent'
 
 /**
  * DraggableContext
@@ -12,9 +12,13 @@ export class DraggableContext {
     public divRef: HTMLDivElement
     public rightMenuRef: HTMLDivElement
 
-    // 拖动吸附
+    /**
+     * 拖动吸附
+     */
     private adsorption = false
-    // 右键菜单显示
+    /**
+     * 右键菜单显示
+     */
     public rightClickMenuIsShow = false
     // 父级盒子 坐标
     private pw = 0

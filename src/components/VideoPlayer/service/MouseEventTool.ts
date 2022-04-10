@@ -6,6 +6,7 @@
 export class MouseEventTool {
 
     public static print(event: MouseEvent) {
+        // noinspection JSUnusedLocalSymbols
         const {
             x, screenX, movementX, offsetX, pageX, clientX,
             y, screenY, movementY, offsetY, pageY, clientY,
@@ -26,7 +27,7 @@ export class MouseEventTool {
         // 相对于整个文档的坐标
         res.push(`page(${ pageX }, ${ pageY })`)
 
-        // 相对于真个屏幕的坐标
+        // 相对于整个屏幕的坐标
         res.push(`screen(${ screenX }, ${ screenY })`)
 
         return res.join('\t')
@@ -57,6 +58,7 @@ export class MouseEventTool {
 
 /**
  * @see MouseEvent.button
+ * @see <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/MouseEvent/button">MouseEvent.button - Web API 接口参考 _ MDN</a>
  */
 export enum MouseButtonKeyType {
     LEFT = 0,

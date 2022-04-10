@@ -1,7 +1,9 @@
 import { InjectionKey } from '@vue/runtime-core'
-import { Event, EventCenter, EventRegistry } from 'typescript-util'
-import { SimpleEventCenter } from 'typescript-util/lib/event/impl/SimpleEventCenter'
+import { EventCenter, SimpleEventCenter } from 'typescript-util'
+import { AspectRatio } from '../service/AspectRatio'
 import { DivWrapper } from '../service/DivWrapper'
+import { PlayerEventRegister } from '../service/PlayerEventRegister'
+import { PlayerResizeEvent } from '../service/PlayerResizeEvent'
 import { VideoWrapper } from '../service/VideoWrapper'
 
 /**
@@ -12,7 +14,7 @@ import { VideoWrapper } from '../service/VideoWrapper'
 export class PlayerContext {
     public static readonly INJECTION_KEY: InjectionKey<PlayerContext> = Symbol.for(PlayerContext.name)
 
-    eventCenter: EventCenter<PlayerEventRegister> = new SimpleEventCenter<PlayerEventRegister>()
+    public eventCenter: EventCenter<PlayerEventRegister> = new SimpleEventCenter<PlayerEventRegister>()
 
     public minDuration: number = 0
     /**
@@ -35,43 +37,6 @@ export class PlayerContext {
 
         const {width: w, height: h} = this.playerBoxElement.realWidthHeight
         this.eventCenter.push(new PlayerResizeEvent(w, h))
-    }
-
-}
-
-/**
- * 宽高比
- */
-export class AspectRatio {
-    /**
-     * 默认 16:9
-     */
-    public static readonly DEFAULT = new AspectRatio(16, 9)
-
-    public width: number
-    public height: number
-
-    constructor(width: number, height: number) {
-        this.width = width
-        this.height = height
-    }
-}
-
-interface PlayerEventRegister extends EventRegistry {
-    PlayerResizeEvent: PlayerResizeEvent
-}
-
-export class PlayerResizeEvent implements Event {
-    public width: number
-    public height: number
-
-    constructor(width: number, height: number) {
-        this.width = width
-        this.height = height
-    }
-
-    public getName(): string {
-        return PlayerResizeEvent.name
     }
 
 }

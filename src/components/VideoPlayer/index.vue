@@ -3,7 +3,8 @@ import { onMounted, onUnmounted, provide, reactive } from 'vue'
 import ControlLayer from './components/ControlLayer.vue'
 import StageLayer from './components/StageLayer.vue'
 import VideoWrapperLayer from './components/VideoWrapperLayer.vue'
-import { AspectRatio, PlayerContext } from './context/PlayerContext'
+import { PlayerContext } from './context/PlayerContext'
+import { AspectRatio } from './service/AspectRatio'
 
 /**
  * 播放器

@@ -10,7 +10,7 @@ export class ControlLayer {
     private static readonly CONTROL_LAYER_HIDE_DELAY = 2
 
     public isShow: boolean
-    private timeoutTimer: null
+    private timeoutTimer: any
 
     public show() {
         this.clearTimeout()
@@ -19,7 +19,6 @@ export class ControlLayer {
 
     public close() {
         this.clearTimeout()
-        // @ts-ignore
         this.timeoutTimer = TimeUnit.SECOND.setTimeout(() => this.isShow = false, ControlLayer.CONTROL_LAYER_HIDE_DELAY)
     }
 

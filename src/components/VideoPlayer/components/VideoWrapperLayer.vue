@@ -1,6 +1,6 @@
-<script setup lang="ts">
-import { PlayerContext } from '@/components/VideoPlayer/context/PlayerContext'
+<script lang="ts" setup>
 import { inject } from 'vue'
+import { PlayerContext } from '../context/PlayerContext'
 
 /**
  * 包裹 video 标签
@@ -8,8 +8,10 @@ import { inject } from 'vue'
  *  - video dom 对象注册
  *  - TODO: 控制视频视频缩放比
  *  - TODO: 处理视频资源加载, 清晰度切换
+ *  @inject service {@link PlayerContext}
  */
 const service = inject(PlayerContext.INJECTION_KEY) as PlayerContext
+
 </script>
 <template>
 <div class="video-wrapper">
@@ -17,7 +19,7 @@ const service = inject(PlayerContext.INJECTION_KEY) as PlayerContext
 </div>
 </template>
 
-<style scoped lang="sass">
+<style lang="sass" scoped>
 .video-wrapper
     display: flex
     justify-content: center

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { DraggableContext } from '@/components/VideoPlayer/context/DraggableContext'
 import { CoreDot } from '@/model/entity/CoreDot'
 import { inject, onMounted, onUnmounted, reactive } from 'vue'
+import { DraggableContext } from '../context/DraggableContext'
 import { PlayerContext } from '../context/PlayerContext'
 
 /**
