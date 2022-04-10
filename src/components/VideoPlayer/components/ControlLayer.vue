@@ -14,6 +14,10 @@ const service = inject(PlayerContext.INJECTION_KEY) as PlayerContext
 const {videoElement, playerBoxElement, minDuration} = service
 const controlLayer = reactive(new ControlLayer())
 
+service.eventCenter.addEventListener('DraggableLeaveEvent', (event) => {
+    controlLayer.suppressionLastMinute = event.timestamp
+})
+
 </script>
 
 <template>

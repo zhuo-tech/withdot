@@ -3,6 +3,7 @@ import { CoreDot } from '@/model/entity/CoreDot'
 import { inject, onMounted, onUnmounted, reactive } from 'vue'
 import { DraggableContext } from '../context/DraggableContext'
 import { PlayerContext } from '../context/PlayerContext'
+import { DraggableLeaveEvent } from '../service/DraggableLeaveEvent'
 
 /**
  * 可拖动的盒子容器
@@ -42,8 +43,9 @@ onMounted(() => {
 <template>
 <div :ref="el => context.divRef = el"
      class="draggable"
-     @mousemove="event => context.dragReLocate(event)"
-     @mouseup="context.closeAdsorption()"
+     @mouseleave="service.eventCenter.push(new DraggableLeaveEvent(Date.now()))"
+     @mousemove.prevent="event => context.dragReLocate(event)"
+     @mouseup.prevent="context.closeAdsorption()"
      @mousedown.prevent="event => context.onMouseDown(event)">
 
     <div v-show="context.rightClickMenuIsShow" :ref="el => context.rightMenuRef = el" class="draggable-right-menu">
@@ -58,31 +60,4 @@ onMounted(() => {
 </div>
 </template>
 
-<style lang="sass" scoped>
-.draggable
-    pointer-events: auto
-    display: inline-block
-    background-color: rgba(65, 71, 77, 0.47)
-    border: 1px solid
-
-    width: 200px
-    height: 200px
-
-    cursor: pointer
-
-    .draggable-right-menu
-        position: absolute
-        width: 100px
-        height: auto
-        list-style: none
-        background-color: rgba(65, 71, 77, .7)
-
-        box-shadow: 0 0 5px rgba(65, 71, 77, .7)
-
-        li
-            padding: 3px 10px
-            border-bottom: 1px solid rgba(16, 16, 16, .5)
-
-        li:last-child
-            border: none
-</style>
+<style lang="sass" scoped src="../style/DraggableStyle.sass"></style>
