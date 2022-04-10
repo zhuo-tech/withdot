@@ -22,7 +22,10 @@ const controlLayer = reactive(new ControlLayer())
      @mouseout="controlLayer.close()"
      @mouseover="controlLayer.show()">
     <!-- 顶部 -->
-    <div :class="{ 'opaque': controlLayer.isShow }" class="header">
+    <div :class="{ 'opaque': controlLayer.isShow }"
+         class="header"
+         @mouseout="controlLayer.preventClosing=false"
+         @mouseover="controlLayer.preventClosing=true">
         <div class="buttons">
             <!-- 更多 -->
             <el-icon>
@@ -35,7 +38,10 @@ const controlLayer = reactive(new ControlLayer())
     </div>
 
     <!-- 底部 -->
-    <div :class="{ 'opaque': controlLayer.isShow }" class="footer">
+    <div :class="{ 'opaque': controlLayer.isShow }"
+         class="footer"
+         @mouseout="controlLayer.preventClosing=false"
+         @mouseover="controlLayer.preventClosing=true">
         <!--进度条-->
         <ProgressBar v-model:value="videoElement.playTime"
                      :max="videoElement.maxDuration"

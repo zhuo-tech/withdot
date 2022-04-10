@@ -7,6 +7,10 @@ export class ControlLayer {
     private static readonly CONTROL_LAYER_HIDE_DELAY = 2
 
     public isShow: boolean
+    /**
+     * 当鼠标处悬停于控制层操作按钮上时, 阻止关闭
+     */
+    public preventClosing: boolean = false
     private timeoutTimer: any
 
     public show() {
@@ -16,6 +20,9 @@ export class ControlLayer {
     }
 
     public close() {
+        if (this.preventClosing) {
+            return
+        }
         this.isShow = false
     }
 
