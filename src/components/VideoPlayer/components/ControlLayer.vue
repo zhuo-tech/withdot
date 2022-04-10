@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { TimeUnit } from 'typescript-util'
 import { inject, reactive } from 'vue'
-import ProgressBar from '../components/ProgressBar.vue'
 import { ControlLayer } from '../context/ControlLayer'
 import { PlayerContext } from '../context/PlayerContext'
+import DoubleSpeed from './DoubleSpeed.vue'
+import ProgressBar from './ProgressBar.vue'
 
 /**
  * 控制器层
@@ -47,10 +48,16 @@ const controlLayer = reactive(new ControlLayer())
         <div class="buttons">
             <div class="left">
                 <!-- 播放按钮 -->
-                <el-icon @click="videoElement.togglePlayState()">
-                    <video-play v-show="!videoElement.playing" />
-                    <video-pause v-show="videoElement.playing" />
-                </el-icon>
+                <el-tooltip placement="top">
+                    <el-icon @click="videoElement.togglePlayState()">
+                        <video-play v-show="!videoElement.playing" />
+                        <video-pause v-show="videoElement.playing" />
+                    </el-icon>
+                    <template #content>
+                        <span v-show="!videoElement.playing">播放</span>
+                        <span v-show="videoElement.playing">暂停</span>
+                    </template>
+                </el-tooltip>
                 <!-- 时间 -->
                 <div class="time">
                     {{ TimeUnit.SECOND.display(videoElement.playTime) }} /
@@ -58,14 +65,21 @@ const controlLayer = reactive(new ControlLayer())
                 </div>
             </div>
             <div class="right">
+                <!-- 倍速 -->
+                <DoubleSpeed v-model:value="videoElement.playbackRate" />
 
                 <!-- 设置 -->
-                <el-icon>
-                    <tools />
-                </el-icon>
+                <el-tooltip placement="top">
+                    <el-icon>
+                        <tools />
+                    </el-icon>
+                    <template #content>
+                        设置
+                    </template>
+                </el-tooltip>
 
                 <!-- 音量 -->
-                <el-tooltip class="box-item" placement="top">
+                <el-tooltip placement="top">
                     <el-icon>
                         <headset />
                     </el-icon>
@@ -75,9 +89,14 @@ const controlLayer = reactive(new ControlLayer())
                 </el-tooltip>
 
                 <!-- 全屏 -->
-                <el-icon @click="playerBoxElement.toggleFullScreen()">
-                    <full-screen />
-                </el-icon>
+                <el-tooltip placement="top">
+                    <el-icon @click="playerBoxElement.toggleFullScreen()">
+                        <full-screen />
+                    </el-icon>
+                    <template #content>
+                        切换全屏
+                    </template>
+                </el-tooltip>
             </div>
         </div>
     </div>
