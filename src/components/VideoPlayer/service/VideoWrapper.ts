@@ -111,7 +111,9 @@ export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
             }
 
             this.element.ontimeupdate = (event) => {
-                this.log.trace(event.type, '播放时间', this.currentTime, TimeUnit.SECOND.display(this.currentTime), '播放结束: ', this.ended)
+                if (this.log.isTraceEnable()) {
+                    this.log.trace(event.type, '播放时间', this.currentTime, TimeUnit.SECOND.display(this.currentTime), '播放结束: ', this.ended)
+                }
                 for (const cb of this.timeUpdateCallback) {
                     try {
                         cb(this.currentTime)
@@ -133,6 +135,23 @@ export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
         }
         const length = this.readyCallback.push(callback)
         return length - 1
+    }
+
+    /**
+     * 视频缓冲时间
+     */
+    public get bufferTime() {
+        if (!this._element) {
+            console.debug('不存在的')
+            return 0
+        }
+        const buffer: TimeRanges = this.element.buffered
+        if (buffer.length <= 0) {
+            return 0
+        }
+
+        // 只看最后一个 TimeRanges 的结束时间
+        return buffer.end(buffer.length - 1)
     }
 
     /**

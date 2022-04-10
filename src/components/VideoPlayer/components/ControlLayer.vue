@@ -48,6 +48,7 @@ service.eventCenter.addEventListener('DraggableLeaveEvent', (event) => {
          @mouseover="controlLayer.preventClosing=true">
         <!--进度条-->
         <ProgressBar v-model:value="videoElement.playTime"
+                     :buffer-value="videoElement.bufferTime"
                      :max="videoElement.maxDuration"
                      :min="minDuration"
                      :format-tips="(t) => TimeUnit.SECOND.display(t)"

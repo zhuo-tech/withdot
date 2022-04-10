@@ -8,6 +8,7 @@ import { PlayerContext } from '../context/PlayerContext'
  *  - video dom 对象注册
  *  - TODO: 控制视频缩放比
  *  - TODO: 处理视频资源加载, 清晰度切换
+ *  - TODO: 加载中状态
  *  @inject service {@link PlayerContext}
  */
 const service = inject(PlayerContext.INJECTION_KEY) as PlayerContext

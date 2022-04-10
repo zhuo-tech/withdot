@@ -3,7 +3,6 @@ import { CoreDot } from '@/model/entity/CoreDot'
 import { inject, onMounted, onUnmounted, reactive } from 'vue'
 import { DraggableContext } from '../context/DraggableContext'
 import { PlayerContext } from '../context/PlayerContext'
-import { DraggableLeaveEvent } from '../service/DraggableLeaveEvent'
 
 /**
  * 可拖动的盒子容器
@@ -43,7 +42,7 @@ onMounted(() => {
 <template>
 <div :ref="el => context.divRef = el"
      class="draggable"
-     @mouseleave="service.eventCenter.push(new DraggableLeaveEvent(Date.now()))"
+     @mouseleave="service.pushDraggableLeaveEvent(Date.now())"
      @mousemove.prevent="event => context.dragReLocate(event)"
      @mouseup.prevent="context.closeAdsorption()"
      @mousedown.prevent="event => context.onMouseDown(event)">

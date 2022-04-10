@@ -2,6 +2,7 @@ import { InjectionKey } from '@vue/runtime-core'
 import { EventCenter, SimpleEventCenter } from 'typescript-util'
 import { AspectRatio } from '../service/AspectRatio'
 import { DivWrapper } from '../service/DivWrapper'
+import { DraggableLeaveEvent } from '../service/DraggableLeaveEvent'
 import { PlayerEventRegister } from '../service/PlayerEventRegister'
 import { PlayerResizeEvent } from '../service/PlayerResizeEvent'
 import { VideoWrapper } from '../service/VideoWrapper'
@@ -36,7 +37,21 @@ export class PlayerContext {
         this.playerBoxElement.resizeHeight(width, height)
 
         const {width: w, height: h} = this.playerBoxElement.realWidthHeight
-        this.eventCenter.push(new PlayerResizeEvent(w, h))
+        this.pushPlayerResizeEvent(w, h)
+    }
+
+    /**
+     * 事件发布: 播放器大小调整
+     */
+    public pushPlayerResizeEvent(width: number, height: number) {
+        this.eventCenter.push(new PlayerResizeEvent(width, height))
+    }
+
+    /**
+     * 事件发布: 离开可拖动组件
+     */
+    public pushDraggableLeaveEvent(timestamp: number) {
+        this.eventCenter.push(new DraggableLeaveEvent(timestamp))
     }
 
 }

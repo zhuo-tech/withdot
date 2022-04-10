@@ -99,11 +99,12 @@ export class LoggerConsoleImpl implements Logger {
     }
 
     private formatInfo(level: LoggerLevel): string[] {
+        const color = '#ffacf0'
         return [
             `%c ${ new Date().toLocaleTimeString() } %c${ LoggerLevelDisplayName[level] }%c - [${ this.name }]: `,
             'color: #717C86; background: #030307;',
             `color: ${ LoggerConsoleImpl.levelColor[level] }; background: #030307;`,
-            'color: #da30f5; background: #030307;',
+            `color: ${ color }; background: #030307;`,
         ]
     }
 
