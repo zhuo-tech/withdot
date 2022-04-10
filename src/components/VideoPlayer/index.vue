@@ -27,7 +27,9 @@ const props = defineProps({
 })
 
 const resize = () => service.resizePlayer(props.aspectRatio)
-service.playerBoxElement.onInitializeFinish(() => window.addEventListener('resize', resize, {passive: true}))
+const addWindowListener = () => window.addEventListener('resize', resize, {passive: true})
+
+service.playerBoxElement.onInitializeFinish(addWindowListener)
 onMounted(resize)
 onUnmounted(() => window.removeEventListener('resize', resize))
 

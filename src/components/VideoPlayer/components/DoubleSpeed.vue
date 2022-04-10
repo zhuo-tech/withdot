@@ -13,9 +13,9 @@ const emits = defineEmits<{
 
 const optionMapping = {
     '0.5x': 0.5,
-    '0.75x': 0.75,
     '1.0x': 1,
     '1.25x': 1.25,
+    '1.5x': 1.5,
     '1.75x': 1.75,
     '2x': 2,
     '3x': 3,
@@ -26,12 +26,19 @@ function selectOption(value: number) {
     emits('update:value', value)
 }
 
+function showSpeed() {
+    if (props.value === optionMapping['1.0x']) {
+        return '倍速'
+    }
+    return ObjectUtil.keyValueReverse(optionMapping)[props.value]
+}
+
 </script>
 
 <template>
 <el-tooltip placement="top">
     <span class="double-speed">
-        {{ ObjectUtil.keyValueReverse(optionMapping)[value] }}
+        {{ showSpeed() }}
     </span>
     <template #content>
         <ul class="speed-option">

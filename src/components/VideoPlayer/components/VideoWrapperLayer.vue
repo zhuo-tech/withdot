@@ -6,7 +6,7 @@ import { PlayerContext } from '../context/PlayerContext'
  * 包裹 video 标签
  * 提供:
  *  - video dom 对象注册
- *  - TODO: 控制视频视频缩放比
+ *  - TODO: 控制视频缩放比
  *  - TODO: 处理视频资源加载, 清晰度切换
  *  @inject service {@link PlayerContext}
  */

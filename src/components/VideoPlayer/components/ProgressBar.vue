@@ -17,7 +17,7 @@ const props = defineProps({
     },
     bufferValue: {
         type: Number,
-        default: 50,
+        default: 0,
     },
     min: {
         type: Number,
