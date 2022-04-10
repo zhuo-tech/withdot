@@ -17,10 +17,11 @@ const controlLayer = reactive(new ControlLayer())
 
 <template>
 <div class="video-control"
+     @mousemove="controlLayer.show()"
      @mouseout="controlLayer.close()"
      @mouseover="controlLayer.show()">
     <!-- 顶部 -->
-    <div v-show="controlLayer.isShow" class="header">
+    <div :class="{ 'opaque': controlLayer.isShow }" class="header">
         <div class="buttons">
             <!-- 更多 -->
             <el-icon>
@@ -29,15 +30,11 @@ const controlLayer = reactive(new ControlLayer())
             <el-icon>
                 <operation />
             </el-icon>
-            <!-- 设置 -->
-            <el-icon>
-                <tools />
-            </el-icon>
         </div>
     </div>
 
     <!-- 底部 -->
-    <div v-show="controlLayer.isShow" class="footer">
+    <div :class="{ 'opaque': controlLayer.isShow }" class="footer">
         <!--进度条-->
         <ProgressBar v-model:value="videoElement.playTime"
                      :max="videoElement.maxDuration"
@@ -49,12 +46,25 @@ const controlLayer = reactive(new ControlLayer())
         <!-- 控制按钮 -->
         <div class="buttons">
             <div class="left">
+                <!-- 播放按钮 -->
                 <el-icon @click="videoElement.togglePlayState()">
                     <video-play v-show="!videoElement.playing" />
                     <video-pause v-show="videoElement.playing" />
                 </el-icon>
+                <!-- 时间 -->
+                <div class="time">
+                    {{ TimeUnit.SECOND.display(videoElement.playTime) }} /
+                    {{ TimeUnit.SECOND.display(videoElement.maxDuration) }}
+                </div>
             </div>
             <div class="right">
+
+                <!-- 设置 -->
+                <el-icon>
+                    <tools />
+                </el-icon>
+
+                <!-- 音量 -->
                 <el-tooltip class="box-item" placement="top">
                     <el-icon>
                         <headset />
@@ -64,7 +74,7 @@ const controlLayer = reactive(new ControlLayer())
                     </template>
                 </el-tooltip>
 
-                <!-- 全屏按钮 -->
+                <!-- 全屏 -->
                 <el-icon @click="playerBoxElement.toggleFullScreen()">
                     <full-screen />
                 </el-icon>

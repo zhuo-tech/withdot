@@ -4,28 +4,35 @@
     height: 100%
     position: relative
 
-    .buttons
-        width: 100%
-        height: 40px
-        font-size: 30px
-        line-height: 40px
-        padding: 5px
-        box-sizing: border-box
+    // 工具栏高度
+    --header-height: 50px
+    --footer-height: 50px
+    --control-font-size: 20px
+    --control-line-height: 50px
+    --control--color: #FFF
 
-    // 控制层显隐渐变
     .header,
     .footer
-        filter: opacity(.5)
-        transition: all ease 1s
+        color: var(--control--color)
+        height: var(--footer-height)
+        transition: all cubic-bezier(0, 1.18, 0.38, 1.08) 2s
+        filter: opacity(0)
 
-    .header:hover,
-    .footer:hover
-        filter: opacity(1)
+        .buttons
+            i
+                display: inline-block
+                font-size: 30px
+                line-height: var(--control-line-height)
+                padding: 10px
+                width: 50px
+                height: 50px
+                box-sizing: border-box
 
     // 顶部控制栏
     .header
+        background: linear-gradient(0deg, rgba(255, 255, 255, 0), rgba(0, 0, 0, .3), rgba(0, 0, 0, .7))
         width: 100%
-        height: 50px
+        height: var(--header-height)
         position: absolute
         top: 0
         left: 0
@@ -37,17 +44,35 @@
 
     // 底部控制栏
     .footer
-        background-color: rgba(163, 160, 161, 0.82)
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(0, 0, 0, .3), rgba(0, 0, 0, .7))
         width: 100%
-        height: 50px
-
+        height: var(--footer-height)
         position: absolute
         bottom: 0
         left: 0
 
-        .el-slider
-            height: 10px
+        .progress-bar
+            position: absolute
 
         .buttons
             display: flex
             justify-content: space-between
+
+            .left,
+            .right
+                display: flex
+                align-items: stretch
+                height: var(--footer-height)
+
+            .left > *,
+            .right > *
+                flex: 0 1 auto
+
+            .time
+                padding: 0 5px
+                font-size: var(--control-font-size)
+                line-height: var(--control-line-height)
+
+
+.opaque
+    filter: opacity(1) !important

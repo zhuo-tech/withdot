@@ -89,6 +89,7 @@ export function createVueRouterInstantiate(): Router {
     }
 
     instantiate.onError((error: any, to: RouteLocationNormalized, from: RouteLocationNormalizedLoaded): any => {
+        console.groupEnd()
         log.error('导航错误', from.path, ' => ', to.path, error)
     })
 

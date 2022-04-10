@@ -65,8 +65,8 @@ onMounted(() => {
     background-color: rgba(65, 71, 77, 0.47)
     border: 1px solid
 
-    width: 300px
-    height: 300px
+    width: 200px
+    height: 200px
 
     cursor: pointer
 

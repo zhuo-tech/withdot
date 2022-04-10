@@ -7,6 +7,7 @@ import { reactive } from 'vue'
 const list: Array<CoreDot> = reactive([])
 
 ObjectUtil.toArray(CoreDotType)
+    .filter((t, i) => i < 3)
     .forEach(kv => {
         let dot = new CoreDot()
         dot.type = kv.value
