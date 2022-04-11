@@ -15,6 +15,9 @@ const RouterConfigItem: RouteRecordRaw[] = [
     {
         path: '/my',
         component: Layout,
+        meta: {
+            isMenu: false,
+        },
         children: [
             {
                 path: 'profile',
