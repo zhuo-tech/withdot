@@ -4,9 +4,9 @@ import { QuestionTypeEnum } from "../QuestionTypeEnum";
 /**
  * 学员考试记录
  */
-export default class CoreMemberExamLog implements BaseEntity {
+export default class CoreStudentExamLog implements BaseEntity {
     
-    public static readonly TABLE_NAME = 'core_member_exam_log'
+    public static readonly TABLE_NAME = 'core_student_exam_log'
 
     /**
      * 考试记录
@@ -16,7 +16,7 @@ export default class CoreMemberExamLog implements BaseEntity {
     /**
      * 学生ID
      */
-    memberId: string
+    studentId: string
 
     /**
      * 打点ID
