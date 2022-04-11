@@ -1,0 +1,75 @@
+.progress-bar
+    // 进度条高度
+    --progress-bar-height: 5px
+    // 轨道背景色
+    --track-bgc: rgba(255, 255, 255, .3)
+    // TIPS 背景色
+    --tips-bgc: rgba(132, 144, 156, .3)
+    // 缓冲轨道背景色
+    --buffer-layer-bgc: rgba(101, 98, 98, 0.5)
+    // 进度着色
+    --display-layer-bgc: rgba(255, 154, 242, .7)
+    // 进度按钮背景色
+    --progress-button-bgc: rgba(114, 169, 255, 0.9)
+
+.progress-bar > *
+    height: var(--progress-bar-height)
+    position: absolute
+    width: 100%
+    cursor: pointer
+
+.progress-bar
+    width: 100%
+    height: var(--progress-bar-height)
+    position: relative
+
+    // 轨道
+    .track
+        background-color: var(--track-bgc)
+
+        .tips
+            display: block
+            opacity: 0
+            position: absolute
+            transform: translate(-35%, -100%)
+            padding: 5px
+
+            top: -5px
+            border-radius: 3px
+            background-color: var(--tips-bgc)
+
+            transition: opacity ease 0.5s
+
+    .track:hover .tips
+        opacity: 1
+
+    // 缓冲轨道
+    .buffer-layer
+        background-color: var(--buffer-layer-bgc)
+
+    .buffer-layer,
+    .display-layer,
+    .other
+        pointer-events: none
+
+    .linear-animation
+        transition: all linear 0.1s
+
+    .display-layer
+        position: relative
+
+        // 进度条逝去进度着色
+        background-color: var(--display-layer-bgc)
+
+        // 操作按钮
+        .progress-button
+            pointer-events: auto
+            position: absolute
+            top: 0
+            right: 0
+            transform: translate(50%, -40%)
+            width: 15px
+            height: 15px
+            background-color: var(--progress-button-bgc)
+            border-radius: 50%
+            box-shadow: 0 0 5px rgba(112, 121, 133, .7)
