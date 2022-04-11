@@ -1,17 +1,20 @@
 <script lang="ts" setup>
+import { VideoEditorContext } from '@/components/VideoEditor/VideoEditorContext'
+import { PlayerContext } from '@/components/VideoPlayer/context/PlayerContext'
 import VideoPlayer from '@/components/VideoPlayer/index.vue'
-import { CoreDot, CoreDotType } from '@/model/entity/CoreDot'
-import { ObjectUtil } from 'typescript-util'
-import { reactive } from 'vue'
+import { provide, reactive } from 'vue'
 import List from './components/List.vue'
 
-const actionList = reactive({
-    currentType: CoreDotType.题目,
-    options: ObjectUtil.toArray(CoreDotType),
-})
+/**
+ * 编辑器
+ * @provide {@link VideoEditorContext}
+ * @provide {@link PlayerContext} 向下注入播放器的上下文 替换编辑器自身
+ */
+const context = reactive(new VideoEditorContext())
+provide(VideoEditorContext.INJECTION_KEY, context as any)
+provide(PlayerContext.INJECTION_KEY, context.playerContext as any)
 
-const pointList = reactive<Array<CoreDot>>([])
-pointList.push(new CoreDot())
+const {actionList, pointList} = context
 </script>
 
 <template>
@@ -34,7 +37,7 @@ pointList.push(new CoreDot())
         </template>
         <template v-slot:operating="{item, index}">
             <el-button type="primary">
-                ???
+                ---
             </el-button>
         </template>
     </List>

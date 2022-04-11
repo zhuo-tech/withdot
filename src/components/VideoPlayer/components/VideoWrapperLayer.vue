@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { inject } from 'vue'
 import { PlayerContext } from '../context/PlayerContext'
+import { ExtendedState, MediaReadyState } from '../service/VideoWrapper'
 
 /**
  * 包裹 video 标签
@@ -15,8 +16,11 @@ const service = inject(PlayerContext.INJECTION_KEY) as PlayerContext
 
 </script>
 <template>
-<div class="video-wrapper">
-    <video :ref="el => service.videoElement.setElement(el)" src="../resource/test.mp4"></video>
+<div v-loading=" service.videoElement.status < MediaReadyState.HAVE_FUTURE_DATA" class="video-wrapper">
+    <video :ref="el => service.videoElement.setElement(el)" src="../resource/test1.mp4"></video>
+</div>
+<div v-show="service.videoElement.status === ExtendedState.PLAY_FINISHED" class="play-finished">
+    <h1 class="relatively-centered" style="text-align: center; font-size: 40px; color: red">播放完成...........</h1>
 </div>
 </template>
 
@@ -31,4 +35,17 @@ const service = inject(PlayerContext.INJECTION_KEY) as PlayerContext
     video
         flex: 0 1 auto
         height: 100%
+
+.play-finished
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+
+.relatively-centered
+    position: relative
+    top: 50%
+    left: 50%
+    transform: translate(-50%, -50%)
 </style>

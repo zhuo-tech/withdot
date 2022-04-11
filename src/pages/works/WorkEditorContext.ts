@@ -36,6 +36,7 @@ export class WorkEditorContext {
         this.workDataIsLoading.value = true
 
         const withArg = new QueryChainWrapper<CoreMaterial>(CoreMaterial.TABLE_NAME)
+            .show('href')
             .getWithArg<CoreWork>('_id', 'material_id', 'material')
 
         this.client.queryWrapper()

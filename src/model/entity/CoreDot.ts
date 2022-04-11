@@ -73,19 +73,19 @@ export enum DotDisplayType {
     EXPANDED = 'expanded'
 }
 
-type DotConfig = CoreExamDotConfig | CoreTextDotConfig
+/**
+ * 打点配置
+ */
+type DotConfig = CoreExamDotConfig<any>  | CoreTextDotConfig
 
 /**
- * 测验(题目)
+ * 视频打点考试配置
  */
-export interface CoreExamDotConfig {
-    list: {
-        question: any
-        score: number
-    }[]
-
-    passLine: number
-    lock: boolean
+export interface CoreExamDotConfig<T> {
+    exam: Array<T>
+    totalScore: number,
+    passScore: number,
+    lockFlag: true
 }
 
 /**
@@ -94,3 +94,5 @@ export interface CoreExamDotConfig {
 export interface CoreTextDotConfig {
     text: string
 }
+
+

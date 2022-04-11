@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, onUnmounted, provide, reactive } from 'vue'
+import { inject, onMounted, onUnmounted, provide, reactive } from 'vue'
 import ControlLayer from './components/ControlLayer.vue'
 import StageLayer from './components/StageLayer.vue'
 import VideoWrapperLayer from './components/VideoWrapperLayer.vue'
@@ -10,9 +10,10 @@ import { AspectRatio } from './service/AspectRatio'
  * 播放器
  * @props aspectRatio 播放器宽高比 {@link AspectRatio}
  * @props pointList 需要渲染的小组件列表 {@link Array<CoreDot>}
- * @provide {@link PlayerContext.INJECTION_KEY}
+ * @inject {@link PlayerContext} 如果有提供注入, 使用注入的上下文(编辑模式); 如果没有, 新建一个 (纯播放模式)
+ * @provide {@link PlayerContext.INJECTION_KEY} 继续向下提供上下文注入
  */
-const service = reactive(new PlayerContext())
+const service = inject(PlayerContext.INJECTION_KEY, reactive(new PlayerContext()) as any)
 provide(PlayerContext.INJECTION_KEY, service as any)
 
 const props = defineProps({
@@ -29,6 +30,7 @@ const props = defineProps({
 const resize = () => service.resizePlayer(props.aspectRatio)
 const addWindowListener = () => window.addEventListener('resize', resize, {passive: true})
 
+// resize 中 resizePlayer 依赖 playerBoxElement 的属性, 故监听器延迟到DOM初始化后添加. mounted 同理.
 service.playerBoxElement.onInitializeFinish(addWindowListener)
 onMounted(resize)
 onUnmounted(() => window.removeEventListener('resize', resize))

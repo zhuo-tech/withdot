@@ -49,6 +49,12 @@ export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
      */
     public playing: boolean = false
     /**
+     * 视频状态: 初始化, 加载, 播放完成等
+     * 由 load 相关事件维护
+     * @see VideoState
+     */
+    public status: VideoState = ExtendedState.UNINITIALIZED
+    /**
      * 内部维护的视频时长, 单位 秒;  与 {@link videoDuration} 的区别在于 这个字段应该是响应式的
      */
     public maxDuration: Ref<number> = ref(0)
@@ -94,37 +100,55 @@ export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
             this.log.trace('尝试设置 空元素, 跳过')
             return
         }
-        if (this._element !== video) {
-            this._element = video
-            this.log.debug('Video DOM 引用初始化')
+        if (this._element === video) {
+            return
+        }
 
-            this.element.onloadeddata = () => {
-                if (this.element.readyState >= MediaReadyState.HAVE_FUTURE_DATA) {
-                    for (let cb of this.readyCallback) {
-                        try {
-                            cb?.()
-                        } catch (e) {
-                            this.log.warn('就绪回调执行失败', e)
-                        }
+        this._element = video
+        this.log.debug('Video DOM 引用初始化')
+
+        // 加载状态
+        this.element.onloadeddata = (event) => {
+            this.status = this.element.readyState
+            this.log.info('加载数据', this.element.readyState, event)
+
+            if (this.element.readyState >= MediaReadyState.HAVE_FUTURE_DATA) {
+                for (let cb of this.readyCallback) {
+                    try {
+                        cb?.()
+                    } catch (e) {
+                        this.log.warn('就绪回调执行失败', e)
                     }
                 }
             }
+        }
 
-            this.element.ontimeupdate = (event) => {
-                if (this.log.isTraceEnable()) {
-                    this.log.trace(event.type, '播放时间', this.currentTime, TimeUnit.SECOND.display(this.currentTime), '播放结束: ', this.ended)
+        this.element.onloadstart = (event) => {
+            this.log.info('on load start', event)
+        }
+
+        this.element.onloadedmetadata = (event) => {
+            this.status = this.element.readyState
+            this.log.info('on load metadata', event)
+        }
+
+        // 播放时间更新
+        this.element.ontimeupdate = (event) => {
+            if (this.log.isTraceEnable()) {
+                this.log.trace(event.type, '播放时间', this.currentTime, TimeUnit.SECOND.display(this.currentTime), '播放结束: ', this.ended)
+            }
+            for (const cb of this.timeUpdateCallback) {
+                try {
+                    cb(this.currentTime)
+                } catch (e) {
+                    this.log.warn(e)
                 }
-                for (const cb of this.timeUpdateCallback) {
-                    try {
-                        cb(this.currentTime)
-                    } catch (e) {
-                        this.log.trace(e)
-                    }
-                }
-                // 通知播放完成
-                if (this.ended) {
-                    this.onPlayFinished?.()
-                }
+            }
+            // 通知播放完成
+            if (this.ended) {
+                this.status = ExtendedState.PLAY_FINISHED
+                this.pause()
+                this.onPlayFinished?.()
             }
         }
     }
@@ -142,7 +166,6 @@ export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
      */
     public get bufferTime() {
         if (!this._element) {
-            console.debug('不存在的')
             return 0
         }
         const buffer: TimeRanges = this.element.buffered
@@ -185,8 +208,9 @@ export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
 
     /**
      * 当前网络活动
+     * @see MediaNetworkState
      */
-    public get networkState(): number {
+    public get networkState(): MediaNetworkState {
         return this.element.networkState
     }
 
@@ -345,6 +369,7 @@ export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
      */
     public pause() {
         this.element.pause()
+        this.playing = false
         this.log.trace('播放暂停')
     }
 
@@ -354,7 +379,10 @@ export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
      */
     public play() {
         this.element.play()
-            .then(() => this.log.debug('开始播放'))
+            .then(() => {
+                this.log.debug('开始播放')
+                this.playing = true
+            })
             .catch((err) => this.log.warn('播放失败', err))
     }
 
@@ -368,7 +396,6 @@ export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
         } else {
             this.play()
         }
-        this.playing = !this.playing
     }
 
 }
@@ -391,4 +418,43 @@ export enum MediaReadyState {
     HAVE_CURRENT_DATA,
     HAVE_FUTURE_DATA,
     HAVE_ENOUGH_DATA
+}
+
+/**
+ * 在 {@link MediaReadyState} 之外 扩充定义的状态
+ */
+export enum ExtendedState {
+    /**
+     * 未初始化
+     */
+    UNINITIALIZED = -1,
+    /**
+     * 播放完成
+     */
+    PLAY_FINISHED = 10
+}
+
+export type VideoState = MediaReadyState | ExtendedState
+
+/**
+ * 媒体网络状态
+ * @see <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLMediaElement/networkState">HTMLMediaElement.networkState - Web API 接口参考 _ MDN</a>
+ */
+export enum MediaNetworkState {
+    /**
+     * 没有数据
+     */
+    NETWORK_EMPTY= 0,
+    /**
+     * 网络空闲
+     */
+    NETWORK_IDLE = 1,
+    /**
+     * 正在下载
+     */
+    NETWORK_LOADING = 2,
+    /**
+     * 没有找到 src
+     */
+    NETWORK_NO_SOURCE = 3
 }

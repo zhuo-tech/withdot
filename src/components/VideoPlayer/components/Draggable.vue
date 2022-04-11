@@ -38,11 +38,17 @@ onMounted(() => {
     })
 })
 
+// 快速拖动时, 因为 mouse move 的延迟, 鼠标指针会移出容器范围 无法触发 mouseup 来清除 Adsorption 状态
+const mouseLeave = () => {
+    service.pushDraggableLeaveEvent(Date.now())
+    context.closeAdsorption()
+}
+
 </script>
 <template>
 <div :ref="el => context.divRef = el"
      class="draggable"
-     @mouseleave="service.pushDraggableLeaveEvent(Date.now())"
+     @mouseleave="mouseLeave"
      @mousemove.prevent="event => context.dragReLocate(event)"
      @mouseup.prevent="context.closeAdsorption()"
      @mousedown.prevent="event => context.onMouseDown(event)">
