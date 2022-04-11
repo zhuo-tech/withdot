@@ -1,4 +1,5 @@
 import { BaseEntity } from '@/model/BaseEntity'
+import { CoreExam } from './CoreExam'
 
 /**
  * 视频播放打点
@@ -56,7 +57,7 @@ export class CoreDot implements BaseEntity {
  * 类型
  */
 export enum CoreDotType {
-    '文本'= 'TEXT',
+    '文本' = 'TEXT',
     '链接' = 'LINK',
     '图片' = 'IMAGE',
     '热区' = 'HOT_SPOT',
@@ -76,13 +77,14 @@ export enum DotDisplayType {
 /**
  * 打点配置
  */
-type DotConfig = CoreExamDotConfig<any>  | CoreTextDotConfig
+type DotConfig = CoreExamDotConfig | CoreTextDotConfig
+
 
 /**
  * 视频打点考试配置
  */
-export interface CoreExamDotConfig<T> {
-    exam: Array<T>
+export interface CoreExamDotConfig {
+    exam: Array<CoreExam>
     totalScore: number,
     passScore: number,
     lockFlag: true

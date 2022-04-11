@@ -1,25 +1,20 @@
-import { CoreExamDotConfig } from "@/model/entity/CoreDot";
-import { MultiQuestionModel } from "@/components/Exam/model/MultiQuestionModel";
+import { CoreExam } from "@/model/entity/CoreExam";
 
 /**
  * 多选题实现逻辑
  */
-class MultiQuestionHandler extends AbstractQuestionHandler<CoreExamDotConfig<MultiQuestionModel>> {
+class MultiQuestionHandler extends AbstractQuestionHandler<CoreExam> {
+    
+    removeById(examId: string, questionId: string): boolean {
+        throw new Error("Method not implemented.");
+    }
     
     /**
      * 保存
      * @param obj 单选题
-     * @return true | false
+     * @return 考试ID
      */
-    saveObj(obj: CoreExamDotConfig<MultiQuestionModel>): boolean {
-        throw new Error("Method not implemented.");
-    }
-
-    /**
-     * 删除
-     * @param quesitonId 题目ID
-     */
-    removeById(quesitonId: string): boolean {
+    saveObj(obj: CoreExam): string {
         throw new Error("Method not implemented.");
     }
 
@@ -27,7 +22,7 @@ class MultiQuestionHandler extends AbstractQuestionHandler<CoreExamDotConfig<Mul
      * 更新
      * @param obj 单选题
      */
-    updateById(obj: CoreExamDotConfig<MultiQuestionModel>): boolean {
+    updateById(obj: CoreExam): boolean {
         throw new Error("Method not implemented.");
     }
 

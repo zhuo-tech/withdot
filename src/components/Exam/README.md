@@ -10,7 +10,7 @@
             "quType": "MULTI", //单选题 多选题 判断题 连线题 排序题 
             "quName": "地球是圆的吗?", 
             "score": 2,
-            "score_weight": false, //是否设置答案的分数
+            "scoreWeight": false, //是否设置答案的分数
             "options":[
               {
                 "id":"10901010891",

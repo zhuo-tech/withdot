@@ -7,16 +7,9 @@ abstract class AbstractQuestionHandler<T> {
     /**
      * 保存答题记录
      * @param obj 题目对象
-     * @return 成功｜失败
+     * @return 考试ID
      */
-    abstract saveObj(obj: T): boolean
-
-    /**
-     * 根据题目ID删除测试中的题目
-     * @param quesitonId 题目类型
-     * @return 成功｜失败
-     */
-    abstract removeById(quesitonId: string): boolean
+    abstract saveObj(obj: T): string
 
     /**
      * 编辑题目记录
@@ -24,5 +17,13 @@ abstract class AbstractQuestionHandler<T> {
      * @return 成功｜失败
      */
     abstract updateById(obj: T): boolean
+
+     /**
+     * 编辑题目记录
+     * @param examId 考试ID
+     * @param questionId 题目ID
+     * @return 成功｜失败
+     */
+    abstract removeById(examId: string,questionId: string): boolean
 
 }

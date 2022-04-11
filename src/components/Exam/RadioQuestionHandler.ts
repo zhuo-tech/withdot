@@ -1,25 +1,20 @@
-import { CoreExamDotConfig } from "@/model/entity/CoreDot";
-import { RadioQuestionModel } from "@/components/Exam/model/RadioQuestionModel";
+import { CoreExam } from "@/model/entity/CoreExam";
 
 /**
  * 单选题实现逻辑
  */
-class RadioQuestionHandler extends AbstractQuestionHandler<CoreExamDotConfig<RadioQuestionModel>> {
+class RadioQuestionHandler extends AbstractQuestionHandler<CoreExam> {
+   
+    removeById(examId: string, questionId: string): boolean {
+        throw new Error("Method not implemented.");
+    }
     
     /**
      * 保存
      * @param obj 单选题
      * @return true | false
      */
-    saveObj(obj: CoreExamDotConfig<RadioQuestionModel>): boolean {
-        throw new Error("Method not implemented.");
-    }
-
-    /**
-     * 删除
-     * @param quesitonId 题目ID
-     */
-    removeById(quesitonId: string): boolean {
+    saveObj(obj: CoreExam): string {
         throw new Error("Method not implemented.");
     }
 
@@ -27,7 +22,7 @@ class RadioQuestionHandler extends AbstractQuestionHandler<CoreExamDotConfig<Rad
      * 更新
      * @param obj 单选题
      */
-    updateById(obj: CoreExamDotConfig<RadioQuestionModel>): boolean {
+    updateById(obj: CoreExam): boolean {
         throw new Error("Method not implemented.");
     }
 
