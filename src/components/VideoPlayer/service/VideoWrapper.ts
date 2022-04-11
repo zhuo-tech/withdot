@@ -94,37 +94,41 @@ export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
             this.log.trace('尝试设置 空元素, 跳过')
             return
         }
-        if (this._element !== video) {
-            this._element = video
-            this.log.debug('Video DOM 引用初始化')
+        if (this._element === video) {
+            return
+        }
 
-            this.element.onloadeddata = () => {
-                if (this.element.readyState >= MediaReadyState.HAVE_FUTURE_DATA) {
-                    for (let cb of this.readyCallback) {
-                        try {
-                            cb?.()
-                        } catch (e) {
-                            this.log.warn('就绪回调执行失败', e)
-                        }
+        this._element = video
+        this.log.debug('Video DOM 引用初始化')
+
+        // 加载状态
+        this.element.onloadeddata = () => {
+            if (this.element.readyState >= MediaReadyState.HAVE_FUTURE_DATA) {
+                for (let cb of this.readyCallback) {
+                    try {
+                        cb?.()
+                    } catch (e) {
+                        this.log.warn('就绪回调执行失败', e)
                     }
                 }
             }
+        }
 
-            this.element.ontimeupdate = (event) => {
-                if (this.log.isTraceEnable()) {
-                    this.log.trace(event.type, '播放时间', this.currentTime, TimeUnit.SECOND.display(this.currentTime), '播放结束: ', this.ended)
+        // 播放时间更新
+        this.element.ontimeupdate = (event) => {
+            if (this.log.isTraceEnable()) {
+                this.log.trace(event.type, '播放时间', this.currentTime, TimeUnit.SECOND.display(this.currentTime), '播放结束: ', this.ended)
+            }
+            for (const cb of this.timeUpdateCallback) {
+                try {
+                    cb(this.currentTime)
+                } catch (e) {
+                    this.log.warn(e)
                 }
-                for (const cb of this.timeUpdateCallback) {
-                    try {
-                        cb(this.currentTime)
-                    } catch (e) {
-                        this.log.trace(e)
-                    }
-                }
-                // 通知播放完成
-                if (this.ended) {
-                    this.onPlayFinished?.()
-                }
+            }
+            // 通知播放完成
+            if (this.ended) {
+                this.onPlayFinished?.()
             }
         }
     }
@@ -142,7 +146,6 @@ export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
      */
     public get bufferTime() {
         if (!this._element) {
-            console.debug('不存在的')
             return 0
         }
         const buffer: TimeRanges = this.element.buffered

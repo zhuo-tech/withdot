@@ -3,7 +3,8 @@
 import { getLogger } from '@/main'
 import { FileInfo } from '@/model/FileInfo'
 import { FileType, FileTypeRegExp } from '@/model/FileType'
-import { INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
+import { FileService, INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
+import { Logger } from '@/tool/log/Logger'
 import { Picture as IconPicture } from '@element-plus/icons-vue'
 import { ObjectUtil, StrUtil } from 'typescript-util'
 import { defineComponent } from 'vue'
@@ -31,8 +32,9 @@ export default defineComponent({
     },
     data() {
         return {
+            fileService: this[INJECT_KEY_FILE_SERVICE] as any,
             log: getLogger('ShowFile'),
-        }
+        } as { fileService: FileService, log: Logger }
     },
     inject: [
         INJECT_KEY_FILE_SERVICE,
@@ -66,7 +68,7 @@ export default defineComponent({
             }
             this.log.debug('渲染类型', type)
 
-            src = this[INJECT_KEY_FILE_SERVICE].showUrl(src)
+            src = this.fileService.showUrl(src)
             // 图片
             if (FileTypeRegExp.IMAGE.test(type)) {
                 return this.renderImage(src)

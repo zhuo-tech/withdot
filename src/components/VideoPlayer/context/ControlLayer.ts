@@ -9,7 +9,7 @@ export class ControlLayer {
 
     public isShow: boolean
     /**
-     * 当鼠标处悬停于控制层操作按钮上时, 阻止关闭
+     * 当鼠标悬停于控制层操作按钮上时, 阻止关闭
      */
     public preventClosing: boolean = false
 
