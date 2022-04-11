@@ -66,6 +66,7 @@ export class ProgressBarContext {
 
     /**
      * 轨道单击事件
+     * TODO: 极端情况下 (move 被干扰? ) 最终计算的值远小于实际值
      */
     public trackOnClick = (event: MouseEvent) => {
         const {offsetX} = event

@@ -4,6 +4,9 @@ import { CoreWork } from '@/model/entity/CoreWork'
 import { LafClient } from 'laf-db-query-wrapper'
 import { reactive, toRefs, watchEffect } from 'vue'
 
+/**
+ * 作品基本信息编辑
+ */
 const props = defineProps({
     data: {
         type: [CoreWork, Object],

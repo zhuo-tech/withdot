@@ -15,6 +15,14 @@ const RouterConfigItem: RouteRecordRaw = {
                 title: '专辑管理',
             },
         },
+        {
+            path: 'edit',
+            component: () => import('./edit.vue'),
+            meta: {
+                isMenu: false,
+                title: '专辑编辑',
+            },
+        },
     ],
 }
 export default RouterConfigItem

@@ -49,9 +49,9 @@ service.eventCenter.addEventListener('DraggableLeaveEvent', (event) => {
         <!--进度条-->
         <ProgressBar v-model:value="videoElement.playTime"
                      :buffer-value="videoElement.bufferTime"
+                     :format-tips="(t) => TimeUnit.SECOND.display(t)"
                      :max="videoElement.maxDuration"
                      :min="minDuration"
-                     :format-tips="(t) => TimeUnit.SECOND.display(t)"
                      @change="(time) => videoElement.setPlayTime(time)">
             <slot></slot>
         </ProgressBar>

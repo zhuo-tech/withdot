@@ -8,7 +8,7 @@ import List from './components/List.vue'
 /**
  * 编辑器
  * @provide {@link VideoEditorContext}
- * @provide {@link PlayerContext} 向下注入播放器的上下文 替换编辑器自身
+ * @provide {@link PlayerContext} 向下注入播放器的上下文 替换播放器自身
  */
 const context = reactive(new VideoEditorContext())
 provide(VideoEditorContext.INJECTION_KEY, context as any)
@@ -20,8 +20,14 @@ const {actionList, pointList} = context
 <template>
 <div class="video-editor-box">
     <!-- 编辑器工具栏 -->
+    <div>
+
+    </div>
+
+    <!-- 播放器 -->
     <VideoPlayer></VideoPlayer>
 
+    <!-- 底部列表 -->
     <el-tabs v-model="actionList.currentType" stretch type="card">
         <el-tab-pane v-for="(kv, index) in actionList.options" :key="index" :label="kv.key" :name="kv.value" />
     </el-tabs>
@@ -41,6 +47,15 @@ const {actionList, pointList} = context
             </el-button>
         </template>
     </List>
+</div>
+
+<!-- 侧边抽屉 -->
+<div>
+
+</div>
+
+<!-- 新增 模态框 -->
+<div>
 
 </div>
 
