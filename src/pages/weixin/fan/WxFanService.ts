@@ -2,6 +2,7 @@ import { cloud } from '@/cloud'
 import { getLogger } from '@/main'
 import BasisCrud from '@/mixin/BasisCrud'
 import { WxAccountFans } from '@/model/entity/WxAccountFans'
+import { LogicDelete } from '@/model/LogicDelete'
 import { RuleItem } from 'async-validator'
 import { Page } from 'laf-db-query-wrapper'
 
@@ -23,7 +24,7 @@ export default class WxFanService extends BasisCrud<WxAccountFans> {
 
     protected pageRequest: (page: Page<WxAccountFans>, query: Partial<WxAccountFans>) => Promise<Page<WxAccountFans>> = async (page, query) => {
         let whereAge: Partial<WxAccountFans> = {
-            delFlag: 0,
+            delFlag: LogicDelete.NORMAL,
         }
         //判断是否有搜索参数
         if (query.nickname) {
@@ -56,7 +57,7 @@ export default class WxFanService extends BasisCrud<WxAccountFans> {
         return await this.DB
             .where({
                 _id: data._id,
-                delFlag: 0,
+                delFlag: LogicDelete.NORMAL,
             })
             .update({
                 remark: data.remark,
@@ -65,7 +66,7 @@ export default class WxFanService extends BasisCrud<WxAccountFans> {
     protected deleteByIdRequest: (id: (string | number)) => Promise<any> = async (id) => {
         return await this.DB
             .where({
-                delFlag: 0,
+                delFlag: LogicDelete.NORMAL,
                 _id: id,
             })
             .remove()

@@ -19,11 +19,11 @@ const props = defineProps<{
         width="45%">
         <el-form :ref="el => service.addFormRef = el"
                  v-loading="service.addFormData.addFormIsLoading"
-                 :model="service.addFormData"
+                 :model="service.addFormData.data"
                  :rules="service.rules">
 
             <el-form-item label="专辑名称" prop="name">
-                <el-input v-model="service.addFormData.name"></el-input>
+                <el-input v-model="service.addFormData.data.name"></el-input>
             </el-form-item>
 
         </el-form>
