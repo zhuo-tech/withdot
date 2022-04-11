@@ -17,7 +17,7 @@ const service = inject(PlayerContext.INJECTION_KEY) as PlayerContext
 </script>
 <template>
 <div v-loading=" service.videoElement.status < MediaReadyState.HAVE_FUTURE_DATA" class="video-wrapper">
-    <video :ref="el => service.videoElement.setElement(el)" src="../resource/test1.mp4"></video>
+    <video :ref="el => service.videoElement.setElement(el)" src="../resource/test.mp4"></video>
 </div>
 <div v-show="service.videoElement.status === ExtendedState.PLAY_FINISHED" class="play-finished">
     <h1 class="relatively-centered" style="text-align: center; font-size: 40px; color: red">播放完成...........</h1>
