@@ -12,6 +12,7 @@
             "score_weight": false, //是否设置答案的分数
             "options":[
               {
+                "id":"10901010891",
                 "label":"A.是",
                 "value": 1
               },
@@ -32,7 +33,7 @@
          {
             "quId": "3",
             "quType": "TKT", //填空题
-            "quName": "{}是{}形的", 
+            "quName": "${}是${}形的", 
             "sort": '3',
             "score": 2,
             "sort_flag": false ,// 是否顺序大题
@@ -53,10 +54,9 @@
          {
              "memberId": '1',
              "dotId": '1',
+             "workerId":"1",
              "score": 60,
              "createTime": 2022-01-01,
-             "origin_answer":[1,2], //正确答案
-             "current_answers":[1,2],  //学生答案
              "answers": [{
                 "quId": "1",
                 "sort": '1',
@@ -73,7 +73,9 @@
                     "label":"A.否",
                     "value": 1
                 },
-                ]
+                ],
+                "origin_answer":[1,2], //正确答案
+                "current_answers":[1,2],  //学生答案
              }]
          }
      ]
