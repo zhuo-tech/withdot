@@ -1,0 +1,35 @@
+.draggable
+    pointer-events: auto
+    display: inline-block
+    cursor: pointer
+
+    .label-mode,
+    .details-mode
+        padding: 5px 10px
+        border-radius: 5px
+        box-shadow: 0 0 5px rgba(112, 121, 133, .4)
+
+    // 收起模式
+    .label-mode
+        background-color: rgba(255, 255, 255, .5)
+
+    // 展开模式 海报
+    .details-mode
+        width: 200px
+        min-height: 100px
+
+    .draggable-right-menu
+        position: absolute
+        width: 100px
+        height: auto
+        list-style: none
+        background-color: rgba(65, 71, 77, .7)
+
+        box-shadow: 0 0 5px rgba(65, 71, 77, .7)
+
+        li
+            padding: 3px 10px
+            border-bottom: 1px solid rgba(16, 16, 16, .5)
+
+        li:last-child
+            border: none

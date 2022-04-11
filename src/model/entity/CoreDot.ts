@@ -14,7 +14,7 @@ export class CoreDot implements BaseEntity {
     /**
      * 组件 打点对应的组件
      */
-    type: string
+    type: CoreDotType
 
     /**
      * 打点的开始时间和结束时间
@@ -52,6 +52,22 @@ export class CoreDot implements BaseEntity {
 
 }
 
+/**
+ * 类型
+ */
+export enum CoreDotType {
+    '文本'= 'TEXT',
+    '链接' = 'LINK',
+    '图片' = 'IMAGE',
+    '热区' = 'HOT_SPOT',
+    '题目' = 'TOPIC',
+    '表单' = 'FORM',
+    '书签' = 'BOOKMARK'
+}
+
+/**
+ * 展示类型
+ */
 export enum DotDisplayType {
     BUTTON = 'button',
     EXPANDED = 'expanded'

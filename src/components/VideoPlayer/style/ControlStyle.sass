@@ -1,0 +1,79 @@
+// 浮层中的第一层: 自定义控制器组件
+.video-control
+    width: 100%
+    height: 100%
+    position: relative
+
+    // 工具栏高度
+    --header-height: 50px
+    --footer-height: 50px
+    --control-font-size: 20px
+    --control-line-height: 50px
+    --control--color: #FFF
+
+    .header,
+    .footer
+        color: var(--control--color)
+        height: var(--footer-height)
+        transition: all cubic-bezier(0, 1.18, 0.38, 1.08) 2s
+        filter: opacity(0)
+
+        .buttons
+            i
+                display: inline-block
+                font-size: 30px
+                line-height: var(--control-line-height)
+                padding: 10px
+                width: 50px
+                height: 50px
+                box-sizing: border-box
+
+    // 顶部控制栏
+    .header
+        background: linear-gradient(0deg, rgba(255, 255, 255, 0), rgba(0, 0, 0, .3), rgba(0, 0, 0, .7))
+        width: 100%
+        height: var(--header-height)
+        position: absolute
+        top: 0
+        left: 0
+
+        .buttons
+            display: flex
+            justify-content: right
+
+
+    // 底部控制栏
+    .footer
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(0, 0, 0, .3), rgba(0, 0, 0, .7))
+        width: 100%
+        height: var(--footer-height)
+        position: absolute
+        bottom: 0
+        left: 0
+
+        .progress-bar
+            position: absolute
+
+        .buttons
+            display: flex
+            justify-content: space-between
+
+            .left,
+            .right
+                display: flex
+                align-items: stretch
+                height: var(--footer-height)
+
+            .left > *,
+            .right > *
+                flex: 0 1 auto
+
+            .time,
+            :deep(.double-speed)
+                padding: 0 5px
+                font-size: var(--control-font-size)
+                line-height: var(--control-line-height)
+
+
+.opaque
+    filter: opacity(1) !important
