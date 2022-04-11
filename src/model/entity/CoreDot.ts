@@ -73,9 +73,15 @@ export enum DotDisplayType {
     EXPANDED = 'expanded'
 }
 
-type DotConfig = CoreExamDotConfig<any> | CoreTextDotConfig
+/**
+ * 打点配置
+ */
+type DotConfig = CoreExamDotConfig<any>  | CoreTextDotConfig
 
-export interface CoreExamDotConfig <T> {
+/**
+ * 视频打点考试配置
+ */
+export interface CoreExamDotConfig<T> {
     exam: Array<T>
     totalScore: number,
     passScore: number,
