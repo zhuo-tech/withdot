@@ -75,12 +75,9 @@ export enum DotDisplayType {
 
 type DotConfig = CoreExamDotConfig | CoreTextDotConfig
 
-/**
- * 测验(题目)
- */
 export interface CoreExamDotConfig {
-    list: {
-        question: any
+    exam: {
+        questions: any
         score: number
     }[]
 
@@ -94,3 +91,5 @@ export interface CoreExamDotConfig {
 export interface CoreTextDotConfig {
     text: string
 }
+
+
