@@ -1,9 +1,10 @@
+import { getToken } from '@/api/token'
 import { LAF_BLASE_URL } from '@/cloud'
 import { LafUploadResponse } from '@/components/Upload/Upload'
 import { getLogger } from '@/main'
 import { FileInfo } from '@/model/FileInfo'
+import type { FileService } from '@/service/FileService'
 import { StorageUnit, StrUtil } from 'typescript-util'
-import type { FileService } from './FileService'
 
 /* 文件常量 */
 export const FILE = {
@@ -31,8 +32,7 @@ export class FileServiceImpl implements FileService {
 
     public getActionUploadHeaders(): Record<string, string> {
         return {
-            // TODO: getToken
-            Authorization: `Bearer sss`,
+            Authorization: getToken(),
         }
     }
 

@@ -1,9 +1,9 @@
 // noinspection JSXNamespaceValidation
 
-import { FileServiceImpl } from '@/components/Upload/FileServiceImpl'
 import { getLogger } from '@/main'
 import { FileInfo } from '@/model/FileInfo'
 import { FileType, FileTypeRegExp } from '@/model/FileType'
+import { INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
 import { Picture as IconPicture } from '@element-plus/icons-vue'
 import { ObjectUtil, StrUtil } from 'typescript-util'
 import { defineComponent } from 'vue'
@@ -11,6 +11,7 @@ import { defineComponent } from 'vue'
 
 /**
  * 兼容多种类型的文件展示
+ * @inject {@link FileService}
  */
 export default defineComponent({
     name: 'ShowFile',
@@ -30,10 +31,12 @@ export default defineComponent({
     },
     data() {
         return {
-            fileService: new FileServiceImpl(),
             log: getLogger('ShowFile'),
         }
     },
+    inject: [
+        INJECT_KEY_FILE_SERVICE,
+    ],
     methods: {
         renderImage(src: string) {
             const imageSlots = {
@@ -63,7 +66,7 @@ export default defineComponent({
             }
             this.log.debug('渲染类型', type)
 
-            src = this.fileService.showUrl(src)
+            src = this[INJECT_KEY_FILE_SERVICE].showUrl(src)
             // 图片
             if (FileTypeRegExp.IMAGE.test(type)) {
                 return this.renderImage(src)

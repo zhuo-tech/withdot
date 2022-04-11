@@ -1,5 +1,7 @@
 // noinspection JSXNamespaceValidation
 
+import { FileService, INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
+import { FileServiceImpl } from '@/service/impl/FileServiceImpl'
 import { ConfigProviderProps } from 'element-plus'
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 import { defineComponent } from 'vue'
@@ -15,6 +17,11 @@ export default defineComponent({
                 message: {max: 10},
             }
         },
+    },
+    provide() {
+        return {
+            [INJECT_KEY_FILE_SERVICE]: new FileServiceImpl() as FileService,
+        }
     },
     render() {
         return (

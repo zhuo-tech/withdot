@@ -1,6 +1,8 @@
 import { LafUploadResponse } from '@/components/Upload/Upload'
 import { FileInfo } from '@/model/FileInfo'
 
+export const INJECT_KEY_FILE_SERVICE = 'fileService'
+
 export interface FileService {
     /**
      * 上传单个小文件

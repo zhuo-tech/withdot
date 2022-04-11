@@ -8,9 +8,8 @@ import { FileInfo } from '@/model/FileInfo'
 import { UploadFilled } from '@element-plus/icons-vue'
 import { UploadFile, UploadFiles, UploadProps, UploadUserFile } from 'element-plus'
 import { CollUtil, ObjectUtil, StrUtil } from 'typescript-util'
-import { reactive, watchEffect } from 'vue'
-import { FileService } from './FileService'
-import { FileServiceImpl } from './FileServiceImpl'
+import { inject, reactive, watchEffect } from 'vue'
+import { FileService, INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
 
 /**
  * 对 el-upload 的包装,
@@ -26,6 +25,7 @@ import { FileServiceImpl } from './FileServiceImpl'
  *     不要传递 action, headres, on-success, fileList 等 上传控制属性,
  *     仅可以传递上传样式控制属性, 如: drag, limit, listType 等 参考: {@link UploadProps}
  *</h3>
+ * @inject {@link FileService}
  * */
 const propsValue = defineProps<{
     tips?: string
@@ -44,7 +44,7 @@ const emit = defineEmits<{
 }>()
 
 const log = getLogger('UploadFile')
-const fileService: FileService = new FileServiceImpl()
+const fileService: FileService = inject(INJECT_KEY_FILE_SERVICE) as FileService
 
 let fileList = reactive<Array<UploadUserFile>>([])
 const {href, hrefs, fileInfo, fileInfoList} = propsValue
