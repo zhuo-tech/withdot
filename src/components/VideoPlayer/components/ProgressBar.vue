@@ -46,7 +46,7 @@ const data = reactive(new ProgressBarContext(props as any, (value) => {
 </script>
 
 <template>
-<div class="progress-bar" @mousemove="data.trackMouseMove">
+<div class="progress-bar" @mousemove="data.trackMouseMove" @mouseleave="data.buttonMouseUp">
     <div :ref="el => data.trackRef.setElement(el)" class="track" @click="data.trackOnClick">
         <div :ref="el => data.tipsRef.setElement(el)" class="tips">
             {{ data.showTipsValue }}

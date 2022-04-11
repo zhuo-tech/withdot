@@ -29,6 +29,7 @@ const props = defineProps({
 const resize = () => service.resizePlayer(props.aspectRatio)
 const addWindowListener = () => window.addEventListener('resize', resize, {passive: true})
 
+// resize 中 resizePlayer 依赖 playerBoxElement 的属性, 故监听器延迟到DOM初始化后添加. mounted 同理.
 service.playerBoxElement.onInitializeFinish(addWindowListener)
 onMounted(resize)
 onUnmounted(() => window.removeEventListener('resize', resize))
