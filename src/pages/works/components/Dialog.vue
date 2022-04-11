@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { addWork, materialList } from '@/api/works'
-import { ElMessage } from 'element-plus'
-import type { FormInstance } from 'element-plus'
-import { reactive, ref } from 'vue'
 import { filterTime } from '@/utils/utils'
+import type { FormInstance } from 'element-plus'
+import { ElMessage } from 'element-plus'
+import { reactive, ref } from 'vue'
 
 const props = defineProps({
     subassembly: {
@@ -93,51 +93,51 @@ getMaterialList()
 </script>
 
 <template>
-    <el-dialog v-model="subassembly.visible" :title="subassembly.title" width="40%">
-        <el-form ref="ruleFormRef" :model="form" :rules="rules" label-width="0">
-            <el-form-item prop="name">
-                <el-input v-model="form.name" placeholder="请输入作品名称" />
-            </el-form-item>
-            <el-form-item prop="title">
-                <el-input v-model="form.title" disabled placeholder="请选择一个视频素材" />
-            </el-form-item>
-            <el-row :gutter="10">
-                <el-col :offset="22" :span="2">
-                    <el-row :gutter="10">
-                        <el-col :span="12">
-                            <el-icon :class="page.current === 1? 'noLast':''" :size="20" @click="lastPage">
-                                <caret-left />
-                            </el-icon>
-                        </el-col>
-                        <el-col :span="12">
-                            <el-icon :class="list.current*list.pageSize >= list.total? 'noLast':''" :size="20" @click="nextPage">
-                                <caret-right />
-                            </el-icon>
-                        </el-col>
-                    </el-row>
-                </el-col>
-            </el-row>
-            <el-row :gutter="10" style="margin-top: 10px">
-                <el-col :span="6">标题</el-col>
-                <el-col :offset="6" :span="6">创建时间</el-col>
-            </el-row>
-            <el-row v-for="(item,index) in list.list"
-                    :key="index" :class="[checkIndex===index?'bg':'','material']"
-                    :gutter="10"
-                    style="margin-top: 20px"
-                    @click="checkMaterial(index,item)">
-                <el-col :span="6">{{ item.title }}</el-col>
-                <el-col :offset="6" :span="6">{{ filterTime(item.createTime) }}</el-col>
-                <el-col :class="[checkIndex===index?'yes':'no','check']" :offset="4" :span="2">已选</el-col>
-            </el-row>
-        </el-form>
-        <template #footer>
-            <span class="dialog-footer">
-              <el-button @click="initialization">取消</el-button>
-              <el-button type="primary" @click="submit">确认</el-button>
-            </span>
-        </template>
-    </el-dialog>
+<el-dialog v-model="subassembly.visible" :title="subassembly.title" width="40%">
+    <el-form ref="ruleFormRef" :model="form" :rules="rules" label-width="0">
+        <el-form-item prop="name">
+            <el-input v-model="form.name" placeholder="请输入作品名称" />
+        </el-form-item>
+        <el-form-item prop="title">
+            <el-input v-model="form.title" disabled placeholder="请选择一个视频素材" />
+        </el-form-item>
+        <el-row :gutter="10">
+            <el-col :offset="22" :span="2">
+                <el-row :gutter="10">
+                    <el-col :span="12">
+                        <el-icon :class="page.current === 1? 'noLast':''" :size="20" @click="lastPage">
+                            <caret-left />
+                        </el-icon>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-icon :class="list.current*list.pageSize >= list.total? 'noLast':''" :size="20" @click="nextPage">
+                            <caret-right />
+                        </el-icon>
+                    </el-col>
+                </el-row>
+            </el-col>
+        </el-row>
+        <el-row :gutter="10" style="margin-top: 10px">
+            <el-col :span="6">标题</el-col>
+            <el-col :offset="6" :span="6">创建时间</el-col>
+        </el-row>
+        <el-row v-for="(item,index) in list.list"
+                :key="index" :class="[checkIndex===index?'bg':'','material']"
+                :gutter="10"
+                style="margin-top: 20px"
+                @click="checkMaterial(index,item)">
+            <el-col :span="6">{{ item.title }}</el-col>
+            <el-col :offset="6" :span="6">{{ filterTime(item.createTime) }}</el-col>
+            <el-col :class="[checkIndex===index?'yes':'no','check']" :offset="4" :span="2">已选</el-col>
+        </el-row>
+    </el-form>
+    <template #footer>
+        <span class="dialog-footer">
+            <el-button @click="initialization">取消</el-button>
+            <el-button type="primary" @click="submit">确认</el-button>
+        </span>
+    </template>
+</el-dialog>
 </template>
 
 <style lang="less" scoped>

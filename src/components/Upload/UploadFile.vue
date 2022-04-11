@@ -4,14 +4,13 @@ import ShowFile from '@/components/Upload/ShowFile'
 import { LafUploadResponse } from '@/components/Upload/Upload'
 import { getLogger } from '@/main'
 import { FileInfo } from '@/model/FileInfo'
+// noinspection ES6UnusedImports
+import { UploadFilled } from '@element-plus/icons-vue'
 import { UploadFile, UploadFiles, UploadProps, UploadUserFile } from 'element-plus'
 import { CollUtil, ObjectUtil, StrUtil } from 'typescript-util'
 import { reactive, watchEffect } from 'vue'
 import { FileService } from './FileService'
 import { FileServiceImpl } from './FileServiceImpl'
-import { FileTypeRegExp } from '@/model/FileType'
-// noinspection ES6UnusedImports
-import { UploadFilled } from '@element-plus/icons-vue'
 
 /**
  * 对 el-upload 的包装,
@@ -143,103 +142,110 @@ const previewControl = reactive<{
 </script>
 
 <template>
-    <el-upload :action="fileService.getActionUploadUrl()"
-               :file-list="fileList"
-               :headres="fileService.getActionUploadHeaders()"
-               :on-preview="file => previewControl.onPreview(file)"
-               :on-remove="onRemove"
-               :on-success="onUploadSuccess"
-               style="width: 100%;"
-               v-bind="$attrs">
-        <!-- 上传控制区域 -->
-        <slot>
-            <div v-if="$attrs.drag && $attrs.listType !== 'picture-card'">
-                <el-icon class="el-icon--upload">
-                    <UploadFilled />
-                </el-icon>
-                <div class="el-upload__text">
-                    将文件拖放到此处或
-                    <em>点击上传</em>
-                </div>
-            </div>
-            <el-icon v-else-if="$attrs.listType === 'picture-card'">
-                <Plus />
+<el-upload :action="fileService.getActionUploadUrl()"
+           :file-list="fileList"
+           :headres="fileService.getActionUploadHeaders()"
+           :on-preview="file => previewControl.onPreview(file)"
+           :on-remove="onRemove"
+           :on-success="onUploadSuccess"
+           style="width: 100%;"
+           v-bind="$attrs">
+    <!-- 上传控制区域 -->
+    <slot>
+        <div v-if="$attrs.drag && $attrs.listType !== 'picture-card'">
+            <el-icon class="el-icon--upload">
+                <UploadFilled />
             </el-icon>
-            <el-button v-else type="primary">点击上传</el-button>
-        </slot>
-
-        <!-- TIPS -->
-        <template #tip>
-            <div class="el-upload__tip">
-                {{ tips || 'jpg/png 小于 500KB 的文件。' }}
+            <div class="el-upload__text">
+                将文件拖放到此处或
+                <em>点击上传</em>
             </div>
-        </template>
+        </div>
+        <el-icon v-else-if="$attrs.listType === 'picture-card'">
+            <Plus />
+        </el-icon>
+        <el-button v-else type="primary">点击上传</el-button>
+    </slot>
 
-        <!-- 文件列表 -->
-        <template #file="{file}">
-            <div class="fileStyle">
-                <ShowFile :file="file.response"></ShowFile>
-                <span class="el-upload-list__item-actions">
-                    <span class="el-upload-list__item-preview" @click="previewControl.onPreview(file)">
-                        <el-icon><zoom-in /></el-icon>
-                    </span>
-                    <!--<span class="el-upload-list__item-delete">-->
-                    <!--    <el-icon><Download /></el-icon>-->
-                    <!--</span>-->
-                    <span class="el-upload-list__item-delete" @click="onRemove(file)">
-                        <el-icon><Delete /></el-icon>
-                    </span>
+    <!-- TIPS -->
+    <template #tip>
+        <div class="el-upload__tip">
+            {{ tips || 'jpg/png 小于 500KB 的文件。' }}
+        </div>
+    </template>
+
+    <!-- 文件列表 -->
+    <template #file="{file}">
+        <div class="fileStyle">
+            <ShowFile :file="file.response"></ShowFile>
+            <span class="el-upload-list__item-actions">
+                <span class="el-upload-list__item-preview" @click="previewControl.onPreview(file)">
+                    <el-icon>
+                        <zoom-in />
+                    </el-icon>
                 </span>
-                <div class="cover"></div>
-            </div>
-        </template>
+                <span class="el-upload-list__item-delete" @click="onRemove(file)">
+                    <el-icon>
+                        <Delete />
+                    </el-icon>
+                </span>
+            </span>
+            <div class="cover"></div>
+        </div>
+    </template>
 
-        <!-- 预览弹框 -->
-        <el-dialog v-model="previewControl.isShow"
-                   append-to-body
-                   close-on-click-modal
-                   destroy-on-close
-                   draggable
-                   lock-scroll
-                   modal
-                   width="45%">
-            <ShowFile :file="previewControl.file" />
-        </el-dialog>
+    <!-- 预览弹框 -->
+    <el-dialog v-model="previewControl.isShow"
+               append-to-body
+               close-on-click-modal
+               destroy-on-close
+               draggable
+               lock-scroll
+               modal
+               width="45%">
+        <ShowFile :file="previewControl.file" />
+    </el-dialog>
 
-    </el-upload>
+</el-upload>
 </template>
 
 <style lang="less" scoped>
-.fileStyle{
+.fileStyle {
     position: relative;
     display: flex;
     align-items: center;
-    audio{
+
+    audio {
         height: 50px;
     }
-    .el-image{
+
+    .el-image {
         height: 80px;
     }
-    video{
+
+    video {
         height: 80px;
     }
-    .el-upload-list__item-actions{
+
+    .el-upload-list__item-actions {
         z-index: 10;
         position: absolute;
         top: 50%;
         left: 85%;
-        transform: translate(-50%,-50%);
+        transform: translate(-50%, -50%);
         display: none;
     }
-    .el-upload-list__item-delete{
+
+    .el-upload-list__item-delete {
         z-index: 10;
         position: absolute;
         top: 50%;
         left: 40px;
-        transform: translate(-50%,-50%);
+        transform: translate(-50%, -50%);
         display: none;
     }
-    .cover{
+
+    .cover {
         width: 100%;
         position: absolute;
         top: 0;
@@ -250,15 +256,18 @@ const previewControl = reactive<{
         background-color: #675f5f;
     }
 }
- .fileStyle:hover {
-     .cover{
-         display: block;
-     }
-     .el-upload-list__item-actions{
-         display: block;
-     }
-     .el-upload-list__item-delete{
-         display: block;
-     }
- }
+
+.fileStyle:hover {
+    .cover {
+        display: block;
+    }
+
+    .el-upload-list__item-actions {
+        display: block;
+    }
+
+    .el-upload-list__item-delete {
+        display: block;
+    }
+}
 </style>

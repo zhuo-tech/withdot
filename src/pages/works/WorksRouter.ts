@@ -5,6 +5,9 @@ import { RouteRecordRaw } from 'vue-router'
 const RouterConfigItem: RouteRecordRaw = {
     path: '/works',
     component: Layout,
+    meta: {
+        title: '作品中心',
+    },
     children: [
         {
             path: '',
@@ -13,6 +16,15 @@ const RouterConfigItem: RouteRecordRaw = {
                 icon: MagicStick,
                 isMenu: true,
                 title: '作品中心',
+            },
+        },
+        {
+            path: 'editor/:id',
+            component: () => import('./WorkEditorPage.vue'),
+            meta: {
+                icon: MagicStick,
+                isMenu: false,
+                title: '编辑作品',
             },
         },
     ],
