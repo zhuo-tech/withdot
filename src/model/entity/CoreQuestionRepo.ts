@@ -26,28 +26,10 @@ export class CoreQuestionRepo implements BaseEntity {
      */
     public type: QuestionTypeEnum
 
-    /**
-     * 题目明细
-     * @type {Array<any>}
-     */
-    public details: Details
-
     public _id: string
     public createTime: number
     public updateTime: number
     public createBy: string
     public updateBy: string
-
-}
-
-
-type Details = RadioQuestion | MultiQuestion
-
-
-export interface RadioQuestion {
-  
-}
-
-export interface MultiQuestion {
 
 }

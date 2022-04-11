@@ -3,13 +3,4 @@
  */
 class Stage {
     
-    componentName: string
-    
-    constructor(name: string) {
-        this.componentName = name
-    }
-
-    render<T>(name:string){
-        this.render
-    }
 }
