@@ -54,10 +54,6 @@ export async function addWork(params: any) {
             name: params.name,
             profile: '',
             content: '',
-            covers: {
-                mp: '',
-                pc: '',
-            },
             material_id: params.materialId,
             createBy: '',
             createTime: Date.now(),

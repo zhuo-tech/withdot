@@ -50,6 +50,8 @@ export default defineComponent({
         renderMenuItem(menu: RouteRecordRaw, rootPath: string = StrUtil.EMPTY) {
             // 没有子菜单: 一级菜单
             let {children, path} = menu
+            children = children?.filter(i => i?.meta?.isMenu !== false)
+
             path = rootPath + this.expectStartWith(path)
             if (CollUtil.isEmpty(children)) {
                 return this.renderMenuNode(path, path, menu)
