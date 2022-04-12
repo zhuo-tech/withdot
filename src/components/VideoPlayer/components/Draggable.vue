@@ -20,7 +20,7 @@ const prop = defineProps({
     item: {
         type: CoreDot,
         required: false,
-        default: () => ({}),
+        default: () => (new CoreDot()),
     },
     index: {
         type: Number,
@@ -50,17 +50,25 @@ const mouseLeave = () => {
 <div :ref="el => context.divRef = el"
      class="draggable"
      @mouseleave="mouseLeave"
+     @contextmenu.prevent.stop="context.rightMenuShow"
      @mousemove.prevent="event => context.dragReLocate(event)"
      @mouseup.prevent="context.closeAdsorption()"
      @mousedown.prevent="event => context.onMouseDown(event)">
-    <div v-show="context.rightClickMenuIsShow" :ref="el => context.rightMenuRef = el" class="draggable-right-menu">
-        <ul>
-            <li>上移一层</li>
-            <li>下移一层</li>
-            <li>置于顶层</li>
-            <li>置于底层</li>
-        </ul>
-    </div>
+
+    <!-- 右键菜单 -->
+    <el-collapse-transition>
+        <div v-show="context.rightClickMenuIsShow"
+             :ref="el => context.rightMenuRef = el"
+             class="draggable-right-menu"
+             @mouseleave="context.rightMenuClose()">
+            <ul>
+                <li @click="context.rightMenuOnClick('+1')">上移一层</li>
+                <li @click="context.rightMenuOnClick('-1')">下移一层</li>
+                <li @click="context.rightMenuOnClick('max')">置于顶层</li>
+                <li @click="context.rightMenuOnClick('min')">置于底层</li>
+            </ul>
+        </div>
+    </el-collapse-transition>
 
     <!-- 收起模式: button -->
     <div v-show="!context.expectToExpand" class="label-mode" @click.stop="context.showDetail()">

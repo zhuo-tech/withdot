@@ -3,6 +3,8 @@
     display: inline-block
     cursor: pointer
 
+    background-color: #FFF
+
     .label-mode,
     .details-mode
         padding: 5px 10px
@@ -25,8 +27,8 @@
         height: auto
         list-style: none
         background-color: rgba(65, 71, 77, .7)
-
         box-shadow: 0 0 5px rgba(65, 71, 77, .7)
+        transition: all ease 0.5s
 
         li
             padding: 3px 10px
@@ -34,3 +36,6 @@
 
         li:last-child
             border: none
+
+        li:hover
+            background-color: rgba(65, 71, 77, 1)
