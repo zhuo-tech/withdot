@@ -16,6 +16,10 @@ export type PropsType = {
  **/
 export class DraggableContext {
     private static readonly ADSORPTION_Z_INDEX = 20000
+    private static readonly Z_INDEX_MAX = 100
+    private static readonly Z_INDEX_MIN = 0
+    private static readonly Z_INDEX_DEFAULT = 1
+
     private log = getLogger(DraggableContext.name)
     public divRef: HTMLDivElement
     public rightMenuRef: HTMLDivElement
@@ -36,7 +40,7 @@ export class DraggableContext {
     // 百分比定位
     private scaleX = 0.5
     private scaleY = 0.5
-    private zIndex = 1
+    private zIndex = DraggableContext.Z_INDEX_DEFAULT
     /**
      * 父容器大小发生变化时, 重设定位
      */
@@ -50,6 +54,7 @@ export class DraggableContext {
     constructor(props: PropsType) {
         this.props = props
         this._expectToExpand = props.item.display === DotDisplayType.EXPANDED
+        this.zIndex = props.index
     }
 
     /**
@@ -114,24 +119,24 @@ export class DraggableContext {
 
     public rightMenuShow(event: MouseEvent) {
         const {offsetX, offsetY} = event
-        this.rightMenuRef.style.top = offsetY + 'px'
-        this.rightMenuRef.style.left = offsetX + 'px'
+        this.rightMenuRef.style.top = offsetY - 20 + 'px'
+        this.rightMenuRef.style.left = offsetX - 20 + 'px'
         this.rightClickMenuIsShow = true
     }
 
     public rightMenuOnClick(action: '+1' | '-1' | 'max' | 'min') {
         switch (action) {
             case '+1':
-                this.zIndex = Math.min(this.zIndex + 1, 100)
+                this.zIndex = Math.min(this.zIndex + 1, DraggableContext.Z_INDEX_MAX)
                 break
             case '-1':
-                this.zIndex = Math.max(this.zIndex - 1, 0)
+                this.zIndex = Math.max(this.zIndex - 1, DraggableContext.Z_INDEX_MIN)
                 break
             case 'max':
-                this.zIndex = 100
+                this.zIndex = DraggableContext.Z_INDEX_MAX
                 break
             case 'min':
-                this.zIndex = 0
+                this.zIndex = DraggableContext.Z_INDEX_MIN
                 break
             default:
                 this.log.trace('不支持的操作类型: ', action)
