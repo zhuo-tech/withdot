@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { TimeUnit } from 'typescript-util'
-import { inject, reactive } from 'vue'
+import { inject, onBeforeUnmount, reactive } from 'vue'
 import { ControlLayer } from '../context/ControlLayer'
 import { PlayerContext } from '../context/PlayerContext'
+import { DraggableLeaveEvent } from '../service/DraggableLeaveEvent'
 import DoubleSpeed from './DoubleSpeed.vue'
 import ProgressBar from './ProgressBar.vue'
 
@@ -14,9 +15,10 @@ const service = inject(PlayerContext.INJECTION_KEY) as PlayerContext
 const {videoElement, playerBoxElement, minDuration} = service
 const controlLayer = reactive(new ControlLayer())
 
-service.eventCenter.addEventListener('DraggableLeaveEvent', (event) => {
+const eventKey = service.eventCenter.addEventListener(DraggableLeaveEvent.NAME, (event) => {
     controlLayer.suppressionLastMinute = event.timestamp
 })
+onBeforeUnmount(() => service.eventCenter.removeEventListener(DraggableLeaveEvent.NAME, eventKey))
 
 </script>
 

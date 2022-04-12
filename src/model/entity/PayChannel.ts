@@ -1,7 +1,10 @@
 /**
  * 支付渠道
  */
-export interface PayChannel {
+export class PayChannel {
+
+  public static readonly TABLE_NAME = 'pay_channel'
+
   /**
    * 主键
    */

@@ -12,6 +12,7 @@ import SettingRouter from '@/pages/settings/SettingRouter'
 import UserRouter from '@/pages/users/UserRouter'
 import WeiXinConfigItem from '@/pages/weixin/weixinRouter'
 import WorksRouter from '@/pages/works/WorksRouter'
+import QuestionRouter from '@/pages/question/QuestionRouter'
 import { LoggerLevel } from '@/tool/log/LoggerLevel'
 import { StrUtil } from 'typescript-util'
 
@@ -38,6 +39,7 @@ const routes: RouteRecordRaw[] = [
     OrderRouter,
     SettingRouter,
     WeiXinConfigItem,
+    QuestionRouter,
     ...AccountRouter,
     ...ErrorRouter,
 ]

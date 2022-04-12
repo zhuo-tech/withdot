@@ -5,10 +5,11 @@ import Dialog from './components/Dialog.vue'
 import Form from './components/Form.vue'
 import EditService from './EditService'
 import { filterTime } from '@/utils/utils'
+import ShowFile from '@/components/Upload/ShowFile'
 
 const service = reactive(new EditService())
 
-const {albumsDetail, subassembly, getWorkListData, Editform} = toRefs(service)
+const {albumsDetail, subassembly, Editform} = toRefs(service)
 
 service.getAlbumsList()
 </script>
@@ -21,7 +22,7 @@ service.getAlbumsList()
             <el-col :span="12">
                 <el-row :gutter="10">
                     <el-col :span="6">
-                        <el-image class="img"></el-image>
+                        <ShowFile :file="albumsDetail.cover" style="height: 100%; width: 154px;" />
                     </el-col>
                     <el-col :span="6" class="albumsDetail">
                         <div>{{ albumsDetail.title }}</div>
@@ -74,7 +75,7 @@ service.getAlbumsList()
                                            confirm-button-text="确认删除"
                                            icon-color="red"
                                            title=" 操作无法撤销, 确定要删除吗 ？"
-                                           @confirm="service.handleDelete(scope.row)">
+                                           @confirm="service.deleteWork(scope.row)">
                                 <template #reference>
                                     <el-button :icon="Delete" type="text">删除</el-button>
                                 </template>
@@ -85,7 +86,7 @@ service.getAlbumsList()
             </el-col>
         </el-row>
     </el-card>
-    <Dialog :getWorkListData="getWorkListData" :service="service" :subassembly="subassembly"></Dialog>
+    <Dialog :aleryWorkList="albumsDetail.workList" :service="service" :subassembly="subassembly" @getNewList="service.getAlbumsList()"></Dialog>
     <Form :service="service"></Form>
 </template>
 <style lang="less" scoped>

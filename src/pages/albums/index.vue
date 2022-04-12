@@ -26,7 +26,11 @@ service.getAlbumList()
                     <el-table-column label="序号" type="index" width="100"></el-table-column>
                     <el-table-column label="标题" prop="title" width="280"></el-table-column>
                     <el-table-column label="价格(元)" prop="sellingPrice" width="280"></el-table-column>
-                    <el-table-column label="作品数量" prop="name" width="280"></el-table-column>
+                    <el-table-column label="作品数量" width="280">
+                        <template #default="scope">
+                            <span>{{ scope.row.workList.length }}</span>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="创建时间" min-width="200" prop="createTime">
                         <template #default="scope">
                             <span>{{ filterTime(scope.createTime) }}</span>
