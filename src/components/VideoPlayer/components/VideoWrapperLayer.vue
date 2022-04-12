@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { inject } from 'vue'
+import { computed, inject } from 'vue'
 import { PlayerContext } from '../context/PlayerContext'
 import { ExtendedState, MediaReadyState } from '../service/VideoWrapper'
 
@@ -14,18 +14,26 @@ import { ExtendedState, MediaReadyState } from '../service/VideoWrapper'
  */
 const service = inject(PlayerContext.INJECTION_KEY) as PlayerContext
 
+const showEnd = computed(() => {
+    if (service.videoElement.playing) {
+        return false
+    }
+    return service.videoElement.status === ExtendedState.PLAY_FINISHED
+})
+
 </script>
 <template>
 <div v-loading=" service.videoElement.status < MediaReadyState.HAVE_FUTURE_DATA" class="video-wrapper">
     <video :ref="el => service.videoElement.setElement(el)" src="../resource/test.mp4"></video>
 </div>
-<div v-show="service.videoElement.status === ExtendedState.PLAY_FINISHED" class="play-finished">
+<div v-show="showEnd" class="play-finished">
     <h1 class="relatively-centered" style="text-align: center; font-size: 40px; color: red">播放完成...........</h1>
 </div>
 </template>
 
 <style lang="sass" scoped>
 .video-wrapper
+    height: 100%
     display: flex
     justify-content: center
     align-items: center
