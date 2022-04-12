@@ -10,6 +10,7 @@ import { Event, TimeUnit } from 'typescript-util'
  * @date 2022-04-10 下午 11:59
  **/
 export class DraggableLeaveEvent implements Event {
+    public static readonly NAME = 'DraggableLeaveEvent'
     /**
      * 建议的抑制时间
      */
@@ -22,6 +23,6 @@ export class DraggableLeaveEvent implements Event {
     }
 
     public getName(): string {
-        return DraggableLeaveEvent.name
+        return DraggableLeaveEvent.NAME
     }
 }

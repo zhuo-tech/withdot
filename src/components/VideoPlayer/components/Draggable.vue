@@ -3,6 +3,7 @@ import { CoreDot } from '@/model/entity/CoreDot'
 import { inject, onMounted, onUnmounted, reactive } from 'vue'
 import { DraggableContext } from '../context/DraggableContext'
 import { PlayerContext } from '../context/PlayerContext'
+import { PlayerResizeEvent } from '../service/PlayerResizeEvent'
 
 /**
  * 可拖动的盒子容器
@@ -31,10 +32,10 @@ const context = reactive(new DraggableContext(prop))
 
 onMounted(() => {
     const listenerKey = service.eventCenter
-        .addEventListener('PlayerResizeEvent', context.resizeRelocate)
+        .addEventListener(PlayerResizeEvent.NAME, context.resizeRelocate)
 
     onUnmounted(() => {
-        service.eventCenter.removeEventListener('PlayerResizeEvent', listenerKey)
+        service.eventCenter.removeEventListener(PlayerResizeEvent.NAME, listenerKey)
     })
 })
 
