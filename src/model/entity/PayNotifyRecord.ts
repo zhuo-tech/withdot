@@ -1,7 +1,10 @@
 /**
  * 异步通知记录
  */
-export interface PayNotifyRecord {
+export class PayNotifyRecord {
+
+  public static readonly TABLE_NAME = 'pay_notify_record'
+
   /**
    * 主键
    */
@@ -45,5 +48,5 @@ export interface PayNotifyRecord {
   /**
    * 删除状态 是否删除 0否1是
    */
-  delFlag: string
+  delFlag: number
 }
