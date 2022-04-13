@@ -30,7 +30,8 @@ export const VueApplication = createApp(App)
 export const VueRouter = createVueRouterInstantiate()
 VueApplication.config.globalProperties.$echarts = echarts
 
-VueApplication.use(VueRouter)
+VueApplication
+    .use(VueRouter)
     .use(createPinia())
     .use(ElementPlus)
     .mount('#app')
