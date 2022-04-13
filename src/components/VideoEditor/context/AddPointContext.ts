@@ -1,5 +1,5 @@
 import { CoreDot, CoreDotType } from '@/model/entity/CoreDot'
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 
 /**
  * AddPoint
@@ -9,7 +9,7 @@ import { reactive, ref } from 'vue'
 export class AddPointContext {
 
     public formIsShow = ref(false)
-    public formData = reactive(new CoreDot())
+    public formData = new CoreDot()
     public formIsLoading: boolean = false
     /**
      * 当前打点类型
@@ -20,11 +20,11 @@ export class AddPointContext {
         this.show()
     }
 
-    public show() {
+    public show = () => {
         this.formIsShow.value = true
     }
 
-    public close() {
+    public close = () =>  {
         this.formIsShow.value = false
     }
 

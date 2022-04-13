@@ -102,4 +102,4 @@ const controlDrawer = reactive({
 
 </template>
 
-<style lang="sass" scoped src="./VideoEditorStyle.sass" />
+<style lang="sass" scoped src="./style/VideoEditorStyle.sass" />

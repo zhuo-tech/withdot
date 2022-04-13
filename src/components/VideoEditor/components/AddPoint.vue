@@ -18,7 +18,6 @@ const emits = defineEmits<{
 }>()
 
 const context = reactive(new AddPointContext())
-const {formIsShow, currentType, formIsLoading} = toRefs(context)
 
 function formSubmit() {
     emits('submit', context.formData)
@@ -29,7 +28,7 @@ function formSubmit() {
 
 <template>
 <!-- 编辑器工具栏 -->
-<el-menu :default-active="currentType" mode="horizontal" @select="context.onMenuSelect">
+<el-menu :default-active="context.currentType" mode="horizontal" @select="context.onMenuSelect">
     <el-menu-item v-for="item in DotTypeOption" :key="item.type" :index="item.type">
         <IconLabel :icon="item.icon" :label="item.label" />
     </el-menu-item>
@@ -37,7 +36,7 @@ function formSubmit() {
 
 <!-- 新增 模态框 -->
 <el-dialog
-    v-model="formIsShow"
+    v-model="context.formIsShow"
     append-to-body
     close-on-click-modal
     destroy-on-close
@@ -47,7 +46,7 @@ function formSubmit() {
     title="新增打点"
     width="45%">
 
-    <el-tabs v-model="currentType" stretch tab-position="left">
+    <el-tabs v-model="context.currentType" stretch tab-position="left">
         <el-tab-pane v-for="item in DotTypeOption" :key="item.type" :name="item.type">
             <template #label>
                 <IconLabel :icon="item.icon" :label="item.label" />
@@ -70,7 +69,7 @@ function formSubmit() {
     <div slot="footer" class="drawer-body-footer" style="display: flex; justify-content: right">
         <el-button @click="context.close()">取 消</el-button>
         <el-button type="primary" @click="formSubmit()">
-            {{ formIsLoading ? '提交中 ...' : '确 定' }}
+            {{ context.formIsLoading ? '提交中 ...' : '确 定' }}
         </el-button>
     </div>
 </el-dialog>
