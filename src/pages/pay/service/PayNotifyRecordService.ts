@@ -1,41 +1,38 @@
 import { cloud } from '@/cloud';
 import { getLogger } from '@/main';
 import { CommonEnum } from '@/model/CommonEnum';
-import { PayChannel } from "@/model/entity/PayChannel"
+import { PayNotifyRecord } from "@/model/entity/PayNotifyRecord"
 import { LogicDelete } from '@/model/LogicDelete';
 import { ObjectUtil } from 'typescript-util';
 
-/**
- * 支付渠道
- */
-export class PayChannelService {
+export class PayNotifyRecordService {
 
-    private readonly log = getLogger('PayChannelService')
+    private readonly log = getLogger('PayNotifyRecordService')
 
     /**
-     * 列表查询支付渠道信息
-     * @returns 支付渠道列表
+     * 列表查询支付通知信息
+     * @returns 支付通知列表
      */
-    async list(): Promise<Array<PayChannel>> {
+    async list(): Promise<Array<PayNotifyRecord>> {
         const dbTemplate = cloud.database();
-        const res = await dbTemplate.collection(PayChannel.TABLE_NAME)
-            .get<PayChannel>()
+        const res = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
+            .get<PayNotifyRecord>()
         return res.data
     }
 
 
     /**
-     * 分页查询支付渠道信息
+     * 分页查询支付通知信息
      * @param size  偏移量
      * @param current 分页大小
-     * @returns 支付渠道分页列表
+     * @returns 支付通知分页列表
      */
-    async page(size: number, current: number): Promise<Array<PayChannel>> {
+    async page(size: number, current: number): Promise<Array<PayNotifyRecord>> {
         const dbTemplate = cloud.database();
-        const res = await dbTemplate.collection(PayChannel.TABLE_NAME)
+        const res = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
             .skip(size * (current - 1))
             .limit(size)
-            .get<PayChannel>()
+            .get<PayNotifyRecord>()
         return res.data
     }
 
@@ -45,19 +42,19 @@ export class PayChannelService {
      */
     async count(): Promise<number> {
         const dbTemplate = cloud.database();
-        const { total } = await dbTemplate.collection(PayChannel.TABLE_NAME).count()
+        const { total } = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME).count()
         return total
     }
 
     /**
-     * 保存支付渠道
-     * @param obj 支付渠道对象
-     * @returns true | false
+     * 保存支付通知
+     * @param obj 支付通知对象
+     * @returns 通知ID
      */
-    async saveObj(obj: PayChannel): Promise<string> {
+    async saveObj(obj: PayNotifyRecord): Promise<string> {
         const dbTemplate = cloud.database();
         this.init(obj, CommonEnum.ACTION_ADD)
-        const { id, error } = await dbTemplate.collection(PayChannel.TABLE_NAME).add({ obj })
+        const { id, error } = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME).add({ obj })
         if (ObjectUtil.isNull(id)) {
             this.log.error("save exam error `{}` ", error)
             throw new Error(error)
@@ -66,36 +63,36 @@ export class PayChannelService {
     }
 
     /**
-     * 修改支付渠道对象
-     * @param obj 支付渠道对象
-     * @returns true | false
+     * 修改支付通知对象
+     * @param obj 支付通知对象
+     * @returns true
      */
-    async updateById(obj: PayChannel): Promise<boolean> {
+    async updateById(obj: PayNotifyRecord): Promise<boolean> {
         const dbTemplate = cloud.database();
         this.init(obj, CommonEnum.ACTION_UPDATE)
         const result = await dbTemplate
-            .collection(PayChannel.TABLE_NAME)
+            .collection(PayNotifyRecord.TABLE_NAME)
             .doc(obj._id)
             .update({ obj })
-        this.log.debug("更新支付渠道记录 `{}` ", result)
+        this.log.debug("更新支付通知记录", result)
         return true
     }
 
     /**
-     * 删除支付渠道
-     * @param id 主键
-     * @returns true
-     */
+    * 删除
+    * @param id 主键
+    * @returns true
+    */
     async removeById(id: string): Promise<boolean> {
         const dbTemplate = cloud.database()
-        const res = dbTemplate.collection(PayChannel.TABLE_NAME)
+        const res = dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
             .where({ _id: id })
             .remove()
-        this.log.debug("删除支付渠道 `{}`", res)
+        this.log.debug("删除支付通知")
         return true
     }
 
-    private init(obj: PayChannel, flag: string): void {
+    private init(obj: PayNotifyRecord, flag: string): void {
         const curTime = Date.now()
         if (CommonEnum.ACTION_ADD === flag) {
             obj.createTime = curTime

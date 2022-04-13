@@ -86,5 +86,5 @@ export class PayChannel {
   /**
    * 删除状态 是否删除 0否1是
    */
-  delFlag: string
+  delFlag: number
 }
