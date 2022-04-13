@@ -20,9 +20,10 @@ export enum questionType {
     saq = '简答题'
 }
 
+let formStatus = false   //false 编辑  true 添加
 export default class QuestionService {
     public DB = cloud.database().collection(CoreQuestionRepo.TABLE_NAME)
-    public formStatus = ref(false)    //false 编辑  true 添加
+
     public tableIsLoading = ref(false)
     public formRef: FormInstance
     public data: any = ref({
@@ -64,24 +65,22 @@ export default class QuestionService {
     public rules = reactive({
         label: [
             {required: true, message: '请输入题目标题', trigger: 'blur'},
-            {min: 3, max: 10, message: '字符应该在3到10', trigger: 'blur'},
         ],
         type: [
             {required: true, message: '选择题目类型', trigger: 'blur'},
         ],
-        content: [
-            {required: true, message: '请输入题目内容', trigger: 'blur'},
-        ],
     })
 
     /**
-     * 添加题目按钮
+     *搜索按钮
      */
-    public addQuestion = () => {
+    public searchQuestion = () => {
         this.showQuery.value = !this.showQuery.value
-        this.formStatus.value = true
     }
-
+    public addQuestion = () => {
+        this.formData.show()
+        formStatus = true
+    }
     /**
      * 刷新题库列表
      */
@@ -149,7 +148,7 @@ export default class QuestionService {
             content: row.content,
             type: row.type,
         }
-        this.formStatus.value = false
+        formStatus = false
         this.formData.show()
     }
 
@@ -157,14 +156,14 @@ export default class QuestionService {
      * 删除题目
      * @param data
      */
-    public handleDelete=(data:any)=>{
-        this.delete(data).then(response=>{
-            if(!response.ok){
+    public handleDelete = (data: any) => {
+        this.delete(data).then(response => {
+            if (!response.ok) {
                 ElMessage.error(response.error)
             }
             ElMessage.success('删除成功')
             this.getList()
-        }).catch(err=>{
+        }).catch(err => {
             ElMessage.error(err)
         })
     }
@@ -178,26 +177,28 @@ export default class QuestionService {
                 return
             }
             this.formData.formIsLoading = true
-            if (this.formStatus.value) {
+            if (formStatus) {
                 this.formSubmitFn().then(response => {
                     this.repeatResponse(response)
                 }).catch(err => {
                     ElMessage.error(err)
                 })
-                return
+            } else {
+                this.editQuestion(this.formData.form).then(response => {
+                    this.repeatResponse(response)
+                }).catch(err => {
+                    ElMessage.error(err)
+                })
             }
-            this.editQuestion(this.formData.form).then(response => {
-                this.repeatResponse(response)
-            }).catch(err => {
-                ElMessage.error(err)
-            })
         })
     }
 
     private formSubmitFn = async () => {
         return await this.DB
             .add({
-                ...this.formData.form,
+                label: this.formData.form.label,
+                content: this.formData.form.content,
+                type: this.formData.form.type,
                 delFlag: LogicDelete.NORMAL,
                 createTime: Date.now(),
                 updateTime: Date.now(),
@@ -232,14 +233,14 @@ export default class QuestionService {
                 updateTime: Date.now(),
             })
     }
-    private delete = async (data:any)=>{
+    private delete = async (data: any) => {
         return await this.DB
             .where({
-                _id:data._id,
-                delFlag:LogicDelete.NORMAL
+                _id: data._id,
+                delFlag: LogicDelete.NORMAL,
             })
             .update({
-                delFlag:LogicDelete.DELETED
+                delFlag: LogicDelete.DELETED,
             })
     }
     private repeatResponse = (response: any) => {
