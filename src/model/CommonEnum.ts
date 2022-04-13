@@ -33,5 +33,15 @@
       * 删除
       * @deprecated
       */
-     DELETE_Y = "1"
+     DELETE_Y = "1",
+
+     /**
+      * 添加
+      */
+     ACTION_ADD = 'add',
+
+     /**
+      * 删除
+      */
+     ACTION_UPDATE = 'update'
 }

@@ -1,6 +1,7 @@
+import { MouseButtonKeyType, MouseEventTool } from '@/components/VideoPlayer/service/MouseEventTool'
 import { getLogger } from '@/main'
 import { CoreDot, DotDisplayType } from '@/model/entity/CoreDot'
-import { MouseButtonKeyType, MouseEventTool } from '../service/MouseEventTool'
+import { ObjectUtil } from 'typescript-util'
 import { PlayerResizeEvent } from '../service/PlayerResizeEvent'
 
 export type PropsType = {
@@ -14,13 +15,15 @@ export type PropsType = {
  * @date 2022-04-10 上午 3:34
  **/
 export class DraggableContext {
+    private static readonly ADSORPTION_Z_INDEX = 20000
+    private static readonly Z_INDEX_MAX = 100
+    private static readonly Z_INDEX_MIN = 0
+    private static readonly Z_INDEX_DEFAULT = 1
+
     private log = getLogger(DraggableContext.name)
     public divRef: HTMLDivElement
     public rightMenuRef: HTMLDivElement
-
-    private readonly props: PropsType
     private _expectToExpand: boolean
-
     /**
      * 拖动吸附
      */
@@ -34,18 +37,24 @@ export class DraggableContext {
     private ph = 0
     private px = 0
     private py = 0
-
     // 百分比定位
     private scaleX = 0.5
     private scaleY = 0.5
+    private zIndex = DraggableContext.Z_INDEX_DEFAULT
+    /**
+     * 父容器大小发生变化时, 重设定位
+     */
+    public resizeRelocate = (event: PlayerResizeEvent) => {
+        this.pw = event.width
+        this.ph = event.height
+        this.setStyle()
+    }
+    private readonly props: PropsType
 
     constructor(props: PropsType) {
         this.props = props
         this._expectToExpand = props.item.display === DotDisplayType.EXPANDED
-    }
-
-    public get expectToExpand(): boolean {
-        return this._expectToExpand
+        this.zIndex = props.index
     }
 
     /**
@@ -53,6 +62,8 @@ export class DraggableContext {
      */
     public closeAdsorption() {
         this.adsorption = false
+        // 更新临时zIndex
+        this.setStyle()
     }
 
     public showDetail() {
@@ -61,6 +72,10 @@ export class DraggableContext {
 
     public showLabel() {
         this._expectToExpand = false
+    }
+
+    public rightMenuClose() {
+        this.rightClickMenuIsShow = false
     }
 
     /**
@@ -80,61 +95,83 @@ export class DraggableContext {
         this.scaleX = left / pw
         this.scaleY = top / ph
 
-        DraggableContext.setLocation(this.divRef, top, left)
-    }
-
-    /**
-     * 父容器大小发生变化时, 重设定位
-     */
-    public resizeRelocate = (event: PlayerResizeEvent) => {
-        const {width, height} = event
-
-        this.pw = width
-        this.ph = height
-
-        // 使用新的容器大小计算相对位置
-        const {scaleX, scaleY} = this
-        const left = width * scaleX
-        const top = height * scaleY
-        DraggableContext.setLocation(this.divRef, top, left)
-
-        if (this.log.isTraceEnable()) {
-            this.log.trace('重新计算位置 父盒子: ', {width, height}, '相对位置: ', {scaleX, scaleY}, '定位: ', {top, left})
-        }
+        this.setStyle()
+        this.synchronousPropsPosition()
     }
 
     /**
      * 鼠标按下事件监听
-     * @param {MouseEvent} event
      */
     public onMouseDown(event: MouseEvent) {
-        switch (MouseEventTool.keyType(event)) {
-            // 左键点击: 标记吸附, 初始化父级容器参照点
-            case MouseButtonKeyType.LEFT: {
-                this.adsorption = true
-                // 点击位置
-                const {x, y} = event
-                const {offsetTop, offsetLeft} = this.divRef
-                this.px = x - offsetLeft
-                this.py = y - offsetTop
-
-                break
-            }
-            // 右键点击: 显示右键菜单
-            case MouseButtonKeyType.RIGHT: {
-                const {offsetX, offsetY} = event
-                DraggableContext.setLocation(this.rightMenuRef, offsetY, offsetX)
-                this.rightClickMenuIsShow = true
-                break
-            }
-            default:
+        if (MouseEventTool.keyType(event) === MouseButtonKeyType.RIGHT) {
+            return
         }
-        return false
+
+        this.adsorption = true
+        // 点击位置
+        const {x, y} = event
+        const {offsetTop, offsetLeft} = this.divRef
+        this.px = x - offsetLeft
+        this.py = y - offsetTop
+        // 更新临时zIndex
+        this.setStyle()
     }
 
-    private static setLocation(dom: HTMLDivElement, top: number, left: number) {
-        dom.style.top = top + 'px'
-        dom.style.left = left + 'px'
+    public rightMenuShow(event: MouseEvent) {
+        const {offsetX, offsetY} = event
+        this.rightMenuRef.style.top = offsetY - 20 + 'px'
+        this.rightMenuRef.style.left = offsetX - 20 + 'px'
+        this.rightClickMenuIsShow = true
+    }
+
+    public rightMenuOnClick(action: '+1' | '-1' | 'max' | 'min') {
+        switch (action) {
+            case '+1':
+                this.zIndex = Math.min(this.zIndex + 1, DraggableContext.Z_INDEX_MAX)
+                break
+            case '-1':
+                this.zIndex = Math.max(this.zIndex - 1, DraggableContext.Z_INDEX_MIN)
+                break
+            case 'max':
+                this.zIndex = DraggableContext.Z_INDEX_MAX
+                break
+            case 'min':
+                this.zIndex = DraggableContext.Z_INDEX_MIN
+                break
+            default:
+                this.log.trace('不支持的操作类型: ', action)
+        }
+        this.rightMenuClose()
+        this.setStyle()
+        this.synchronousPropsPosition()
+    }
+
+    private setStyle() {
+        const {scaleX, scaleY, pw, ph, zIndex, adsorption} = this
+        const top = scaleY * ph
+        const left = scaleX * pw
+
+        const {style} = this.divRef
+        style.top = top + 'px'
+        style.left = left + 'px'
+        style.zIndex = String(adsorption ? DraggableContext.ADSORPTION_Z_INDEX : zIndex)
+    }
+
+    private synchronousPropsPosition() {
+        const {item} = this.props
+        if (ObjectUtil.isNull(item.position)) {
+            item.position = {} as any
+        }
+        // @ts-ignore
+        item.position.x = this.scaleX
+        // @ts-ignore
+        item.position.y = this.scaleY
+        // @ts-ignore
+        item.position.z = this.zIndex
+    }
+
+    public get expectToExpand(): boolean {
+        return this._expectToExpand
     }
 
 }

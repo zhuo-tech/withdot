@@ -3,9 +3,9 @@ import { getLogger } from '@/main'
 import { CoreDot, CoreDotType, DotDisplayType } from '@/model/entity/CoreDot'
 import { AddLocation, Comment, Crop, Document, ElementPlus, Link, PictureFilled } from '@element-plus/icons-vue'
 import { InjectionKey } from '@vue/runtime-core'
+import { LafClient } from 'laf-db-query-wrapper'
 import { ObjectUtil } from 'typescript-util'
 import { reactive } from 'vue'
-import { AddPoint } from './AddPoint'
 
 export const DotTypeOption: Array<{ icon: any, type: CoreDotType, label: string }> = [
     {icon: Document, type: CoreDotType.题目, label: '题目'},
@@ -24,7 +24,10 @@ export const DotTypeOption: Array<{ icon: any, type: CoreDotType, label: string 
  */
 export class VideoEditorContext {
     public static readonly INJECTION_KEY: InjectionKey<PlayerContext> = Symbol.for(VideoEditorContext.name)
+    // noinspection JSUnusedLocalSymbols
     private log = getLogger(VideoEditorContext.name)
+    // noinspection JSUnusedLocalSymbols
+    private readonly client = new LafClient<CoreDot>(CoreDot.TABLE_NAME)
     /**
      * 播放器
      */
@@ -33,10 +36,6 @@ export class VideoEditorContext {
      * 当前打点类型
      */
     public currentType: CoreDotType = CoreDotType.题目
-    /**
-     * 添加新打点
-     */
-    public addPoint = reactive(new AddPoint())
 
     public pointList = reactive<Array<CoreDot>>([])
 
@@ -54,8 +53,4 @@ export class VideoEditorContext {
             })
     }
 
-    public addPointOnSelect = (value: CoreDotType) => {
-        this.currentType = value
-        this.addPoint.show()
-    }
 }
