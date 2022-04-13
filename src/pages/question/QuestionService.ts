@@ -22,7 +22,7 @@ export enum questionType {
 
 export default class QuestionService {
     public DB = cloud.database().collection(CoreQuestionRepo.TABLE_NAME)
-    public formStatus = ref(false)    //false 编辑  true 添加
+
     public tableIsLoading = ref(false)
     public formRef: FormInstance
     public data: any = ref({
@@ -38,6 +38,7 @@ export default class QuestionService {
         label: '',
     })
     public formData = reactive({
+        status: true, //false 编辑  true 添加
         visible: false,
         formIsLoading: false,
         show() {
@@ -79,7 +80,7 @@ export default class QuestionService {
      */
     public addQuestion = () => {
         this.showQuery.value = !this.showQuery.value
-        this.formStatus.value = true
+        this.formData.status = true
     }
 
     /**
@@ -149,7 +150,7 @@ export default class QuestionService {
             content: row.content,
             type: row.type,
         }
-        this.formStatus.value = false
+        this.formData.status = false
         this.formData.show()
     }
 
@@ -157,14 +158,14 @@ export default class QuestionService {
      * 删除题目
      * @param data
      */
-    public handleDelete=(data:any)=>{
-        this.delete(data).then(response=>{
-            if(!response.ok){
+    public handleDelete = (data: any) => {
+        this.delete(data).then(response => {
+            if (!response.ok) {
                 ElMessage.error(response.error)
             }
             ElMessage.success('删除成功')
             this.getList()
-        }).catch(err=>{
+        }).catch(err => {
             ElMessage.error(err)
         })
     }
@@ -178,26 +179,30 @@ export default class QuestionService {
                 return
             }
             this.formData.formIsLoading = true
-            if (this.formStatus.value) {
+            if (this.formData.status) {
+                console.log(1111111111)
                 this.formSubmitFn().then(response => {
                     this.repeatResponse(response)
                 }).catch(err => {
                     ElMessage.error(err)
                 })
-                return
+            } else {
+                console.log(22222222222222)
+                this.editQuestion(this.formData.form).then(response => {
+                    this.repeatResponse(response)
+                }).catch(err => {
+                    ElMessage.error(err)
+                })
             }
-            this.editQuestion(this.formData.form).then(response => {
-                this.repeatResponse(response)
-            }).catch(err => {
-                ElMessage.error(err)
-            })
         })
     }
 
     private formSubmitFn = async () => {
         return await this.DB
             .add({
-                ...this.formData.form,
+                label: this.formData.form.label,
+                content: this.formData.form.content,
+                type: this.formData.form.type,
                 delFlag: LogicDelete.NORMAL,
                 createTime: Date.now(),
                 updateTime: Date.now(),
@@ -232,14 +237,14 @@ export default class QuestionService {
                 updateTime: Date.now(),
             })
     }
-    private delete = async (data:any)=>{
+    private delete = async (data: any) => {
         return await this.DB
             .where({
-                _id:data._id,
-                delFlag:LogicDelete.NORMAL
+                _id: data._id,
+                delFlag: LogicDelete.NORMAL,
             })
             .update({
-                delFlag:LogicDelete.DELETED
+                delFlag: LogicDelete.DELETED,
             })
     }
     private repeatResponse = (response: any) => {

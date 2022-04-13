@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { QuestionTypeEnum } from '@/model/QuestionTypeEnum'
 import QuestionService,{questionType} from '@/pages/question/QuestionService'
 import { reactive } from 'vue'
 import QueryForm from './components/QueryForm.vue'
@@ -9,7 +10,6 @@ import { filterTime } from '@/utils/utils'
 const service = reactive(new QuestionService())
 
 const {data,pageSizeChange,currentPageChange} = service
-
 service.getList()
 </script>
 
@@ -26,24 +26,17 @@ service.getList()
             <el-table-column label="题目标题" prop="label" width="380"></el-table-column>
             <el-table-column label="题目类型" prop="type" width="280">
                 <template #default="scope">
-                    <!--<span>{{ questionType.scope?.row?.type }}</span>-->
-                    <!--<span>-->
-                    <!--    <span v-if="scope.row==='radio'">选择题</span>-->
-                    <!--    <span v-if="scope.row==='multi'">多选题</span>-->
-                    <!--    <span v-if="scope.row==='judge'">判断题</span>-->
-                    <!--    <span v-if="scope.row==='saq'">简答题</span>-->
-                    <!--</span>-->
-                    <span>{{ scope.row.type }}</span>
+                    <span>{{ questionType[scope.row.type] }}</span>
                 </template>
             </el-table-column>
             <el-table-column label="创建时间" prop="createTime" width="280">
                 <template #default="scope">
-                    <span>{{ filterTime(scope.createTime) }}</span>
+                    <span>{{ filterTime(scope.row.createTime) }}</span>
                 </template>
             </el-table-column>
             <el-table-column label="更新时间" prop="updateTime">
                 <template #default="scope">
-                    <span>{{ filterTime(scope.updateTime) }}</span>
+                    <span>{{ filterTime(scope.row.updateTime) }}</span>
                 </template>
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="180">
