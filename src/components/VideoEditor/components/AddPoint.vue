@@ -69,16 +69,10 @@ function formSubmit() {
             </el-form-item>
         </el-form>
 
-        <el-tab-pane v-for="item in DotTypeOption" :key="item.type" :name="item.type">
-            <template #label>
-                <IconLabel :icon="item.icon" :label="item.label" />
-            </template>
-
-            <!-- SLOT -->
-            <div>
-                <slot :config="context.formData.config" name="configForm"></slot>
-            </div>
-        </el-tab-pane>
+        <!-- SLOT -->
+        <div>
+            <slot :config="context.formData.config" name="configForm"></slot>
+        </div>
     </el-tabs>
 
     <div slot="footer" class="drawer-body-footer" style="display: flex; justify-content: right">
