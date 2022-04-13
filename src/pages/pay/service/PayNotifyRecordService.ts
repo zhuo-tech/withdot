@@ -16,6 +16,7 @@ export class PayNotifyRecordService {
     async list(): Promise<Array<PayNotifyRecord>> {
         const dbTemplate = cloud.database();
         const res = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
+        .where({delFlag: LogicDelete.NORMAL})
             .get<PayNotifyRecord>()
         return res.data
     }
@@ -23,15 +24,16 @@ export class PayNotifyRecordService {
 
     /**
      * 分页查询支付通知信息
-     * @param size  偏移量
      * @param current 分页大小
+     * @param size  偏移量
      * @returns 支付通知分页列表
      */
-    async page(size: number, current: number): Promise<Array<PayNotifyRecord>> {
+    async page(current: number,size: number): Promise<Array<PayNotifyRecord>> {
         const dbTemplate = cloud.database();
         const res = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
-            .skip(size * (current - 1))
+            .where({delFlag: LogicDelete.NORMAL})
             .limit(size)
+            .skip(size * (current - 1))
             .get<PayNotifyRecord>()
         return res.data
     }
@@ -42,7 +44,7 @@ export class PayNotifyRecordService {
      */
     async count(): Promise<number> {
         const dbTemplate = cloud.database();
-        const { total } = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME).count()
+        const { total } = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME).where({delFlag: LogicDelete.NORMAL}).count()
         return total
     }
 
@@ -79,11 +81,26 @@ export class PayNotifyRecordService {
     }
 
     /**
+    * 逻辑删除
+    * @param id 主键
+    * @returns true
+    */
+    async deleteById(id: string): Promise<boolean> {
+        const dbTemplate = cloud.database();
+        const result = await dbTemplate
+            .collection(PayNotifyRecord.TABLE_NAME)
+            .doc(id)
+            .update({delFlag: LogicDelete.DELETED})
+        this.log.debug("删除支付通知 `{}` ", result)
+        return true
+    }
+
+    /**
     * 删除
     * @param id 主键
     * @returns true
     */
-    async removeById(id: string): Promise<boolean> {
+     async removeById(id: string,): Promise<boolean> {
         const dbTemplate = cloud.database()
         const res = dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
             .where({ _id: id })
