@@ -37,7 +37,7 @@
             "quName": "${}是${}形的", 
             "sort": '3',
             "score": 2,
-            "sortFlag": false ,// 是否顺序大题
+            "sortFlag": false ,// 是否顺序答题
             "scoreWeight": false, //是否设置答案的分数权重
             "answer":[{
                 "label": '地球',
