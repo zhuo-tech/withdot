@@ -53,13 +53,6 @@ const controlDrawer = reactive({
 
     <!-- 底部列表 -->
     <div>
-        <el-tabs v-model="context.currentType" stretch type="card">
-            <el-tab-pane v-for="item in DotTypeOption" :key="item.type" :label="item.label" :name="item.label">
-                <template #label>
-                    <IconLabel :icon="item.icon" :label="item.label" />
-                </template>
-            </el-tab-pane>
-        </el-tabs>
         <List :list="pointList">
             <template v-slot:prefix>
                 <el-icon>
