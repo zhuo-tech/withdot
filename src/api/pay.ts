@@ -3,7 +3,7 @@ import { cloud } from '@/cloud'
 const DB = cloud.database()
 
 /**
- * 获取短信验证
+ * 获取支付信息
  * @param mobile:any
  * @returns {Promise<any>}
  */
