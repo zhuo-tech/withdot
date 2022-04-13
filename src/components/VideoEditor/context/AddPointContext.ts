@@ -9,7 +9,7 @@ import { ref } from 'vue'
 export class AddPointContext {
 
     public formIsShow = ref(false)
-    public formData = new CoreDot()
+    public formData: CoreDot = AddPointContext.formDataDefault()
     public formIsLoading: boolean = false
     /**
      * 当前打点类型
@@ -26,6 +26,12 @@ export class AddPointContext {
 
     public close = () =>  {
         this.formIsShow.value = false
+    }
+
+    public static formDataDefault() {
+        let dot = new CoreDot()
+        dot.config = {} as any
+        return dot
     }
 
 }

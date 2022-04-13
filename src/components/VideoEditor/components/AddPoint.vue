@@ -21,7 +21,7 @@ const context = reactive(new AddPointContext())
 
 function formSubmit() {
     emits('submit', context.formData)
-    context.formData = new CoreDot()
+    context.formData = AddPointContext.formDataDefault()
 }
 
 </script>
@@ -47,22 +47,37 @@ function formSubmit() {
     width="45%">
 
     <el-tabs v-model="context.currentType" stretch tab-position="left">
+        <el-form :model="context.formData" label-suffix=":" label-width="100px">
+
+            <el-form-item label="标签">
+                <el-input v-model="context.formData.label" placeholder="标签"></el-input>
+            </el-form-item>
+
+            <el-form-item label="开始时间">
+
+            </el-form-item>
+
+            <el-form-item label="结束时间">
+
+            </el-form-item>
+
+            <el-form-item label="时间">
+                <div class="select-play-time">
+                    <slot class="schedule" name="header"></slot>
+                    <div class="display">{{ TimeUnit.SECOND.display(currentPlayTime) }}</div>
+                </div>
+            </el-form-item>
+        </el-form>
+
         <el-tab-pane v-for="item in DotTypeOption" :key="item.type" :name="item.type">
             <template #label>
                 <IconLabel :icon="item.icon" :label="item.label" />
             </template>
-            <el-form label-suffix=":" label-width="100px">
-                <el-form-item label="时间">
-                    <div class="select-play-time">
-                        <slot class="schedule" name="header"></slot>
-                        <div class="display">{{ TimeUnit.SECOND.display(currentPlayTime) }}</div>
-                    </div>
-                </el-form-item>
-                <!-- 根据 currentType 渲染不同的选择项 -->
-                <div>
 
-                </div>
-            </el-form>
+            <!-- SLOT -->
+            <div>
+                <slot name="configForm" :config="context.formData.config"></slot>
+            </div>
         </el-tab-pane>
     </el-tabs>
 
@@ -89,5 +104,5 @@ function formSubmit() {
 <style lang="sass">
 .select-play-time
     .progress-bar
-        margin-top: 30px
+        margin-top: 15px
 </style>
