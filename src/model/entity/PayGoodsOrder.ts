@@ -1,7 +1,8 @@
 /**
  * 商品订单表
  */
-export interface PayGoodsOrder {
+export class PayGoodsOrder {
+  public static readonly TABLE_NAME = 'Pay_Goods_Order'
   /**
    * 主键
    */

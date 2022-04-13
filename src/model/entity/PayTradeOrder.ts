@@ -1,4 +1,5 @@
-export interface PayTradeOrder {
+export class PayTradeOrder {
+  public static readonly TABLE_NAME = 'Pay_Trade_Order'
   /**
    * 主键
    */

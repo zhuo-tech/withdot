@@ -1,7 +1,9 @@
 /**
  * 异步通知记录
  */
-export interface PayNotifyRecord {
+export class PayNotifyRecord {
+
+  public static readonly TABLE_NAME = 'pay_notify_record'
   /**
    * 主键
    */
