@@ -34,7 +34,7 @@ service.getList()
                     <span>{{ filterTime(scope.row.createTime) }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="更新时间" prop="updateTime">
+            <el-table-column label="更新时间" prop="updateTime" width="280">
                 <template #default="scope">
                     <span>{{ filterTime(scope.row.updateTime) }}</span>
                 </template>

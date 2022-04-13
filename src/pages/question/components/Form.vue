@@ -23,7 +23,7 @@ const props = defineProps<{
                     <el-option v-for="item in questionTypeList" :key="item" :label="item.label" :value="item.value" />
                 </el-select>
             </el-form-item>
-            <el-form-item label="题目内容" prop="content">
+            <el-form-item label="题目内容">
                 <Editor v-model:value="service.formData.form.content" @changeValue="service.changeValue" />
             </el-form-item>
         </el-form>

@@ -65,13 +65,9 @@ export default class QuestionService {
     public rules = reactive({
         label: [
             {required: true, message: '请输入题目标题', trigger: 'blur'},
-            {min: 3, max: 10, message: '字符应该在3到10', trigger: 'blur'},
         ],
         type: [
             {required: true, message: '选择题目类型', trigger: 'blur'},
-        ],
-        content: [
-            {required: true, message: '请输入题目内容', trigger: 'blur'},
         ],
     })
 

@@ -33,7 +33,7 @@ service.getAlbumList()
                     </el-table-column>
                     <el-table-column label="创建时间" min-width="200" prop="createTime">
                         <template #default="scope">
-                            <span>{{ filterTime(scope.createTime) }}</span>
+                            <span>{{ filterTime(scope.row.createTime) }}</span>
                         </template>
                     </el-table-column>
                     <el-table-column fixed="right" label="操作" width="180">
