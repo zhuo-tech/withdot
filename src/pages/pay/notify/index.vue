@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { PayNotifyRecord } from '@/model/entity/PayNotifyRecord';
 import { ref } from 'vue'
-import { PayNotifyRecordService } from '../service/PayNotifyRecordService';
+import { PayNotifyRecordService } from '@/pages/pay/service/PayNotifyRecordService'
 
 const service = new PayNotifyRecordService()
 let notifyList = ref<PayNotifyRecord[]>([])

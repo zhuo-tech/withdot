@@ -4,7 +4,7 @@
 export class PayNotifyRecord {
 
   public static readonly TABLE_NAME = 'pay_notify_record'
-
+  
   /**
    * 主键
    */

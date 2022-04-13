@@ -102,5 +102,4 @@ export class PayTradeOrderService {
             obj.updateTime = curTime
         }
     }
-
 }

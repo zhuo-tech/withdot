@@ -119,5 +119,4 @@ export class PayNotifyRecordService {
             obj.updateTime = curTime
         }
     }
-
 }
