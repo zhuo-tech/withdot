@@ -32,14 +32,7 @@ const showList = computed(() => props.pointList.filter(dot => {
     const {start, end = 0} = dot as CoreDot
     const ct = service.videoElement.playTime
     return ct >= start && ct <= start + end
-}), {
-    onTrack(event) {
-        console.debug('被追踪: ', event)
-    },
-    onTrigger(event) {
-        console.debug('被触发: ', event)
-    },
-})
+}))
 
 const resize = () => service.resizePlayer(<AspectRatio>props.aspectRatio)
 const addWindowListener = () => window.addEventListener('resize', resize, {passive: true})
