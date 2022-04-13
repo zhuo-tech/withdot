@@ -1,5 +1,4 @@
 import { CoreDot, CoreDotType } from '@/model/entity/CoreDot'
-import { ref } from 'vue'
 
 /**
  * AddPoint
@@ -8,24 +7,28 @@ import { ref } from 'vue'
  **/
 export class AddPointContext {
 
-    public formIsShow = ref(false)
+    public formIsShow = false
     public formData: CoreDot = AddPointContext.formDataDefault()
     public formIsLoading: boolean = false
     /**
      * 当前打点类型
      */
     public currentType: CoreDotType = CoreDotType.题目
-    public onMenuSelect = (type: CoreDotType) => {
+
+    public onMenuSelect(type: CoreDotType) {
         this.currentType = type
+
+        console.debug('Select ', this)
         this.show()
     }
 
-    public show = () => {
-        this.formIsShow.value = true
+    public show() {
+        console.debug('显示??? ', this)
+        this.formIsShow = true
     }
 
-    public close = () =>  {
-        this.formIsShow.value = false
+    public close() {
+        this.formIsShow = false
     }
 
     public static formDataDefault() {
