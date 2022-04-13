@@ -42,7 +42,7 @@ export class RadioQuestionModel {
      /**
       * 正确答案
       */
-     originAnswer: Array<any>
+     originAnswers: Array<any>
  
      /**
       * 学生答案

@@ -22,6 +22,15 @@ export function setToken(token: string, expire: number, userId: number): void {
     localStorage.setItem('userId', `${ userId }`)
 }
 
+export function getUserId(): string {
+    const userId = localStorage.getItem('userId')
+    if (!userId) {
+        ElMessage.error('用户不存在')
+        return ''
+    }
+    return userId
+}
+
 export function clearToken() {
     localStorage.removeItem(kToken)
     localStorage.removeItem(kTokenExpire)

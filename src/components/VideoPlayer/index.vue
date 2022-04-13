@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { inject, onMounted, onUnmounted, provide, reactive } from 'vue'
+import { CoreDot } from '@/model/entity/CoreDot'
+import { computed, inject, onMounted, onUnmounted, provide, reactive } from 'vue'
 import ControlLayer from './components/ControlLayer.vue'
 import StageLayer from './components/StageLayer.vue'
 import VideoWrapperLayer from './components/VideoWrapperLayer.vue'
@@ -27,7 +28,13 @@ const props = defineProps({
     },
 })
 
-const resize = () => service.resizePlayer(props.aspectRatio)
+const showList = computed(() => props.pointList.filter(dot => {
+    const {start, end = 0} = dot as CoreDot
+    const ct = service.videoElement.playTime
+    return ct >= start && ct <= start + end
+}))
+
+const resize = () => service.resizePlayer(<AspectRatio>props.aspectRatio)
 const addWindowListener = () => window.addEventListener('resize', resize, {passive: true})
 
 // resize 中 resizePlayer 依赖 playerBoxElement 的属性, 故监听器延迟到DOM初始化后添加. mounted 同理.
@@ -44,7 +51,7 @@ onUnmounted(() => window.removeEventListener('resize', resize))
     <div id="player" :ref="el => service.playerBoxElement.setElement(el)">
         <VideoWrapperLayer />
         <ControlLayer />
-        <StageLayer :list="pointList" />
+        <StageLayer :list="showList" />
     </div>
 </div>
 </template>

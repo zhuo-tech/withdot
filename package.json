@@ -6,7 +6,8 @@
         "dev": "vite",
         "build": "vite build",
         "build-tsc": "vue-tsc --noEmit && vite build",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "ts-node": "ts-node"
     },
     "dependencies": {
         "@element-plus/icons-vue": "^1.0.0",

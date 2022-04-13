@@ -8,6 +8,7 @@ import 'element-plus/dist/index.css'
 import App from '@/App'
 import { createVueRouterInstantiate } from '@/router'
 import * as ElIconModules from '@element-plus/icons-vue'
+// @ts-ignore
 import * as echarts from 'echarts'
 
 // 初始化日志

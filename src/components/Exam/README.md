@@ -77,7 +77,7 @@
                       "value": 1
                   },
                   ],
-                  "originAnswer":[1,2], //正确答案
+                  "originAnswers":[1,2], //正确答案
                   "currentAnswers":[1,2],  //学生答案
               }]
           }
