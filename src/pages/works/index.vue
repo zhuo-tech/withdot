@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { dataList, del } from '@/api/works'
 import { filterTime } from '@/utils/utils'
-import { Delete, Edit, Warning } from '@element-plus/icons-vue'
+import { Delete, Edit, Warning,Plus } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { reactive, ref } from 'vue'
 import Dialog from './components/Dialog.vue'
@@ -75,7 +75,7 @@ getListData()
         <el-tag v-for="(item,index) in 4" :key="index" class="ml-2" type="success">Tag 2</el-tag>
     </div>
     <div>
-        <el-button class="create" type="primary" @click="createWorks">创建作品</el-button>
+        <el-button class="create" type="primary" :icon="Plus" @click="createWorks">新增</el-button>
     </div>
     <el-table :data="data" stripe style="width: 100%">
         <el-table-column label="序号" type="index" width="80"></el-table-column>

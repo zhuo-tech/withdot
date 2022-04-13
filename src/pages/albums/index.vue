@@ -3,7 +3,7 @@ import { reactive } from 'vue'
 import AddForm from './components/AddForm.vue'
 import AlbumsService from './AlbumsService'
 import { filterTime } from '@/utils/utils'
-import { Delete, Edit, Warning } from '@element-plus/icons-vue'
+import { Delete, Edit, Warning, Plus } from '@element-plus/icons-vue'
 
 const service = reactive(new AlbumsService())
 
@@ -16,8 +16,8 @@ service.getAlbumList()
             <div>专辑管理</div>
         </template>
         <el-row :gutter="10">
-            <el-col :span="6">
-                <el-button type="primary" @click="service.clickAddForm()">创建新专辑</el-button>
+            <el-col :span="6" :offset="22">
+                <el-button type="primary" :icon="Plus" @click="service.clickAddForm()">新增</el-button>
             </el-col>
         </el-row>
         <el-row :gutter="10" style="margin-top: 20px">

@@ -1,5 +1,5 @@
 import Layout from '@/components/layout/main.vue'
-import { Menu } from '@element-plus/icons-vue'
+import { ChatRound, Cloudy, FolderOpened, Fries, Headset, PictureFilled, Place, Tools, TrendCharts } from '@element-plus/icons-vue'
 import { RouteRecordRaw } from 'vue-router'
 
 const RouterConfigItem: RouteRecordRaw = {
@@ -7,7 +7,7 @@ const RouterConfigItem: RouteRecordRaw = {
     component: Layout,
     redirect: '/weixin/setting',
     meta: {
-        icon: Menu,
+        icon: ChatRound,
         isMenu: true,
         title: '微信管理',
     },
@@ -16,7 +16,7 @@ const RouterConfigItem: RouteRecordRaw = {
             path: 'setting',
             component: () => import('./setting/index.vue'),
             meta: {
-                icon: Menu,
+                icon: Tools,
                 isMenu: true,
                 title: '菜单设置',
             },
@@ -25,7 +25,7 @@ const RouterConfigItem: RouteRecordRaw = {
             path: 'operation',
             component: () => import('./operation/index.vue'),
             meta: {
-                icon: Menu,
+                icon: TrendCharts,
                 isMenu: true,
                 title: '运营数据',
             },
@@ -34,7 +34,7 @@ const RouterConfigItem: RouteRecordRaw = {
             path: 'fan',
             component: () => import('./fan/index.vue'),
             meta: {
-                icon: Menu,
+                icon: Fries,
                 isMenu: true,
                 title: '粉丝管理',
             },
@@ -43,7 +43,7 @@ const RouterConfigItem: RouteRecordRaw = {
             path: 'news',
             component: () => import('./news/index.vue'),
             meta: {
-                icon: Menu,
+                icon: Cloudy,
                 isMenu: true,
                 title: '消息管理',
             },
@@ -52,7 +52,7 @@ const RouterConfigItem: RouteRecordRaw = {
             path: 'account',
             component: () => import('./account/index.vue'),
             meta: {
-                icon: Menu,
+                icon: Place,
                 isMenu: true,
                 title: '账号管理',
             },
@@ -61,7 +61,7 @@ const RouterConfigItem: RouteRecordRaw = {
             path: 'automaticResponse',
             component: () => import('./automaticResponse/index.vue'),
             meta: {
-                icon: Menu,
+                icon: Headset,
                 isMenu: true,
                 title: '自动回复',
             },
@@ -70,7 +70,7 @@ const RouterConfigItem: RouteRecordRaw = {
             path: 'material',
             component: () => import('./material/index.vue'),
             meta: {
-                icon: Menu,
+                icon: FolderOpened,
                 isMenu: true,
                 title: '素材管理',
             },
@@ -79,7 +79,7 @@ const RouterConfigItem: RouteRecordRaw = {
             path: 'graphics',
             component: () => import('./graphics/index.vue'),
             meta: {
-                icon: Menu,
+                icon: PictureFilled,
                 isMenu: true,
                 title: '图文管理',
             },
