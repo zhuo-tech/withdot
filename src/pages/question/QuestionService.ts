@@ -20,6 +20,7 @@ export enum questionType {
     saq = '简答题'
 }
 
+let formStatus = false   //false 编辑  true 添加
 export default class QuestionService {
     public DB = cloud.database().collection(CoreQuestionRepo.TABLE_NAME)
 
@@ -38,7 +39,6 @@ export default class QuestionService {
         label: '',
     })
     public formData = reactive({
-        status: true, //false 编辑  true 添加
         visible: false,
         formIsLoading: false,
         show() {
@@ -76,13 +76,15 @@ export default class QuestionService {
     })
 
     /**
-     * 添加题目按钮
+     *搜索按钮
      */
-    public addQuestion = () => {
+    public searchQuestion = () => {
         this.showQuery.value = !this.showQuery.value
-        this.formData.status = true
     }
-
+    public addQuestion = () => {
+        this.formData.show()
+        formStatus = true
+    }
     /**
      * 刷新题库列表
      */
@@ -150,7 +152,7 @@ export default class QuestionService {
             content: row.content,
             type: row.type,
         }
-        this.formData.status = false
+        formStatus = false
         this.formData.show()
     }
 
@@ -179,15 +181,13 @@ export default class QuestionService {
                 return
             }
             this.formData.formIsLoading = true
-            if (this.formData.status) {
-                console.log(1111111111)
+            if (formStatus) {
                 this.formSubmitFn().then(response => {
                     this.repeatResponse(response)
                 }).catch(err => {
                     ElMessage.error(err)
                 })
             } else {
-                console.log(22222222222222)
                 this.editQuestion(this.formData.form).then(response => {
                     this.repeatResponse(response)
                 }).catch(err => {

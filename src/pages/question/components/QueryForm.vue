@@ -28,8 +28,8 @@ const props = defineProps<{
         </el-collapse-transition>
         <el-col :span="12">
             <el-row justify="end" type="flex">
-                <el-button :icon="CirclePlusFilled" type="primary" @click="service.formData.show()">新建题目</el-button>
-                <el-button :icon="Search" type="primary" @click="service.addQuestion()" />
+                <el-button :icon="CirclePlusFilled" type="primary" @click="service.addQuestion()">新建题目</el-button>
+                <el-button :icon="Search" type="primary" @click="service.searchQuestion()" />
                 <el-button v-loading="service.tableIsLoading"
                            :disabled="service.tableIsLoading"
                            :icon="Refresh"
