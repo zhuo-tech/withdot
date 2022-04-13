@@ -60,15 +60,17 @@ export class FileServiceImpl implements FileService {
         const formData = new FormData()
         formData.set('file', file)
 
-        const {ok, statusText, json} = await fetch(this.getActionUploadUrl(), {
+        let response = await fetch(this.getActionUploadUrl(), {
             headers: this.getActionUploadHeaders(),
             body: formData,
+            method: 'POST',
         })
+        const {ok, statusText, json} = response
         // 网络错误
         if (!ok) {
             throw new Error('错误' + statusText)
         }
-        const res: LafUploadResponse = await json()
+        const res: LafUploadResponse = await json.apply(response)
 
         return this.formatResponse(res, file)
     }

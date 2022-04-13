@@ -77,7 +77,7 @@ const controlDrawer = reactive({
         </List>
     </div>
     <!-- 侧边抽屉 -->
-    <el-drawer v-model="controlDrawer.isShow" title="I am the title">
+    <el-drawer v-model="controlDrawer.isShow">
         <template #title>
             <h1>啊~ 抽屉列表-----------------</h1>
         </template>
@@ -92,7 +92,6 @@ const controlDrawer = reactive({
             </template>
             <template v-slot:operating="{item, index}">
                 <el-button type="primary">
-                    ---
                 </el-button>
             </template>
         </List>
@@ -102,4 +101,4 @@ const controlDrawer = reactive({
 
 </template>
 
-<style lang="sass" scoped src="./VideoEditorStyle.sass" />
+<style lang="sass" scoped src="./style/VideoEditorStyle.sass" />

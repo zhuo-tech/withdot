@@ -2,7 +2,9 @@
  * 商品订单表
  */
 export class PayGoodsOrder {
-  public static readonly TABLE_NAME = 'Pay_Goods_Order'
+
+  public static readonly TABLE_NAME = 'pay_goods_order'
+
   /**
    * 主键
    */
@@ -61,5 +63,5 @@ export class PayGoodsOrder {
   /**
    * 删除状态 是否删除 0否1是
    */
-  delFlag: string
+  delFlag: number
 }

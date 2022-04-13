@@ -1,5 +1,7 @@
 export class PayTradeOrder {
-  public static readonly TABLE_NAME = 'Pay_Trade_Order'
+
+  public static readonly TABLE_NAME = 'pay_trade_order'
+
   /**
    * 主键
    */
@@ -123,5 +125,5 @@ export class PayTradeOrder {
   /**
    * 删除状态 是否删除 0否1是
    */
-  delFlag: string
+  delFlag: number
 }

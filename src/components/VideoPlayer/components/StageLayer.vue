@@ -7,7 +7,7 @@ import Draggable from './Draggable.vue'
  * 所有子元素都应该是 可拖动的盒子 Draggable
  * @props list {Array<CoreDot>}
  */
-const prop = defineProps<{
+const props = defineProps<{
     list: Array<CoreDot>
 }>()
 
@@ -15,10 +15,7 @@ const prop = defineProps<{
 
 <template>
 <div class="stage-box">
-    <Draggable v-for="(item, index) in list"
-               :key="index"
-               :index="index"
-               :item="item" />
+    <Draggable v-for="(item, index) in list" :key="index" :index="index" :item="item" />
 </div>
 </template>
 

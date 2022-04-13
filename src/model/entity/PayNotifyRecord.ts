@@ -4,6 +4,7 @@
 export class PayNotifyRecord {
 
   public static readonly TABLE_NAME = 'pay_notify_record'
+  
   /**
    * 主键
    */
@@ -47,5 +48,5 @@ export class PayNotifyRecord {
   /**
    * 删除状态 是否删除 0否1是
    */
-  delFlag: string
+  delFlag: number
 }
