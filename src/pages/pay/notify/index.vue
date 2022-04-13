@@ -78,9 +78,9 @@ init()
                 <template #default="scope">
                     <el-button 
                         size="small" 
-                        type="danger" 
+                        type="text" 
                         icon="Delete"
-                        @click="handleDelete(scope.$index, scope.row)">
+                        @click="handleDelete(scope.$index, scope.row)">删除
                     </el-button>
                 </template>
             </el-table-column>
