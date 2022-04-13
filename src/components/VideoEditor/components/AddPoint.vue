@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { CoreDot } from '@/model/entity/CoreDot'
 import { TimeUnit } from 'typescript-util'
-import { reactive, toRefs } from 'vue'
+import { reactive } from 'vue'
 import { AddPointContext } from '../context/AddPointContext'
 import { DotTypeOption } from '../context/VideoEditorContext'
 import IconLabel from './IconLabel'
@@ -28,7 +28,7 @@ function formSubmit() {
 
 <template>
 <!-- 编辑器工具栏 -->
-<el-menu :default-active="context.currentType" mode="horizontal" @select="context.onMenuSelect">
+<el-menu :default-active="context.currentType" mode="horizontal" @select="(t) => context.onMenuSelect(t)">
     <el-menu-item v-for="item in DotTypeOption" :key="item.type" :index="item.type">
         <IconLabel :icon="item.icon" :label="item.label" />
     </el-menu-item>
@@ -69,16 +69,10 @@ function formSubmit() {
             </el-form-item>
         </el-form>
 
-        <el-tab-pane v-for="item in DotTypeOption" :key="item.type" :name="item.type">
-            <template #label>
-                <IconLabel :icon="item.icon" :label="item.label" />
-            </template>
-
-            <!-- SLOT -->
-            <div>
-                <slot name="configForm" :config="context.formData.config"></slot>
-            </div>
-        </el-tab-pane>
+        <!-- SLOT -->
+        <div>
+            <slot :config="context.formData.config" name="configForm"></slot>
+        </div>
     </el-tabs>
 
     <div slot="footer" class="drawer-body-footer" style="display: flex; justify-content: right">

@@ -1,135 +1,146 @@
 <script lang="ts" setup>
-import CrudPagination from '@/components/CrudPagination/CrudPagination'
-import ShowFile from '@/components/Upload/ShowFile'
 import { getLogger } from '@/main'
-import { Delete, Edit, Warning } from '@element-plus/icons-vue'
-import goodsorderform from '@/components/pay/goodsorderform.vue'
-import { ref } from "vue"
-import type { VNode, VNodeProps } from "vue"
-import { ElLoading } from "element-plus"
+import {  ref } from "vue"
+import { cloud } from '@/cloud'
+import { PayGoodsOrderService } from '../service/PayGoodsOrderService'
+
+
+const DB = cloud.database() // 数据库
+
+
+const tableData = ref()//表单
 
 const log = getLogger('支付渠道')
 
-const value = ref("")
+const orderform = ref("")//订单状态
 
-const options = [
+const hide = ref(true)//头部展示
+
+const odd = ref('')//单号
+
+
+const PayOptions = [  //状态
   {
-    value: "win",
-    label: "支付成功",
+    PayName: "win",
+    order : "支付成功",
   },
   {
-    value: "accomplish",
-    label: "支付完成",
+    PayName: "accomplish",
+    order: "支付完成",
   },
-    {
-    value: "unpaid",
-    label: "待支付",
-  },  {
-    value: "failed",
-    label: "支付失败",
-  },  {
-    value: "cancel",
-    label: "支付取消",
+  {
+    PayName: "unpaid",
+    order: "待支付",
+  }, {
+    PayName: "failed",
+    order: "支付失败",
+  }, {
+    PayName: "cancel",
+    order: "支付取消",
   },
 
 ]
 
 
 
-const input = ref('')
-
+//清空
 function sweepaway() {
-  value.value = ""
-  input.value = ""
+  orderform.value = ""
+  odd.value = ""
 }
 
-const tableData = [
-  {
-    sort: 1,
-    productname: "",
-    sum: "",
-    state: "",
-    odd: "",
-    time:""
-  },
-]
 
-const hide = ref(true)
+//隐藏头部
 function showhide() {
   hide.value = !hide.value
 }
 
-const fullscreenLoading = ref(false)
+//获取数据
+const list = async () => {
+  const service = new PayGoodsOrderService()
+  tableData.value = await service.list()
+  let sortord = 1
+  tableData.value.forEach((item: { sort: number }) => {
+    item.sort = sortord
+    sortord++
+  })
+
+}
+list()
+
+
+//刷新
+const controlRefresh = ref(false)
 const openFullScreen1 = () => {
-  fullscreenLoading.value = true
+  controlRefresh.value = true
   setTimeout(() => {
-    fullscreenLoading.value = false
+    controlRefresh.value = false
   }, 2000)
 }
 </script>
 
 <template>
-<el-card class="box-card">
+  <el-card class="box-card">
     <template #header>
-        <div class="card-header">
-            <h1>商品订单</h1>
-        </div>
+      <div class="card-header">
+        <h1>商品订单</h1>
+      </div>
     </template>
     <div v-show="hide" class="choice">
-    <span class="size">订单状态：</span>
-    <el-select v-model="value" class="select" placeholder="订单状态">
-      <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-    </el-select>
+      <span class="size">订单状态：</span>
+      <el-select v-model="orderform" class="select" placeholder="订单状态">
+        <el-option v-for="item in PayOptions" :key="item.PayName" :label="item.order" :value="item.PayName" />
+      </el-select>
 
-    <span class="size1">支付单号：</span>
-    <el-input style="width: 276px;" v-model="input" placeholder="支付单号" />
+      <span class="size1">支付单号：</span>
+      <el-input style="width: 276px;" v-model="odd" placeholder="支付单号" />
 
 
-    <div class="but">
-      <div class="seek">
-        <img class="icon" src="../../../assets/icon/ss.png" alt="" />
-        搜索
-      </div>
-      <div @click="sweepaway()" class="empty">
-        <img class="icon1" src="../../../assets/icon/sc.png" alt="" />
-        清空
-      </div>
-    </div>
-  </div>
-
-  <div class="addbox">
-
-    <div class="hintbox">
-      <el-tooltip effect="dark" content="刷新" placement="top">
-        <el-button class="lod" v-loading.fullscreen.lock="fullscreenLoading" type="primary" @click="openFullScreen1">
-          <div class="hint">
-            <img class="ico" src="../../../assets/icon/sx.png" alt="" />
-          </div>
-        </el-button>
-      </el-tooltip>
-
-      <el-tooltip effect="dark" content="搜索" placement="top">
-        <div @click="showhide()" class="hint">
-          <img class="ico" src="../../../assets/icon/sss.png" alt="" />
+      <div class="but">
+        <div class="seek">
+          <img class="icon" src="../../../assets/icon/ss.png" alt="" />
+          搜索
         </div>
-      </el-tooltip>
+        <div @click="sweepaway()" class="empty">
+          <img class="icon1" src="../../../assets/icon/sc.png" alt="" />
+          清空
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div class="formbox">
-    <el-table :data="tableData" border style="width: 100%">
-      <el-table-column prop="sort" label="序号" width="60" />
-      <el-table-column prop="productname" label="商品名称" />
-      <el-table-column prop="sum" label="金额/元" />
-      <el-table-column prop="state" label="订单状态" />
-      <el-table-column prop="odd" label="支付单号" />
-      <el-table-column prop="time" label="创建时间" />
-    </el-table>
-  </div>
-  <div class="pages">
-    <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="1" />
-  </div>
-</el-card>
+    <div class="addbox">
+
+      <div class="hintbox">
+        <el-tooltip effect="dark" content="刷新" placement="top">
+          <el-button class="lod" v-loading.fullscreen.lock="controlRefresh" type="primary" @click="openFullScreen1">
+            <div class="hint">
+              <img class="ico" src="../../../assets/icon/sx.png" alt="" />
+            </div>
+          </el-button>
+        </el-tooltip>
+
+        <el-tooltip effect="dark" content="搜索" placement="top">
+          <div @click="showhide()" class="hint">
+            <img class="ico" src="../../../assets/icon/sss.png" alt="" />
+          </div>
+        </el-tooltip>
+      </div>
+    </div>
+
+    <div class="formbox">
+      <el-table :data="tableData" border style="width: 100%">
+        <el-table-column prop="sort" label="序号" width="60" />
+        <el-table-column prop="goodsName" label="商品名称" />
+        <el-table-column prop="amount" label="金额/元" />
+        <el-table-column prop="status" label="订单状态" />
+        <el-table-column prop="payOrderId" label="支付单号" />
+        <el-table-column prop="createTime" label="创建时间" />
+      </el-table>
+    </div>
+    <div class="pages">
+      <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="1" />
+    </div>
+  </el-card>
 </template>
 <style scoped lang="less">
 .choice {
@@ -226,6 +237,7 @@ const openFullScreen1 = () => {
     width: 100%;
     display: flex;
     justify-content: flex-end;
+
     .lod {
       width: 30px;
       height: 30px;

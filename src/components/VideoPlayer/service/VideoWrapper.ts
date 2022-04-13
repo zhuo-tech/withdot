@@ -1,8 +1,7 @@
 import { DomWrapper, DomWrapperInitializeError } from '@/components/VideoPlayer/service/DomWrapper'
 import { getLogger } from '@/main'
-import { LoggerLevel } from '@/tool/log/LoggerLevel'
 import { TimeUnit } from 'typescript-util'
-import { ref, Ref } from 'vue'
+import { Ref, ref } from 'vue'
 
 /**
  * <h1>HtmlVideoWrapper</h1>
@@ -26,7 +25,7 @@ import { ref, Ref } from 'vue'
  * @date 2022-04-04 下午 11:25
  **/
 export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
-    private log = getLogger(VideoWrapper.name, LoggerLevel.DEBUG)
+    private log = getLogger(VideoWrapper.name)
     /**
      * DOM 引用
      */
@@ -80,11 +79,7 @@ export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
             this.maxDuration.value = isNaN(max) ? 0 : max
         })
 
-        // 更新播放时间
-        this.pushTimeUpdateCallback((time) => {
-            this.playTime.value = time
-        })
-
+        this.pushTimeUpdateCallback(time => this.playTime.value = time)
     }
 
     private get element(): HTMLVideoElement {
@@ -96,61 +91,13 @@ export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
 
     public setElement(video: HTMLVideoElement) {
         // vite 重载时候 video 为 null, 如果缺少此判断 直接设置 element 会导致循环渲染 堆栈溢出 (Wrapper 对象 在 script 中是响应式对象)
-        if (!video) {
+        if (!video || this._element === video) {
             this.log.trace('尝试设置 空元素, 跳过')
-            return
-        }
-        if (this._element === video) {
             return
         }
 
         this._element = video
         this.log.debug('Video DOM 引用初始化')
-
-        // 加载状态
-        this.element.onloadeddata = (event) => {
-            this.status = this.element.readyState
-            this.log.info('加载数据', this.element.readyState, event)
-
-            if (this.element.readyState >= MediaReadyState.HAVE_FUTURE_DATA) {
-                for (let cb of this.readyCallback) {
-                    try {
-                        cb?.()
-                    } catch (e) {
-                        this.log.warn('就绪回调执行失败', e)
-                    }
-                }
-            }
-        }
-
-        this.element.onloadstart = (event) => {
-            this.log.info('on load start', event)
-        }
-
-        this.element.onloadedmetadata = (event) => {
-            this.status = this.element.readyState
-            this.log.info('on load metadata', event)
-        }
-
-        // 播放时间更新
-        this.element.ontimeupdate = (event) => {
-            if (this.log.isTraceEnable()) {
-                this.log.trace(event.type, '播放时间', this.currentTime, TimeUnit.SECOND.display(this.currentTime), '播放结束: ', this.ended)
-            }
-            for (const cb of this.timeUpdateCallback) {
-                try {
-                    cb(this.currentTime)
-                } catch (e) {
-                    this.log.warn(e)
-                }
-            }
-            // 通知播放完成
-            if (this.ended) {
-                this.status = ExtendedState.PLAY_FINISHED
-                this.pause()
-                this.onPlayFinished?.()
-            }
-        }
     }
 
     public onInitializeFinish(callback: () => void): number {
@@ -225,15 +172,6 @@ export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
 
     /**
      * 就绪状态
-     * | Constant   | Value   | Description |
-     * | ---------------| -------- | ----------------------------------|
-     * | HAVE_NOTHING   | 0  |  没有关于音频/视频是否就绪的信息 |
-     * | HAVE_METADATA   | 1  |  音频/视频已初始化 |
-     * | HAVE_CURRENT_DATA |    2  |  数据已经可以播放(当前位置已经加载) 但没有数据能播放下一帧的内容 |
-     * | HAVE_FUTURE_DATA |    3  |  当前及至少下一帧的数据是可用的(换句话来说至少有两帧的数据) |
-     * | HAVE_ENOUGH_DATA |   4   |  可用数据足以开始播放-如果网速得到保障 那么视频可以一直播放到底 |
-     *
-     * @see <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLMediaElement/readyState">Web API 接口参考 _ MDN</a>
      * @see MediaReadyState
      */
     public get readyState(): MediaReadyState {
@@ -398,6 +336,53 @@ export class VideoWrapper implements DomWrapper<HTMLVideoElement> {
         }
     }
 
+    public onLoadedData(event: Event) {
+        this.status = this.element.readyState
+        this.log.info('加载数据', this.element.readyState, event)
+
+        if (this.element.readyState >= MediaReadyState.HAVE_FUTURE_DATA) {
+            for (let cb of this.readyCallback) {
+                try {
+                    cb?.()
+                } catch (e) {
+                    this.log.warn('就绪回调执行失败', e)
+                }
+            }
+        }
+    }
+
+    public onTimeUpdate(event: Event) {
+        if (this.log.isTraceEnable()) {
+            this.log.trace(event.type, '播放时间', TimeUnit.SECOND.display(this.currentTime))
+        }
+
+        this.status = this.element.readyState
+
+        for (const cb of this.timeUpdateCallback) {
+            try {
+                cb(this.currentTime)
+            } catch (e) {
+                this.log.warn(e)
+            }
+        }
+        // 通知播放完成
+        if (this.ended) {
+            this.status = ExtendedState.PLAY_FINISHED
+            this.pause()
+            this.onPlayFinished?.()
+        }
+    }
+
+    // noinspection JSUnusedLocalSymbols
+    public onLoadStart(event: Event) {
+        this.log.info('on load start')
+    }
+
+    // noinspection JSUnusedLocalSymbols
+    public onLoadMetaData(event: Event) {
+        this.status = this.element.readyState
+        this.log.debug('load meta data')
+    }
 }
 
 /**
@@ -444,7 +429,7 @@ export enum MediaNetworkState {
     /**
      * 没有数据
      */
-    NETWORK_EMPTY= 0,
+    NETWORK_EMPTY = 0,
     /**
      * 网络空闲
      */

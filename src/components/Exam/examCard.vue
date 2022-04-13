@@ -33,7 +33,7 @@ const options = [
         label: "Option5",
     },
 ];
-// 表格数据
+// 所有题目数据
 const tableData: User[] = [
     {
         order: 1,
@@ -61,14 +61,13 @@ const tableData: User[] = [
         type: "选择题",
     },
 ];
-let tempTableData = ref<User[]>(tableData);
+let tempTableData = ref<User[]>(tableData); // 表格显示数据
 const multipleSelection = ref<User[]>([]); // 保存已选中的数据
 
 // ======================================函数===================================================
 
 onMounted(() => {
-    // tempTableData = tableData;
-    // console.log(tempTableData, "1111111111");
+    console.log("onMounted");
 });
 // 表格选中回调
 const handleSelectionChange = (val: User[]) => {

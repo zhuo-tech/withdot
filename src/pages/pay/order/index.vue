@@ -1,73 +1,74 @@
 <script lang="ts" setup>
-import CrudPagination from '@/components/CrudPagination/CrudPagination'
-import ShowFile from '@/components/Upload/ShowFile'
 import { getLogger } from '@/main'
-import { Delete, Edit, Warning } from '@element-plus/icons-vue'
-import transaction from '@/components/pay/transaction.vue'
 import { ref } from "vue";
-import type { VNode, VNodeProps } from "vue";
-import { ElLoading } from "element-plus";
+import { cloud } from '@/cloud'
+import { PayTradeOrderService } from '../service/PayTradeOrderService'
 
 const log = getLogger('交易订单')
 
-const value = ref("");
+const DB = cloud.database() // 数据库
 
-const options = [
+const orderform = ref("");//订单默认状态
+
+const tableData = ref()//表单
+
+const hide = ref(true);//头部展示
+
+//订单状态
+const PayOptions = [
     {
-        value: "win",
-        label: "支付成功",
+        PayName: "win",
+        order: "支付成功",
     },
     {
-        value: "accomplish",
-        label: "支付完成",
+        PayName: "accomplish",
+        order: "支付完成",
     },
     {
-        value: "unpaid",
-        label: "待支付",
+        PayName: "unpaid",
+        order: "待支付",
     },
     {
-        value: "failed",
-        label: "支付失败",
+        PayName: "failed",
+        order: "支付失败",
     },
     {
-        value: "cancel",
-        label: "支付取消",
+        PayName: "cancel",
+        order: "支付取消",
     },
 ];
 
+//清空状态
 function sweepaway() {
-    value.value = "";
+    orderform.value = "";
 }
 
-const tableData = [
-    {
-        sort: 1,
-        order: "",
-        ditchid: "",
-        commercialtenant: "",
-        Channelorder: "",
-        describe: "",
-        sum: "",
-        currency: "",
-        state: "",
-        ip: "",
-        wintime: "",
-        time: "",
-    },
-];
-
-const hide = ref(true);
+//隐藏头部
 function showhide() {
     hide.value = !hide.value;
 }
 
-const fullscreenLoading = ref(false);
+//刷新
+const controlRefresh = ref(false);
 const openFullScreen1 = () => {
-    fullscreenLoading.value = true;
+    controlRefresh.value = true;
     setTimeout(() => {
-        fullscreenLoading.value = false;
+        controlRefresh.value = false;
     }, 2000);
 };
+
+//获取数据
+const list = async () => {
+  const service = new PayTradeOrderService()
+  tableData.value = await service.list()
+  let sortord = 1
+  tableData.value.forEach((item: { sort: number }) => {
+    item.sort = sortord
+    sortord++
+  })
+
+}
+list()
 </script>
 
 <template>
@@ -79,12 +80,12 @@ const openFullScreen1 = () => {
     </template>
      <div v-show="hide" class="choice">
         <span class="size">订单状态：</span>
-        <el-select v-model="value" class="select" placeholder="订单状态">
+        <el-select v-model="orderform" class="select" placeholder="订单状态">
             <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                v-for="item in PayOptions"
+                :key="item.PayName"
+                :label="item.order"
+                :value="item.PayName"
             />
         </el-select>
 
@@ -113,7 +114,7 @@ const openFullScreen1 = () => {
             <el-tooltip effect="dark" content="刷新" placement="top">
                 <el-button
                     class="lod"
-                    v-loading.fullscreen.lock="fullscreenLoading"
+                    v-loading.fullscreen.lock="controlRefresh"
                     type="primary"
                     @click="openFullScreen1"
                 >
@@ -142,17 +143,17 @@ const openFullScreen1 = () => {
     <div class="formbox">
         <el-table :data="tableData" border style="width: 100%">
             <el-table-column prop="sort" label="序号" width="60" />
-            <el-table-column prop="order" label="订单号" />
-            <el-table-column prop="ditchid" label="渠道ID" />
-            <el-table-column prop="commercialtenant" label="渠道商户" />
-            <el-table-column prop="Channelorder" label="渠道订单" />
-            <el-table-column prop="describe" label="商品描述" />
-            <el-table-column prop="sum" label="金额" />
+            <el-table-column prop="orderId" label="订单号" />
+            <el-table-column prop="channelId" label="渠道ID" />
+            <el-table-column prop="channelMchId" label="渠道商户" />
+            <el-table-column prop="channelOrderNo" label="渠道订单" />
+            <el-table-column prop="body" label="商品描述" />
+            <el-table-column prop="amount" label="金额" />
             <el-table-column prop="currency" label="币种" />
-            <el-table-column prop="state" label="支付状态" />
-            <el-table-column prop="ip" label="客户端IP" />
-            <el-table-column prop="wintime" label="成功时间" />
-            <el-table-column prop="time" label="创建时间" />
+            <el-table-column prop="status" label="支付状态" />
+            <el-table-column prop="clientIp" label="客户端IP" />
+            <el-table-column prop="paySucTime" label="成功时间" />
+            <el-table-column prop="createTime" label="创建时间" />
         </el-table>
     </div>
     <div class="pages">

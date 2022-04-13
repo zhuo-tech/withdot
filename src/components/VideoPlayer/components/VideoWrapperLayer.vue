@@ -24,7 +24,12 @@ const showEnd = computed(() => {
 </script>
 <template>
 <div v-loading=" service.videoElement.status < MediaReadyState.HAVE_FUTURE_DATA" class="video-wrapper">
-    <video :ref="el => service.videoElement.setElement(el)" src="../resource/test.mp4"></video>
+    <video :ref="el => service.videoElement.setElement(el)"
+           src="../resource/test.mp4"
+           @loadeddata="(event) => service.videoElement.onLoadedData(event)"
+           @loadedmetadata="(event) => service.videoElement.onLoadMetaData(event)"
+           @loadstart="(event) => service.videoElement.onLoadStart(event)"
+           @timeupdate="service.videoElement.onTimeUpdate"></video>
 </div>
 <div v-show="showEnd" class="play-finished">
     <h1 class="relatively-centered" style="text-align: center; font-size: 40px; color: red">播放完成...........</h1>
