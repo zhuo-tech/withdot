@@ -46,7 +46,7 @@ const page = async (current: number, size: number) => {
  */
 const handleSearch = async (query: PayNotifyQo) => {
     notifyList.value = await service.pageByParams(current.value, size.value, query)
-    qo.value.orderNo = ''
+    handleClearForm()
 }
 /**
  * 分页处理
@@ -54,7 +54,6 @@ const handleSearch = async (query: PayNotifyQo) => {
  */
 const handleCurrentChange = async (current: number) => {
     notifyList.value = await service.page(current, size.value)
-    handleClearForm()
 }
 const handleClearForm = () => {
     qoRef.value.resetFields()
