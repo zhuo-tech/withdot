@@ -5,35 +5,28 @@ import { PayTradeOrderService } from "@/pages/pay/service/PayTradeOrderService";
 import { getLogger } from "@/main";
 import { PayTradeOrderQo } from "@/pages/pay/service/qo/PayTradeOrderQo";
 import { PayTradeOrder } from '@/model/entity/PayTradeOrder';
+import { getPayStatLabel, StatusOptions } from '@/model/PayStatusEnum';
 
 export default defineComponent({
     setup() {
-        const log = getLogger("交易记录");
-        const service = new PayTradeOrderService();
-        const query = new PayTradeOrderQo(1, 10)
-        const statusOptions = [
-            { value: '0', label: '待支付' },
-            { value: '1', label: '支付成功' },
-            { value: '2', label: '支付完成' },
-            { value: '-1', label: '支付失败' },
-            { value: '-2', label: '支付取消' }
-        ]
+        const L = getLogger("交易记录");
+        const S = new PayTradeOrderService();
+        const Q = new PayTradeOrderQo(1, 10)
         const trade = reactive({
             tableKey: 0,
             list: Array<PayTradeOrder>(),
             total: 0,
             listLoading: true,
-            queryParam: query,
-            statusOptions: statusOptions,
+            queryParam: Q,
+            statusOptions: StatusOptions,
             genSn(index: number) {
                 return (index += 1)
             },
             fmtPayStatus(row: PayTradeOrder): string {
-                const o = statusOptions.find(item => item.value === row.status)
-                return o ? o.label : '-'
+                return getPayStatLabel(row.status)
             },
             async handleDelete(index: number, obj: PayTradeOrder) {
-                await service.removeById(obj._id)
+                await S.removeById(obj._id)
                 ElMessage.success({
                     message: '删除成功',
                     type: 'success',
@@ -41,18 +34,18 @@ export default defineComponent({
                 })
             },
             handleCurrentChange(current: number) {
-                log.debug(`current -> ${current} `)
+                L.debug(`current -> ${current} `)
                 trade.queryParam.current = current
                 trade.getList(trade.queryParam)
             },
             handleSizeChange(size: number) {
                 trade.queryParam.size = size
-                log.debug(`size -> ${size} `)
+                L.debug(`size -> ${size} `)
                 trade.getList(trade.queryParam)
             },
             async getList(queryParam: PayTradeOrderQo) {
                 trade.listLoading = true
-                const res = await service.page(queryParam);
+                const res = await S.page(queryParam);
                 trade.list = res.record ?? []
                 trade.total = res.total ?? 0
                 setTimeout(() => { trade.listLoading = false }, 0.5 * 1000)
@@ -82,7 +75,7 @@ export default defineComponent({
             <el-form v-model="queryParam" ref="queryParamRef">
                 <el-col :span="12">
                     <el-form-item label="订单号">
-                        <el-input v-model="queryParam.orderNo" clearable/>
+                        <el-input v-model="queryParam.orderNo" clearable />
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">

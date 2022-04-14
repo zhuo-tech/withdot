@@ -8,20 +8,20 @@ import { PayNotifyQo } from "@/pages/pay/service/qo/PayNotifyQo";
 
 export default defineComponent({
     setup() {
-        const log = getLogger("支付通知");
-        const service = new PayNotifyRecordService();
-        const query = new PayNotifyQo(1, 10, '')
+        const L = getLogger("支付通知");
+        const S = new PayNotifyRecordService();
+        const Q = new PayNotifyQo(1, 10, '')
         const notify = reactive({
             tableKey: 0,
             list: Array<PayNotifyRecord>(),
             total: 0,
             listLoading: true,
-            queryParam: query,
+            queryParam: Q,
             genSn(index: number) {
                 return (index += 1)
             },
-            async handleDelete(index: number, obj: PayNotifyRecord,) {
-                await service.deleteById(obj._id)
+            async handleDelete(index: number, obj: PayNotifyRecord) {
+                await S.deleteById(obj._id)
                 ElMessage.success({
                     message: '删除成功',
                     type: 'success',
@@ -29,18 +29,18 @@ export default defineComponent({
                 })
             },
             handleCurrentChange(current: number) {
-                log.debug(`current -> ${current} `)
+                L.debug(`current -> ${current} `)
                 notify.queryParam.current = current
                 notify.getList(notify.queryParam.current, notify.queryParam.size, notify.queryParam.orderNo)
             },
             handleSizeChange(size: number) {
                 notify.queryParam.size = size
-                log.debug(`size -> ${size} `)
+                L.debug(`size -> ${size} `)
                 notify.getList(notify.queryParam.current, notify.queryParam.size, notify.queryParam.orderNo)
             },
             async getList(current: number, size: number, orderNo: string) {
                 notify.listLoading = true
-                const res = await service.pageByParams(current, size, orderNo);
+                const res = await S.pageByParams(current, size, orderNo);
                 notify.list = res.record ?? []
                 notify.total = res.total ?? 0
                 setTimeout(() => { notify.listLoading = false }, 0.5 * 1000)
@@ -55,9 +55,9 @@ export default defineComponent({
         })
         onMounted(() => {
             notify.getList(
-                    notify.queryParam.current,
-                    notify.queryParam.size, 
-                    notify.queryParam.orderNo
+                notify.queryParam.current,
+                notify.queryParam.size,
+                notify.queryParam.orderNo
             )
         })
         return {
@@ -77,7 +77,7 @@ export default defineComponent({
             <el-col :span="6">
                 <el-form v-model="queryParam" ref="queryParamRef">
                     <el-form-item label="订单号">
-                        <el-input v-model="queryParam.orderNo" clearable/>
+                        <el-input v-model="queryParam.orderNo" clearable />
                     </el-form-item>
                 </el-form>
             </el-col>
