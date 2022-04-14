@@ -6,6 +6,11 @@ import { PayNotifyRecord } from "@/model/entity/PayNotifyRecord"
 import { LogicDelete } from '@/model/LogicDelete';
 import { ObjectUtil } from 'typescript-util';
 
+/**
+ * 支付通知服务
+ * @author HK
+ * @date 2022年04月01日 17点13分
+ */
 export class PayNotifyRecordService {
 
     private readonly log = getLogger('PayNotifyRecordService')

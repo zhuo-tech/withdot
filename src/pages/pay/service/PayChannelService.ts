@@ -7,6 +7,8 @@ import { ObjectUtil } from 'typescript-util';
 
 /**
  * 支付渠道
+ * @author HK
+ * @date 2022年04月01日 17点13分
  */
 export class PayChannelService {
 

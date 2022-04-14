@@ -7,6 +7,11 @@ import { ObjectUtil } from 'typescript-util';
 import { BaseMo } from '@/model/BaseMo';
 import { PayTradeOrderQo } from '@/pages/pay/service/qo/PayTradeOrderQo';
 
+/**
+ * 交易记录服务
+ * @author HK
+ * @date 2022年04月01日 17点13分
+ */
 export class PayTradeOrderService {
 
     private readonly log = getLogger('PayTradeOrderService')
