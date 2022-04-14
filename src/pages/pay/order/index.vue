@@ -12,7 +12,7 @@ export default defineComponent({
         const L = getLogger("交易记录");
         const S = new PayTradeOrderService();
         const Q = new PayTradeOrderQo(1, 10)
-        const trade = reactive({
+        const R = reactive({
             tableKey: 0,
             list: Array<PayTradeOrder>(),
             total: 0,
@@ -35,30 +35,30 @@ export default defineComponent({
             },
             handleCurrentChange(current: number) {
                 L.debug(`current -> ${current} `)
-                trade.queryParam.current = current
-                trade.getList(trade.queryParam)
+                R.queryParam.current = current
+                R.getList(R.queryParam)
             },
             handleSizeChange(size: number) {
-                trade.queryParam.size = size
+                R.queryParam.size = size
                 L.debug(`size -> ${size} `)
-                trade.getList(trade.queryParam)
+                R.getList(R.queryParam)
             },
             async getList(queryParam: PayTradeOrderQo) {
-                trade.listLoading = true
+                R.listLoading = true
                 const res = await S.page(queryParam);
-                trade.list = res.record ?? []
-                trade.total = res.total ?? 0
-                setTimeout(() => { trade.listLoading = false }, 0.5 * 1000)
+                R.list = res.record ?? []
+                R.total = res.total ?? 0
+                setTimeout(() => { R.listLoading = false }, 0.5 * 1000)
             },
             handleSearch() {
-                trade.getList(trade.queryParam)
+                R.getList(R.queryParam)
             }
         })
         onMounted(() => {
-            trade.getList(trade.queryParam)
+            R.getList(R.queryParam)
         })
         return {
-            ...toRefs(trade)
+            ...toRefs(R)
         }
     }
 })

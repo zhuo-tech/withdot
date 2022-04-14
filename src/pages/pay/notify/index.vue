@@ -10,8 +10,8 @@ export default defineComponent({
     setup() {
         const L = getLogger("支付通知");
         const S = new PayNotifyRecordService();
-        const Q = new PayNotifyQo(1, 10, '')
-        const notify = reactive({
+        const Q = new PayNotifyQo(1, 10)
+        const R = reactive({
             tableKey: 0,
             list: Array<PayNotifyRecord>(),
             total: 0,
@@ -30,38 +30,30 @@ export default defineComponent({
             },
             handleCurrentChange(current: number) {
                 L.debug(`current -> ${current} `)
-                notify.queryParam.current = current
-                notify.getList(notify.queryParam.current, notify.queryParam.size, notify.queryParam.orderNo)
+                R.queryParam.current = current
+                R.getList(R.queryParam)
             },
             handleSizeChange(size: number) {
-                notify.queryParam.size = size
+                R.queryParam.size = size
                 L.debug(`size -> ${size} `)
-                notify.getList(notify.queryParam.current, notify.queryParam.size, notify.queryParam.orderNo)
+                R.getList(R.queryParam)
             },
-            async getList(current: number, size: number, orderNo: string) {
-                notify.listLoading = true
-                const res = await S.pageByParams(current, size, orderNo);
-                notify.list = res.record ?? []
-                notify.total = res.total ?? 0
-                setTimeout(() => { notify.listLoading = false }, 0.5 * 1000)
+            async getList(params: PayNotifyQo) {
+                R.listLoading = true
+                const res = await S.pageByParams(params);
+                R.list = res.record ?? []
+                R.total = res.total ?? 0
+                setTimeout(() => { R.listLoading = false }, 0.5 * 1000)
             },
             handleSearch() {
-                notify.getList(
-                    notify.queryParam.current,
-                    notify.queryParam.size,
-                    notify.queryParam.orderNo
-                )
+                R.getList(R.queryParam)
             }
         })
         onMounted(() => {
-            notify.getList(
-                notify.queryParam.current,
-                notify.queryParam.size,
-                notify.queryParam.orderNo
-            )
+            R.getList(R.queryParam)
         })
         return {
-            ...toRefs(notify)
+            ...toRefs(R)
         }
     }
 })

@@ -29,8 +29,7 @@ export class PayTradeOrderService {
 
     /**
      * 分页查询
-     * @param current 分页大小
-     * @param size  偏移量
+     * @param q 查询对象
      * @returns 分页列表
      */
     async page(q: PayTradeOrderQo): Promise<BaseMo<PayTradeOrder>> {
