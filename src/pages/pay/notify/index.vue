@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { PayNotifyRecord } from '@/model/entity/PayNotifyRecord';
 import { Search } from '@element-plus/icons-vue'
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { PayNotifyRecordService } from '@/pages/pay/service/PayNotifyRecordService'
 import { PayNotifyQo } from '@/pages/pay/service/PayNotifyQo'
-
+import { getLogger } from '@/main';
+const log = getLogger("支付通知")
 const service = new PayNotifyRecordService()
 let notifyList = ref<PayNotifyRecord[]>([])
 const total = ref(0)
@@ -12,6 +13,7 @@ const size = ref(10)
 const current = ref(1)
 const qo = ref<PayNotifyQo>(new PayNotifyQo())
 const qoRef = ref()
+ 
 onMounted(() => {
     init()
 })
