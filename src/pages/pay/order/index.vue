@@ -3,7 +3,7 @@ import { ElMessage } from 'element-plus'
 import { defineComponent, onMounted, reactive, toRefs } from "vue";
 import { PayTradeOrderService } from "@/pages/pay/service/PayTradeOrderService";
 import { getLogger } from "@/main";
-import { PayTradeOrderQo } from "@/pages/pay/service/model/PayTradeOrderQo";
+import { PayTradeOrderQo } from "@/pages/pay/service/qo/PayTradeOrderQo";
 import { PayTradeOrder } from '@/model/entity/PayTradeOrder';
 
 export default defineComponent({
@@ -82,7 +82,7 @@ export default defineComponent({
             <el-form v-model="queryParam" ref="queryParamRef">
                 <el-col :span="12">
                     <el-form-item label="订单号">
-                        <el-input v-model="queryParam.orderNo" />
+                        <el-input v-model="queryParam.orderNo" clearable/>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">

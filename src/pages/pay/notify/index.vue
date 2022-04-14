@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus'
 import { defineComponent, onMounted, reactive, toRefs } from "vue";
 import { PayNotifyRecordService } from "@/pages/pay/service/PayNotifyRecordService";
 import { getLogger } from "@/main";
-import { PayNotifyQo } from "@/pages/pay/service/model/PayNotifyQo";
+import { PayNotifyQo } from "@/pages/pay/service/qo/PayNotifyQo";
 
 export default defineComponent({
     setup() {
@@ -77,7 +77,7 @@ export default defineComponent({
             <el-col :span="6">
                 <el-form v-model="queryParam" ref="queryParamRef">
                     <el-form-item label="订单号">
-                        <el-input v-model="queryParam.orderNo" />
+                        <el-input v-model="queryParam.orderNo" clearable/>
                     </el-form-item>
                 </el-form>
             </el-col>

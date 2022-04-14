@@ -5,7 +5,7 @@ import { PayTradeOrder } from "@/model/entity/PayTradeOrder"
 import { LogicDelete } from '@/model/LogicDelete';
 import { ObjectUtil } from 'typescript-util';
 import { BaseMo } from '@/model/BaseMo';
-import { PayTradeOrderQo } from './model/PayTradeOrderQo';
+import { PayTradeOrderQo } from '@/pages/pay/service/qo/PayTradeOrderQo';
 
 export class PayTradeOrderService {
 
@@ -36,8 +36,9 @@ export class PayTradeOrderService {
             p['status'] = status
         }
         if (orderNo) {
-            p['orderNo'] = orderNo
+            p['orderId'] = orderNo
         }
+        console.log(p)
         const res = await dbTemplate.collection(PayTradeOrder.TABLE_NAME)
             .where(p)
             .limit(size)

@@ -1,10 +1,10 @@
 import { cloud } from '@/cloud';
 import { getLogger } from '@/main';
+import { BaseMo } from '@/model/BaseMo';
 import { CommonEnum } from '@/model/CommonEnum';
 import { PayNotifyRecord } from "@/model/entity/PayNotifyRecord"
 import { LogicDelete } from '@/model/LogicDelete';
-import { ObjectUtil, StrUtil } from 'typescript-util';
-import { PayNotifyMo } from './model/PayNotifyMo'
+import { ObjectUtil } from 'typescript-util';
 
 export class PayNotifyRecordService {
 
@@ -29,7 +29,7 @@ export class PayNotifyRecordService {
      * @param size  偏移量
      * @returns 支付通知分页列表
      */
-    async page(current: number, size: number): Promise<PayNotifyMo<PayNotifyRecord>> {
+    async page(current: number, size: number): Promise<BaseMo<PayNotifyRecord>> {
         const dbTemplate = cloud.database();
         const res = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
             .where({ delFlag: LogicDelete.NORMAL })
@@ -49,12 +49,11 @@ export class PayNotifyRecordService {
      * @param size  偏移量
      * @returns 支付通知分页列表
      */
-    async pageByParams(current: number, size: number, orderNo: string): Promise<PayNotifyMo<PayNotifyRecord>> {
+    async pageByParams(current: number, size: number, orderNo: string): Promise<BaseMo<PayNotifyRecord>> {
         const dbTemplate = cloud.database();
         const query = { delFlag: LogicDelete.NORMAL }
         if (orderNo) {
-            // @ts-ignore
-            query.orderNo = dbTemplate.RegExp({ regexp: `.*${orderNo}.*` })
+            query['orderNo'] = orderNo
         }
         const res = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
             .where(query)
