@@ -104,7 +104,7 @@ export default defineComponent({
                 </template>
             </el-table-column>
         </el-table>
-        <el-pagination fixed="right" :total="total" v-show="total > 0" v-model:page="queryParam.current"
+        <el-pagination class="pages" :total="total" v-show="total > 0" v-model:page="queryParam.current"
             v-model:limit="queryParam.size" @size-change="handleSizeChange" @current-change="handleCurrentChange"
             :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper" />
 
@@ -112,5 +112,11 @@ export default defineComponent({
 
 </template>
 
+
 <style lang="less" scoped>
+.pages {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+}
 </style>
