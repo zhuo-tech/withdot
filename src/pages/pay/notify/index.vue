@@ -1,78 +1,71 @@
-<script lang="ts" setup>
-import { PayNotifyRecord } from '@/model/entity/PayNotifyRecord';
-import { Search } from '@element-plus/icons-vue'
-import { onMounted, ref } from 'vue'
-import { PayNotifyRecordService } from '@/pages/pay/service/PayNotifyRecordService'
-import { PayNotifyQo } from '@/pages/pay/service/PayNotifyQo'
+<script lang="ts">
+import { PayNotifyRecord } from "@/model/entity/PayNotifyRecord";
+import { ElMessage } from 'element-plus'
+import { defineComponent, onMounted, reactive, toRefs } from "vue";
+import { PayNotifyRecordService } from "@/pages/pay/service/PayNotifyRecordService";
+import { getLogger } from "@/main";
+import { PayNotifyQo } from "@/pages/pay/service/model/PayNotifyQo";
 
-const service = new PayNotifyRecordService()
-let notifyList = ref<PayNotifyRecord[]>([])
-const total = ref(0)
-const size = ref(10)
-const current = ref(1)
-const qo = ref<PayNotifyQo>(new PayNotifyQo())
-const qoRef = ref()
-onMounted(() => {
-    init()
+export default defineComponent({
+    setup() {
+        const log = getLogger("支付通知");
+        const service = new PayNotifyRecordService();
+        const query = new PayNotifyQo(1, 10, '')
+        const notify = reactive({
+            tableKey: 0,
+            list: Array<PayNotifyRecord>(),
+            total: 0,
+            listLoading: true,
+            queryParam: query,
+            genSn(index: number) {
+                return (index += 1)
+            },
+            async handleDelete(index: number, obj: PayNotifyRecord,) {
+                await service.deleteById(obj._id)
+                ElMessage.success({
+                    message: '删除成功',
+                    type: 'success',
+                    duration: 2000
+                })
+            },
+            handleCurrentChange(current: number) {
+                log.debug(`current -> ${current} `)
+                notify.queryParam.current = current
+                notify.getList(notify.queryParam.current, notify.queryParam.size, notify.queryParam.orderNo)
+            },
+            handleSizeChange(size: number) {
+                notify.queryParam.size = size
+                log.debug(`size -> ${size} `)
+                notify.getList(notify.queryParam.current, notify.queryParam.size, notify.queryParam.orderNo)
+            },
+            async getList(current: number, size: number, orderNo: string) {
+                notify.listLoading = true
+                const res = await service.pageByParams(current, size, orderNo);
+                notify.list = res.record ?? []
+                notify.total = res.total ?? 0
+                setTimeout(() => { notify.listLoading = false }, 0.5 * 1000)
+            },
+            handleSearch() {
+                notify.getList(
+                    notify.queryParam.current,
+                    notify.queryParam.size,
+                    notify.queryParam.orderNo
+                )
+            }
+        })
+        onMounted(() => {
+            notify.getList(
+                    notify.queryParam.current,
+                    notify.queryParam.size, 
+                    notify.queryParam.orderNo
+            )
+        })
+        return {
+            ...toRefs(notify)
+        }
+    }
 })
-/**
- * 生成序列号
- * @param index 序号
- * @returns 递增序号
- */
-const genSn = (index: number) => {
-    return index += 1
-}
-
-/**
- * 统计汇总
- */
-const count = async () => {
-    total.value = await service.count()
-}
-/**
- * 分页查询支付渠道列表
- * @param current  当前页
- * @param size  分页大小
- */
-const page = async (current: number, size: number) => {
-    notifyList.value = await service.page(current, size)
-}
-
-/**
- * 检索
- */
-const handleSearch = async (query: PayNotifyQo) => {
-    notifyList.value = await service.pageByParams(current.value, size.value, query)
-    qo.value.orderNo = ''
-}
-/**
- * 分页处理
- * @param current 当前页
- */
-const handleCurrentChange = async (current: number) => {
-    notifyList.value = await service.page(current, size.value)
-    handleClearForm()
-}
-const handleClearForm = () => {
-    qoRef.value.resetFields()
-}
-/**
- * 逻辑删除
- * @param index 下标
- * @param row  记录
- */
-const handleDelete = async (index: number, row: PayNotifyRecord) => {
-    console.log(index, row)
-    await service.deleteById(row._id)
-    notifyList.value = await service.page(current.value, size.value)
-}
-const init = () => {
-    count()
-    page(current.value, size.value)
-}
 </script>
-
 <template>
     <el-card class="box-card">
         <template #header>
@@ -82,17 +75,18 @@ const init = () => {
         </template>
         <el-row :gutter="20">
             <el-col :span="6">
-                <el-form v-model="qo" ref="qoRef">
+                <el-form v-model="queryParam" ref="queryParamRef">
                     <el-form-item label="订单号">
-                        <el-input v-model="qo.orderNo" />
+                        <el-input v-model="queryParam.orderNo" />
                     </el-form-item>
                 </el-form>
             </el-col>
             <el-col :span="6" :offset="0">
-                <el-button type="primary" :icon="Search" @click="handleSearch(qo)">查询</el-button>
+                <el-button type="primary" icon="Search" @click="handleSearch()">查询</el-button>
             </el-col>
         </el-row>
-        <el-table :data="notifyList" style="width: 100%">
+        <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row
+            style="width: 100%">
             <el-table-column label="序号" type="index" :sn="genSn" width="60" />
             <el-table-column label="订单号码" prop="orderNo" width="180" />
             <el-table-column label="响应通知" prop="notifyId" />
@@ -101,18 +95,27 @@ const init = () => {
             <el-table-column label="创建时间" prop="createTime" />
             <el-table-column fixed="right" label="操作" width="120">
                 <template #default="scope">
-                    <el-button size="small" type="text" icon="Delete" @click="handleDelete(scope.$index, scope.row)">
-                        删除
-                    </el-button>
+                    <el-divider direction="vertical" />
+                    <el-popconfirm icon="Warning" cancel-button-text="手滑了" confirm-button-text="确认删除" icon-color="red"
+                        title=" 操作无法撤销, 确定要删除吗 ？" @click="handleDelete(scope.$index, scope.row)">
+                        <template #reference>
+                            <el-button size="small" type="text" icon="Delete"
+                                @click="handleDelete(scope.$index, scope.row)">
+                                删除
+                            </el-button>
+                        </template>
+                    </el-popconfirm>
                 </template>
             </el-table-column>
         </el-table>
-        <div class="pages">
-            <el-pagination :total="total" :page-size="size" @current-change="handleCurrentChange" background
-                layout="total, prev, pager, next, jumper" />
-        </div>
+        <el-pagination class="pages" :total="total" v-show="total > 0" v-model:page="queryParam.current"
+            v-model:limit="queryParam.size" @size-change="handleSizeChange" @current-change="handleCurrentChange"
+            :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper" />
+
     </el-card>
+
 </template>
+
 
 <style lang="less" scoped>
 .pages {

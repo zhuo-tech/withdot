@@ -3,8 +3,8 @@ import { getLogger } from '@/main';
 import { CommonEnum } from '@/model/CommonEnum';
 import { PayNotifyRecord } from "@/model/entity/PayNotifyRecord"
 import { LogicDelete } from '@/model/LogicDelete';
-import { ObjectUtil } from 'typescript-util';
-import { PayNotifyQo } from '@/pages/pay/service/PayNotifyQo';
+import { ObjectUtil, StrUtil } from 'typescript-util';
+import { PayNotifyMo } from './model/PayNotifyMo'
 
 export class PayNotifyRecordService {
 
@@ -17,7 +17,7 @@ export class PayNotifyRecordService {
     async list(): Promise<Array<PayNotifyRecord>> {
         const dbTemplate = cloud.database();
         const res = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
-        .where({delFlag: LogicDelete.NORMAL})
+            .where({ delFlag: LogicDelete.NORMAL })
             .get<PayNotifyRecord>()
         return res.data
     }
@@ -29,14 +29,18 @@ export class PayNotifyRecordService {
      * @param size  偏移量
      * @returns 支付通知分页列表
      */
-    async page(current: number,size: number): Promise<Array<PayNotifyRecord>> {
+    async page(current: number, size: number): Promise<PayNotifyMo<PayNotifyRecord>> {
         const dbTemplate = cloud.database();
         const res = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
-            .where({delFlag: LogicDelete.NORMAL})
+            .where({ delFlag: LogicDelete.NORMAL })
             .limit(size)
             .skip(size * (current - 1))
             .get<PayNotifyRecord>()
-        return res.data
+        const { total } = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME).where({ delFlag: LogicDelete.NORMAL }).count()
+        return {
+            total,
+            record: res.data
+        };
     }
 
     /**
@@ -45,21 +49,26 @@ export class PayNotifyRecordService {
      * @param size  偏移量
      * @returns 支付通知分页列表
      */
-     async pageByParams(current: number,size: number,params: PayNotifyQo): Promise<Array<PayNotifyRecord>> {
+    async pageByParams(current: number, size: number, orderNo: string): Promise<PayNotifyMo<PayNotifyRecord>> {
         const dbTemplate = cloud.database();
-        const { orderNo } = params;
+        const query = { delFlag: LogicDelete.NORMAL }
         if (orderNo) {
             // @ts-ignore
-            params.orderNo = dbTemplate.RegExp({ regexp: `.*${orderNo}.*` })
+            query.orderNo = dbTemplate.RegExp({ regexp: `.*${orderNo}.*` })
         }
-        params.delFlag = LogicDelete.NORMAL
         const res = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
-            .where(params)
+            .where(query)
             .limit(size)
             .skip(size * (current - 1))
-            .orderBy('createTime', 'desc')
             .get<PayNotifyRecord>()
-        return res.data
+
+        const { total } = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
+            .where(query)
+            .count()
+        return {
+            total,
+            record: res.data
+        };
     }
 
     /**
@@ -68,7 +77,7 @@ export class PayNotifyRecordService {
      */
     async count(): Promise<number> {
         const dbTemplate = cloud.database();
-        const { total } = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME).where({delFlag: LogicDelete.NORMAL}).count()
+        const { total } = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME).where({ delFlag: LogicDelete.NORMAL }).count()
         return total
     }
 
@@ -114,7 +123,7 @@ export class PayNotifyRecordService {
         const result = await dbTemplate
             .collection(PayNotifyRecord.TABLE_NAME)
             .doc(id)
-            .update({delFlag: LogicDelete.DELETED})
+            .update({ delFlag: LogicDelete.DELETED })
         this.log.debug("删除支付通知 `{}` ", result)
         return true
     }
@@ -124,7 +133,7 @@ export class PayNotifyRecordService {
     * @param id 主键
     * @returns true
     */
-     async removeById(id: string,): Promise<boolean> {
+    async removeById(id: string,): Promise<boolean> {
         const dbTemplate = cloud.database()
         const res = dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
             .where({ _id: id })
