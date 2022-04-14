@@ -75,7 +75,7 @@ export class PayTradeOrderService {
         this.init(obj, CommonEnum.ACTION_ADD)
         const { id, error } = await dbTemplate.collection(PayTradeOrder.TABLE_NAME).add({ obj })
         if (ObjectUtil.isNull(id)) {
-            this.log.error("save exam error `{}` ", error)
+            this.log.error(`save exam error -> ${error}`)
             throw new Error(error)
         }
         return id as string
@@ -93,7 +93,7 @@ export class PayTradeOrderService {
             .collection(PayTradeOrder.TABLE_NAME)
             .doc(obj._id)
             .update({ obj })
-        this.log.debug("更新交易记录 `{}` ", result)
+        this.log.debug(`更新交易记录 -> ${result}`)
         return true
     }
 
@@ -105,9 +105,9 @@ export class PayTradeOrderService {
     async removeById(id: string): Promise<boolean> {
         const dbTemplate = cloud.database()
         const res = dbTemplate.collection(PayTradeOrder.TABLE_NAME)
-            .where({ _id: id })
-            .remove()
-        this.log.debug("删除交易 `{}` ", res)
+            .doc(id)
+            .update({ delFlag: LogicDelete.DELETED })
+        this.log.debug(`删除交易 -> ${res}`)
         return true
     }
 

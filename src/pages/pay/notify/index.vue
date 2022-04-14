@@ -4,13 +4,13 @@ import { ElMessage } from 'element-plus'
 import { defineComponent, onMounted, reactive, toRefs } from "vue";
 import { PayNotifyRecordService } from "@/pages/pay/service/PayNotifyRecordService";
 import { getLogger } from "@/main";
-import { PayNotifyQo } from "@/pages/pay/service/qo/PayNotifyQo";
+import { PayNotifyRecordQo } from "@/pages/pay/service/qo/PayNotifyRecordQo";
 
 export default defineComponent({
     setup() {
         const L = getLogger("支付通知");
         const S = new PayNotifyRecordService();
-        const Q = new PayNotifyQo(1, 10)
+        const Q = new PayNotifyRecordQo(1, 10)
         const R = reactive({
             tableKey: 0,
             list: Array<PayNotifyRecord>(),
@@ -38,7 +38,7 @@ export default defineComponent({
                 L.debug(`size -> ${size} `)
                 R.getList(R.queryParam)
             },
-            async getList(params: PayNotifyQo) {
+            async getList(params: PayNotifyRecordQo) {
                 R.listLoading = true
                 const res = await S.pageByParams(params);
                 R.list = res.record ?? []

@@ -1,11 +1,14 @@
 import { BasePage } from "@/model/BasePage"
 
 /**
- * 支付通知查询对象
+ * 商品订单查询对象
  * @author HK
  * @date 2022年04月01日 17点13分
  */
-export class PayNotifyQo extends BasePage {
+export class PayGoodsOrderQo extends BasePage {
+    current: number
+    size: number
+    status?: string
     orderNo?: string
     constructor(current: number, size: number) {
         super()
