@@ -64,6 +64,9 @@ const videoRef: VideoWrapperContext = ref({}) as any
 #player
     position: relative
 
+    .stage-wrapper
+        pointer-events: none
+
 #player > *
     position: absolute
     width: 100%
