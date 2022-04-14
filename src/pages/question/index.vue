@@ -23,7 +23,7 @@ service.getList()
         <!--表格-->
         <el-table v-loading="service.data.loading" :data="service.data.list" style="width: 100%">
             <el-table-column label="序号" type="index" width="100"></el-table-column>
-            <el-table-column label="题目标题" prop="label" width="280"></el-table-column>
+            <el-table-column label="题目标题" prop="label"></el-table-column>
             <el-table-column label="题目类型" prop="type" width="180">
                 <template #default="scope">
                     <span>{{ questionType[scope.row.type] }}</span>

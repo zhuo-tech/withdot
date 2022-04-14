@@ -20,10 +20,10 @@ export enum questionType {
     saq = '简答题'
 }
 
-let formStatus = false   //false 编辑  true 添加
+
 export default class QuestionService {
     public DB = cloud.database().collection(CoreQuestionRepo.TABLE_NAME)
-
+    public formStatus = ref(false)   //false 编辑  true 添加
     public tableIsLoading = ref(false)
     public formRef: FormInstance
     public data: any = ref({
@@ -79,7 +79,7 @@ export default class QuestionService {
     }
     public addQuestion = () => {
         this.formData.show()
-        formStatus = true
+        this.formStatus.value = true
     }
     /**
      * 刷新题库列表
@@ -148,7 +148,7 @@ export default class QuestionService {
             content: row.content,
             type: row.type,
         }
-        formStatus = false
+        this.formStatus.value = false
         this.formData.show()
     }
 
@@ -177,7 +177,7 @@ export default class QuestionService {
                 return
             }
             this.formData.formIsLoading = true
-            if (formStatus) {
+            if (this.formStatus.value) {
                 this.formSubmitFn().then(response => {
                     this.repeatResponse(response)
                 }).catch(err => {
@@ -212,6 +212,7 @@ export default class QuestionService {
                 current: this.data.value.page.currentPage,
                 size: this.data.value.page.pageSize,
             })
+            .orderBy('updateTime','desc')
             .get()
     }
     private getListCount = async (whereFlag: any) => {
@@ -250,7 +251,7 @@ export default class QuestionService {
         }
         setTimeout(() => {
             this.formData.formIsLoading = false
-            if (!this.formData.form._id) {
+            if (this.formStatus.value) {
                 ElMessage.success('题目添加成功')
             } else {
                 ElMessage.success('题目编辑修改成功')
