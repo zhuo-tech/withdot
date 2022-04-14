@@ -35,7 +35,7 @@ export class CoreDot implements BaseEntity {
 
     display: DotDisplayType
 
-    position?: {
+    position: {
         x: number
         y: number
         z?: number

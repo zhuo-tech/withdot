@@ -30,7 +30,6 @@ export class DivWrapper implements DomWrapper<HTMLDivElement> {
             return
         }
         this._element = value
-        this.log.trace('Div DOM 初始化')
         for (let cb of this.readyCallback) {
             try {
                 cb?.()
