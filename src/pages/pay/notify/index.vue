@@ -54,7 +54,11 @@ export default defineComponent({
             }
         })
         onMounted(() => {
-            notify.getList(1, 10, notify.queryParam.orderNo)
+            notify.getList(
+                    notify.queryParam.current,
+                    notify.queryParam.size, 
+                    notify.queryParam.orderNo
+            )
         })
         return {
             ...toRefs(notify)
