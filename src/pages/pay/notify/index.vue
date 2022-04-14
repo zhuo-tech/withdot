@@ -95,7 +95,6 @@ export default defineComponent({
             <el-table-column label="创建时间" prop="createTime" />
             <el-table-column fixed="right" label="操作" width="120">
                 <template #default="scope">
-                    <el-divider direction="vertical" />
                     <el-popconfirm icon="Warning" cancel-button-text="手滑了" confirm-button-text="确认删除" icon-color="red"
                         title=" 操作无法撤销, 确定要删除吗 ？" @click="handleDelete(scope.$index, scope.row)">
                         <template #reference>
