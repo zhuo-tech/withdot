@@ -4,6 +4,7 @@ import { TimeUnit } from 'typescript-util'
 import { reactive } from 'vue'
 import { AddPointContext } from '../context/AddPointContext'
 import { DotTypeOption } from '../context/VideoEditorContext'
+import DotConfigForm from './DotConfigForm'
 import IconLabel from './IconLabel'
 
 const props = defineProps({
@@ -67,12 +68,11 @@ function formSubmit() {
                     <div class="display">{{ TimeUnit.SECOND.display(currentPlayTime) }}</div>
                 </div>
             </el-form-item>
-        </el-form>
 
-        <!-- SLOT -->
-        <div>
-            <slot :config="context.formData.config" name="configForm"></slot>
-        </div>
+            <el-form-item label-width="0px">
+                <DotConfigForm :type="context.currentType" :value="context.formData.config" />
+            </el-form-item>
+        </el-form>
     </el-tabs>
 
     <div slot="footer" class="drawer-body-footer" style="display: flex; justify-content: right">
