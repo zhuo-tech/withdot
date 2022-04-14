@@ -25,7 +25,7 @@ const config = reactive({
             </el-col>
             <el-col v-if="config.switch" :span="12">
                 <el-form-item label="时长">
-                    <el-input-number v-model="config.time" min="1"></el-input-number>&nbsp;&nbsp;&nbsp;秒
+                    <el-input-number v-model="config.time" :min="1"></el-input-number>&nbsp;&nbsp;&nbsp;秒
                 </el-form-item>
             </el-col>
         </el-row>

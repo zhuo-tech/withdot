@@ -26,7 +26,7 @@ const changeValue = (value: any) => {
             </el-col>
             <el-col :span="12" v-if="config.switch">
                 <el-form-item label="时长">
-                    <el-input-number v-model="config.time" min="1"></el-input-number>&nbsp;&nbsp;&nbsp;秒
+                    <el-input-number v-model="config.time" :min="1"></el-input-number>&nbsp;&nbsp;&nbsp;秒
                 </el-form-item>
             </el-col>
         </el-row>
