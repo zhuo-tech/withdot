@@ -29,15 +29,21 @@ export class VideoEditorContext {
     // noinspection JSUnusedLocalSymbols
     private readonly client = new LafClient<CoreDot>(CoreDot.TABLE_NAME)
     /**
-     * 播放器
-     */
-    public playerContext: PlayerContext = new PlayerContext()
-    /**
      * 当前打点类型
      */
     public currentType: CoreDotType = CoreDotType.题目
 
     public pointList = reactive<Array<CoreDot>>([])
+
+    public controlDrawer = {
+        isShow: false,
+        show() {
+            this.isShow = true
+        },
+        close() {
+            this.isShow = false
+        },
+    }
 
     constructor() {
         ObjectUtil.toArray(CoreDotType)
@@ -45,7 +51,7 @@ export class VideoEditorContext {
             .forEach((kv, index) => {
                 let dot = new CoreDot()
                 dot.type = kv.value
-                dot._id = kv.key
+                dot._id = String(index)
                 dot.label = kv.key
                 dot.display = index % 2 === 0 ? DotDisplayType.BUTTON : DotDisplayType.EXPANDED
                 dot.createTime = Date.now()
