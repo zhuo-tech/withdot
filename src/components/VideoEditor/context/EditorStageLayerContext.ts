@@ -58,13 +58,20 @@ export class EditorStageLayerContext {
         const {offsetX, offsetY} = event
         this.selectOffsetX = offsetX
         this.selectOffsetY = offsetY
+
+        this.stageLayerRef.style.pointerEvents = 'auto'
     }
 
     // noinspection JSUnusedLocalSymbols
     public onMouseUp(event: MouseEvent) {
         this.selectIndex = null
+
+        this.stageLayerRef.style.pointerEvents = 'none'
     }
 
+    /**
+     * TODO: 需要防抖 -- 连续长时间拖动会妨碍视频播放
+     */
     public onMouseMove(event: MouseEvent) {
         let index = this.selectIndex
 
@@ -87,7 +94,6 @@ export class EditorStageLayerContext {
 
         style.top = y + 'px'
         style.left = x + 'px'
-
 
         this.setPosition(index, {x: x / width, y: y / height})
     }
