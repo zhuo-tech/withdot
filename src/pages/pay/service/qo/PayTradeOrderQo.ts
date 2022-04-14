@@ -1,6 +1,6 @@
 import { BasePage } from "@/model/BasePage"
 
-export class PayTradeOrderQo extends BasePage{
+export class PayTradeOrderQo extends BasePage {
     current: number
     size: number
     status?: string
