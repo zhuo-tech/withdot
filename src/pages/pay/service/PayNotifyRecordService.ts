@@ -59,7 +59,7 @@ export class PayNotifyRecordService {
         const { current, size, orderNo } = q
         const p = { delFlag: LogicDelete.NORMAL }
         if (orderNo) {
-            p['orderId'] = orderNo
+            p['orderNo'] = orderNo
         }
         const res = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
             .where(p)
