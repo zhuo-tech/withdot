@@ -1,7 +1,7 @@
 
 <script lang="ts">
 import { ElMessage } from 'element-plus'
-import { defineComponent, onMounted, reactive, toRefs } from "vue";
+import { defineComponent, onMounted, reactive, ref, toRefs } from "vue";
 import { PayTradeOrderService } from "@/pages/pay/service/PayTradeOrderService";
 import { getLogger } from "@/main";
 import { PayTradeOrderQo } from "@/pages/pay/service/qo/PayTradeOrderQo";
@@ -13,53 +13,64 @@ export default defineComponent({
         const L = getLogger("交易记录");
         const S = new PayTradeOrderService();
         const Q = new PayTradeOrderQo(1, 10)
-        const R = reactive({
-            tableKey: 0,
-            list: Array<PayTradeOrder>(),
-            total: 0,
-            listLoading: true,
+        const total = ref(0)
+        const listLoading = ref(true)
+        const state = reactive({
+            data: Array<PayTradeOrder>(),
+            total,
+            listLoading,
             queryParam: Q,
             statusOptions: StatusOptions,
-            genSn(index: number) {
-                return (index += 1)
-            },
-            fmtPayStatus(row: PayTradeOrder): string {
-                return getPayStatLabel(row.status)
-            },
-            async handleDelete(index: number, obj: PayTradeOrder) {
-                await S.removeById(obj._id)
-                ElMessage.success({
-                    message: '删除成功',
-                    type: 'success',
-                    duration: 2000
-                })
-            },
-            handleCurrentChange(current: number) {
-                L.debug(`current -> ${current} `)
-                R.queryParam.current = current
-                R.getList(R.queryParam)
-            },
-            handleSizeChange(size: number) {
-                R.queryParam.size = size
-                L.debug(`size -> ${size} `)
-                R.getList(R.queryParam)
-            },
-            async getList(queryParam: PayTradeOrderQo) {
-                R.listLoading = true
-                const res = await S.page(queryParam);
-                R.list = res.record ?? []
-                R.total = res.total ?? 0
-                setTimeout(() => { R.listLoading = false }, 0.5 * 1000)
-            },
-            handleSearch() {
-                R.getList(R.queryParam)
-            }
         })
+        L.debug(`[state] -> ${JSON.stringify(state)}`)
+        const handleSn = (index: number): number => {
+            return (index += 1)
+        }
+        const handlePayStatus = (row: PayTradeOrder): string => {
+            return getPayStatLabel(row.status)
+        }
+        const handleDelete = async (index: number, obj: PayTradeOrder):Promise<void> => {
+            L.debug(`delete obj by id [index]-> ${index} [id]-> ${obj._id}`)
+            await S.removeById(obj._id)
+            ElMessage.success({
+                message: '删除成功',
+                type: 'success',
+                duration: 2000
+            })
+            handlePage(state.queryParam)
+        }
+        const handleCurrentChange = (current: number): void => {
+            L.debug(`current -> ${current} `)
+            state.queryParam.current = current
+            handlePage(state.queryParam)
+        }
+        const handleSizeChange = (size: number): void => {
+            state.queryParam.size = size
+            L.debug(`size -> ${size} `)
+            handlePage(state.queryParam)
+        }
+        const handlePage = async (queryParam: PayTradeOrderQo): Promise<void> => {
+            state.listLoading = true
+            const res = await S.page(queryParam);
+            state.data = res.record ?? []
+            state.total = res.total ?? 0
+            state.listLoading = false
+        }
+        const handleSearch = () => {
+            handlePage(state.queryParam)
+        }
         onMounted(() => {
-            R.getList(R.queryParam)
+            handlePage(state.queryParam)
         })
         return {
-            ...toRefs(R)
+            ...toRefs(state),
+            handleSearch,
+            handlePage,
+            handleSizeChange,
+            handleCurrentChange,
+            handleDelete,
+            handleSn,
+            handlePayStatus
         }
     }
 })
@@ -92,9 +103,8 @@ export default defineComponent({
                 </el-col>
             </el-form>
         </el-row>
-        <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row
-            style="width: 100%">
-            <el-table-column label="序号" type="index" :sn="genSn" width="60" />
+        <el-table v-loading="listLoading" :data="data" border fit highlight-current-row style="width: 100%">
+            <el-table-column label="序号" type="index" :sn="handleSn" width="60" />
             <el-table-column prop="orderId" label="订单号" />
             <el-table-column prop="channelId" label="渠道ID" />
             <el-table-column prop="channelMchId" label="渠道商户" />
@@ -102,7 +112,7 @@ export default defineComponent({
             <el-table-column prop="body" label="商品描述" />
             <el-table-column prop="amount" label="金额" />
             <el-table-column prop="currency" label="币种" />
-            <el-table-column prop="status" :formatter="fmtPayStatus" label="支付状态" />
+            <el-table-column prop="status" :formatter="handlePayStatus" label="支付状态" />
             <el-table-column prop="clientIp" label="客户端IP" />
             <el-table-column prop="paySucTime" label="成功时间" />
             <el-table-column prop="createTime" label="创建时间" />
@@ -111,8 +121,7 @@ export default defineComponent({
                     <el-popconfirm icon="Warning" cancel-button-text="手滑了" confirm-button-text="确认删除" icon-color="red"
                         title=" 操作无法撤销, 确定要删除吗 ？" @click="handleDelete(scope.$index, scope.row)">
                         <template #reference>
-                            <el-button size="small" type="text" icon="Delete"
-                                @click="handleDelete(scope.$index, scope.row)">
+                            <el-button size="small" type="text" icon="Delete">
                                 删除
                             </el-button>
                         </template>
@@ -128,8 +137,8 @@ export default defineComponent({
 
 <style lang="less" scoped>
 .pages {
-  margin-top: 10px;
-  display: flex;
-  justify-content: flex-end;
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
 }
 </style>
