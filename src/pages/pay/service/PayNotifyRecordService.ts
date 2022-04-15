@@ -4,6 +4,7 @@ import { CommonEnum } from '@/model/CommonEnum';
 import { PayNotifyRecord } from "@/model/entity/PayNotifyRecord"
 import { LogicDelete } from '@/model/LogicDelete';
 import { ObjectUtil } from 'typescript-util';
+import { PayChannelQo } from './PayChannelQo'
 
 export class PayNotifyRecordService {
 
@@ -24,14 +25,33 @@ export class PayNotifyRecordService {
 
     /**
      * 分页查询支付通知信息
-     * @param current 分页大小
-     * @param size  偏移量
+     * @param current 当前页
+     * @param size  分页大小
      * @returns 支付通知分页列表
      */
     async page(current: number,size: number): Promise<Array<PayNotifyRecord>> {
         const dbTemplate = cloud.database();
         const res = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
             .where({delFlag: LogicDelete.NORMAL})
+            .limit(size)
+            .skip(size * (current - 1))
+            .get<PayNotifyRecord>()
+        return res.data
+    }
+
+    /**
+     * 分页查询支付通知信息
+     * @param current 当前页
+     * @param size  分页大小
+     * @returns 支付通知分页列表
+     */
+    async pageByParams(current: number,size: number,params: PayChannelQo): Promise<Array<PayNotifyRecord>> {
+        const dbTemplate = cloud.database();
+        const res = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
+            .where({
+                delFlag: LogicDelete.NORMAL,
+                orderNo: params.orderNo
+            })
             .limit(size)
             .skip(size * (current - 1))
             .get<PayNotifyRecord>()

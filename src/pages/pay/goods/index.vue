@@ -3,9 +3,52 @@ import { getLogger } from '@/main'
 import {  ref } from "vue"
 import { cloud } from '@/cloud'
 import { PayGoodsOrderService } from '../service/PayGoodsOrderService'
+import { PayGoodsOrder } from '@/model/entity/PayGoodsOrder'
 
 
 const DB = cloud.database() // 数据库
+
+
+const service = new PayGoodsOrderService()
+let notifyList = ref<PayGoodsOrder[]>([])
+const total = ref(0)
+const size = ref(5)
+const current = ref(1)
+/**
+ * 生成序列号
+ * @param index 序号
+ * @returns 递增序号
+ */
+const genSn = (index: number) => {
+    return index += 1
+}
+
+/**
+ * 统计汇总
+ */
+const count = async () => {
+    total.value = await service.count()
+}
+/**
+ * 分页查询支付渠道列表
+ * @param current  当前页
+ * @param size  分页大小
+ */
+const page = async ( current: number,size: number) => {
+    notifyList.value = await service.page(current, size)
+}
+
+
+/**
+ * 分页处理
+ * @param current 当前页
+ */
+const handleCurrentChange = async (current: number) => {
+    notifyList.value = await service.page(current, size.value)
+    
+}
+
+
 
 
 const tableData = ref()//表单
@@ -55,24 +98,12 @@ function showhide() {
   hide.value = !hide.value
 }
 
-//获取数据
-const list = async () => {
-  const service = new PayGoodsOrderService()
-  tableData.value = await service.list()
-  let sortord = 1
-  tableData.value.forEach((item: { sort: number }) => {
-    item.sort = sortord
-    sortord++
-  })
-
-}
-list()
-
 
 //刷新
 const controlRefresh = ref(false)
 const openFullScreen1 = () => {
   controlRefresh.value = true
+  init()
   setTimeout(() => {
     controlRefresh.value = false
   }, 2000)
@@ -97,39 +128,29 @@ const openFullScreen1 = () => {
 
 
       <div class="but">
-        <div class="seek">
-          <img class="icon" src="../../../assets/icon/ss.png" alt="" />
-          搜索
-        </div>
-        <div @click="sweepaway()" class="empty">
-          <img class="icon1" src="../../../assets/icon/sc.png" alt="" />
-          清空
-        </div>
+        <el-button  size="default" type="primary" icon="Search">搜索</el-button>
+       <el-button @click="sweepaway()" size="default"  type="primary" icon="Delete">清空</el-button>
       </div>
     </div>
 
     <div class="addbox">
 
-      <div class="hintbox">
-        <el-tooltip effect="dark" content="刷新" placement="top">
-          <el-button class="lod" v-loading.fullscreen.lock="controlRefresh" type="primary" @click="openFullScreen1">
-            <div class="hint">
-              <img class="ico" src="../../../assets/icon/sx.png" alt="" />
-            </div>
+        <div class="hintbox">
+        <el-tooltip content="刷新" effect="dark" placement="top">
+          <el-button v-loading.fullscreen.lock="controlRefresh" class="lod" type="primary" @click="openFullScreen1">
+                  <el-button class="hint" icon="refresh" circle />
           </el-button>
         </el-tooltip>
 
-        <el-tooltip effect="dark" content="搜索" placement="top">
-          <div @click="showhide()" class="hint">
-            <img class="ico" src="../../../assets/icon/sss.png" alt="" />
-          </div>
+        <el-tooltip content="搜索" effect="dark" placement="top">
+            <el-button class="hint" @click="showhide()" icon="Search" circle />
         </el-tooltip>
       </div>
     </div>
 
     <div class="formbox">
-      <el-table :data="tableData" border style="width: 100%">
-        <el-table-column prop="sort" label="序号" width="60" />
+      <el-table :data="notifyList" border style="width: 100%">
+        <el-table-column :sn="genSn" type="index" label="序号" width="60" />
         <el-table-column prop="goodsName" label="商品名称" />
         <el-table-column prop="amount" label="金额/元" />
         <el-table-column prop="status" label="订单状态" />
@@ -137,9 +158,10 @@ const openFullScreen1 = () => {
         <el-table-column prop="createTime" label="创建时间" />
       </el-table>
     </div>
-    <div class="pages">
-      <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="1" />
-    </div>
+   <div class="pages">
+            <el-pagination :total="total" :page-size="size" @current-change="handleCurrentChange" background
+                layout="total, prev, pager, next, jumper" />
+        </div>
   </el-card>
 </template>
 <style scoped lang="less">
@@ -164,50 +186,9 @@ const openFullScreen1 = () => {
 
   .but {
     display: flex;
-    margin: 10px 0 0 180px;
+    margin: 0 0 0 180px;
     font-size: 15px;
     font-weight: 400;
-
-    .seek {
-      width: 70px;
-      height: 30px;
-      display: flex;
-      border: solid 1px;
-      font-size: 14px;
-      line-height: 30px;
-      margin: -5px 30px 0 0;
-      border-radius: 5px;
-      background-color: #409eff;
-      color: #fff;
-      text-align: center;
-      cursor: pointer;
-
-      .icon {
-        margin: 2px 0 0 5px;
-        width: 23px;
-        height: 23px;
-      }
-    }
-
-    .empty {
-      font-size: 14px;
-      width: 70px;
-      height: 30px;
-      display: flex;
-      border: solid 1px #c0c4cc;
-      line-height: 30px;
-      margin-top: -5px;
-      border-radius: 5px;
-      color: #606266;
-      text-align: center;
-      cursor: pointer;
-
-      .icon1 {
-        margin: 7px 2px 0 10px;
-        width: 15px;
-        height: 15px;
-      }
-    }
   }
 }
 
@@ -215,23 +196,6 @@ const openFullScreen1 = () => {
   display: flex;
   margin-top: 20px;
   justify-content: space-between;
-
-  .add {
-    display: flex;
-
-    .addbut {
-      font-size: 14px;
-      width: 70px;
-      height: 30px;
-      text-align: center;
-      background-color: #409eff;
-      border: solid 1px;
-      line-height: 30px;
-      border-radius: 5px;
-      color: #fff;
-      cursor: pointer;
-    }
-  }
 
   .hintbox {
     width: 100%;
@@ -252,21 +216,12 @@ const openFullScreen1 = () => {
       border-radius: 50px;
       margin-left: 10px;
       cursor: pointer;
-
-      .ico {
-        margin: 0 auto;
-        margin-top: 5px;
-      }
     }
   }
 }
 
 .formbox {
   margin-top: 10px;
-
-  .form {
-    text-align: center;
-  }
 }
 
 .pages {
