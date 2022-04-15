@@ -31,15 +31,13 @@ import {
 
 const routes: RouteRecordRaw[] = [
     HomeRouter,
-    PayRouter,
     MaterialRouter,
     WorksRouter,
     AlbumsRouter,
     UserRouter,
-    OrderRouter,
-    SettingRouter,
-    WeiXinConfigItem,
     QuestionRouter,
+    PayRouter,
+    WeiXinConfigItem,
     ...AccountRouter,
     ...ErrorRouter,
 ]
