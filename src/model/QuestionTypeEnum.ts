@@ -5,17 +5,13 @@
  */
 export enum QuestionTypeEnum {
     /**
-     * 单选题
+     * 选择
      */
-    RADIO = "radio",
+    XUANZE = "select",
     /**
-     * 多选题
+     * 填空
      */
-    MULTI = "multi",
-    /**
-     * 判断题
-     */
-    JUDGE = "judge",
+    TIANKONG = 'fillInTheBlank',
     /**
      * 简单题
      */
