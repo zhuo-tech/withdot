@@ -16,16 +16,11 @@ const props = defineProps<{
                @close="service.formData.initForm()">
         选择
         <el-form :ref="el => service.formRef = el" :model="service.formData.form" :rules="service.rules" label-width="80px">
-            <el-form-item label="题目标题" prop="label">
-                <el-input v-model="service.formData.form.label" placeholder="请输入题目标题"></el-input>
+            <el-form-item label="题目" prop="label">
+                <el-input v-model="service.formData.form.label" placeholder="请输入题目"></el-input>
             </el-form-item>
-            <el-form-item label="题目类型" prop="type">
-                <el-select v-model="service.formData.form.type" placeholder="请选择题目类型">
-                    <el-option v-for="item in questionTypeList" :key="item" :label="item.label" :value="item.value" />
-                </el-select>
-            </el-form-item>
-            <el-form-item label="题目内容">
-                <Editor v-model:value="service.formData.form.content" @changeValue="service.changeValue" />
+            <el-form-item label="选项">
+
             </el-form-item>
         </el-form>
         <template #footer>
