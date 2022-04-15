@@ -45,3 +45,18 @@
       */
      ACTION_UPDATE = 'update'
 }
+
+export const PayTypeOptions = [
+   { value: '0', label: '付费' },
+   { value: '1', label: '免费' }
+]
+
+/**
+* 获取名称
+* @param key 值
+* @returns 付费状态名称
+*/
+export function getIsPayLabel(key: string): string {
+   const o = PayTypeOptions.find(item => item.value === key)
+   return o ? o.label : '-'
+}

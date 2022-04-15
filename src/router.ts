@@ -7,7 +7,7 @@ import HomeRouter, { ROUTER_PATH_HOME } from '@/pages/home/HomeRouter'
 import MaterialRouter from '@/pages/materials/MaterialRouter'
 import PayRouter from '@/pages/pay/PayRouter'
 
-import UserRouter from '@/pages/users/UserRouter'
+import StudentRouter from '@/pages/student/StudentRouter'
 import WorksRouter from '@/pages/works/WorksRouter'
 import QuestionRouter from '@/pages/question/QuestionRouter'
 import { LoggerLevel } from '@/tool/log/LoggerLevel'
@@ -17,7 +17,6 @@ import {
     createRouter,
     createWebHistory,
     NavigationGuard,
-    NavigationGuardNext,
     NavigationGuardWithThis,
     NavigationHookAfter,
     RouteLocationNormalized,
@@ -31,7 +30,7 @@ const routes: RouteRecordRaw[] = [
     MaterialRouter,
     WorksRouter,
     AlbumsRouter,
-    UserRouter,
+    StudentRouter,
     QuestionRouter,
     PayRouter,
     ...AccountRouter,

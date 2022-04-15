@@ -1,5 +1,4 @@
 import { cloud } from '@/cloud';
-import { getLogger } from '@/main';
 import { BaseMo } from '@/model/BaseMo';
 import { CommonEnum } from '@/model/CommonEnum';
 import { PayNotifyRecord } from "@/model/entity/PayNotifyRecord"
@@ -13,8 +12,6 @@ import { PayNotifyRecordQo } from '@/pages/pay/service/qo/PayNotifyRecordQo';
  * @date 2022年04月01日 17点13分
  */
 export class PayNotifyRecordService {
-
-    private readonly log = getLogger('PayNotifyRecordService')
 
     /**
      * 列表查询支付通知信息

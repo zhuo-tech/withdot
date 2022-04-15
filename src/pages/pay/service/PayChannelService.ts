@@ -1,5 +1,4 @@
 import { cloud } from '@/cloud';
-import { getLogger } from '@/main';
 import { CommonEnum } from '@/model/CommonEnum';
 import { PayChannel } from "@/model/entity/PayChannel"
 import { PayNotifyRecord } from '@/model/entity/PayNotifyRecord'
@@ -13,9 +12,6 @@ import { PayChannelQo } from './PayChannelQo'
  * @date 2022年04月01日 17点13分
  */
 export class PayChannelService {
-
-
-    private readonly log = getLogger('PayChannelService')
 
     /**
      * 列表查询支付渠道信息

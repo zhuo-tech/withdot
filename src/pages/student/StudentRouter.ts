@@ -3,7 +3,7 @@ import { User } from '@element-plus/icons-vue'
 import { RouteRecordRaw } from 'vue-router'
 
 const RouterConfigItem: RouteRecordRaw = {
-    path: '/user',
+    path: '/student',
     component: Layout,
     children: [
         {

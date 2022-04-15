@@ -1,5 +1,4 @@
 import { cloud } from '@/cloud';
-import { getLogger } from '@/main';
 import { CommonEnum } from '@/model/CommonEnum';
 import { PayGoodsOrder } from "@/model/entity/PayGoodsOrder"
 import { LogicDelete } from '@/model/LogicDelete';
@@ -13,8 +12,6 @@ import { BaseMo } from '@/model/BaseMo';
  * @date 2022年04月01日 17点13分
  */
 export class PayGoodsOrderService {
-
-    private readonly log = getLogger('PayGoodsOrderService')
 
     /**
      * 列表查询商品订单信息

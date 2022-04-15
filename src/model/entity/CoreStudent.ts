@@ -16,5 +16,5 @@ export class CoreStudent implements BaseEntity {
     /**
      * 0 付费学员 1 未付费学员
      */
-    isPay: number
+    isPay: string
 }

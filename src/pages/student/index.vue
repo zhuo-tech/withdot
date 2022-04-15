@@ -1,22 +1,22 @@
 
 <script lang="ts">
-import { ElMessage } from 'element-plus'
 import { onMounted, reactive, ref, toRefs } from "vue";
 import { getLogger } from "@/main";
-import { PayNotifyRecordService } from "@/pages/pay/service/PayNotifyRecordService";
-import { PayNotifyRecordQo } from "@/pages/pay/service/qo/PayNotifyRecordQo";
-import { PayNotifyRecord } from "@/model/entity/PayNotifyRecord";
-const NAME = PayNotifyRecord.name
+import { StudentService } from "@/pages/student/StudentService";
+import { StudentQo } from "@/pages/student/StudentQo";
+import { CoreStudent } from "@/model/entity/CoreStudent";
+import { getIsPayLabel } from '@/model/CommonEnum';
+const NAME = StudentService.name
 export default {
     name: NAME,
     setup() {
-        const L = getLogger("支付通知");
-        const S = new PayNotifyRecordService();
-        const Q = new PayNotifyRecordQo(1, 10);
+        const L = getLogger("学员列表");
+        const S = new StudentService();
+        const Q = new StudentQo(1, 10);
         const total = ref(0)
         const listLoading = ref(true)
         const state = reactive({
-            data: Array<PayNotifyRecord>(),
+            data: Array<CoreStudent>(),
             total,
             listLoading,
             queryParam: Q
@@ -27,6 +27,12 @@ export default {
         })
         const handleSn = (index: number): number => {
             return (index += 1)
+        }
+        const handlePayType = (row: CoreStudent): string => {
+            return getIsPayLabel(row.isPay)
+        }
+        const handleDetail = (index: number, row: CoreStudent) => {
+            //TODO
         }
         const handleCurrentChange = (current: number) => {
             L.debug(`current -> ${current} `)
@@ -41,17 +47,7 @@ export default {
         const handleSearch = () => {
             handlePage(state.queryParam)
         }
-        const handleDelete = async (index: number, obj: PayNotifyRecord) => {
-            L.debug(`delete obj by id [index]-> ${index} [id]-> ${obj._id}`)
-            await S.deleteById(obj._id)
-            ElMessage.success({
-                message: '删除成功',
-                type: 'success',
-                duration: 2000
-            })
-            handlePage(state.queryParam)
-        }
-        const handlePage = async (params: PayNotifyRecordQo): Promise<void> => {
+        const handlePage = async (params: StudentQo): Promise<void> => {
             state.listLoading = true
             const res = await S.pageByParams(params);
             state.data = res.record ?? []
@@ -60,11 +56,11 @@ export default {
         }
         return {
             ...toRefs(state),
+            handlePayType,
             handleSearch,
             handlePage,
             handleSizeChange,
             handleCurrentChange,
-            handleDelete,
             handleSn
         }
     }
@@ -74,14 +70,19 @@ export default {
     <el-card class="box-card">
         <template #header>
             <div class="card-header">
-                <h1>支付通知</h1>
+                <h1>学员列表</h1>
             </div>
         </template>
         <el-row :gutter="24">
             <el-col :span="12">
                 <el-form v-model="queryParam" ref="queryParamRef">
-                    <el-form-item label="订单号">
-                        <el-input v-model="queryParam.orderNo" clearable />
+                    <el-form-item>
+                        <el-checkbox-group>
+                            <el-radio-group v-model="queryParam.isPay" size="large">
+                                <el-radio-button label="免费" />
+                                <el-radio-button label="付费" />
+                            </el-radio-group>
+                        </el-checkbox-group>
                     </el-form-item>
                 </el-form>
             </el-col>
@@ -89,21 +90,18 @@ export default {
                 <el-button type="primary" icon="Search" @click="handleSearch()">查询</el-button>
             </el-col>
         </el-row>
-        <el-table v-loading="listLoading" :data="data" border fit highlight-current-row style="width: 100%">
+        <el-table v-loading="listLoading" :data="data" border fit highlight-current-row
+            style="width: 100%;pading-top:20px">
             <el-table-column label="序号" type="index" :sn="handleSn" width="60" />
-            <el-table-column label="订单号码" prop="orderNo" width="180" />
-            <el-table-column label="响应通知" prop="notifyId" />
-            <el-table-column label="回调报文" prop="request" show-overflow-tooltip />
-            <el-table-column label="响应报文" prop="response" />
-            <el-table-column label="创建时间" prop="createTime" />
+            <el-table-column label="学员头像" prop="avatar" />
+            <el-table-column label="学员姓名" prop="name" />
+            <el-table-column label="手机号码" prop="phone" />
+            <el-table-column label="是否付费" prop="isPay" :formatter="getIsPayLabel"/>
+            <el-table-column label="注册时间" prop="createTime" />
             <el-table-column fixed="right" label="操作" width="120">
-                <template #default="scope">
-                    <el-popconfirm icon="Warning" title=" 操作无法撤销, 确定要删除吗 ？" cancel-button-text="手滑了"
-                        confirm-button-text="确认删除" icon-color="red" @click="handleDelete(scope.$index, scope.row)">
-                        <template #reference>
-                            <el-button size="small" type="text" icon="Delete">删除</el-button>
-                        </template>
-                    </el-popconfirm>
+                <template #scope>
+                    <el-button size="small" type="text" icon="View" @click="handleDetail(scope.$index, scope.row)">查看
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
