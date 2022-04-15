@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { reactive } from 'vue'
 
-const config = reactive({
-    url: '',
-    switch: false,
-    time: 3,
-    pause: true,
+const props = defineProps({
+    value: {
+        type: Object,
+        required: true,
+    },
 })
 const rules = reactive({
     url: [
@@ -20,11 +20,11 @@ const rules = reactive({
 </script>
 
 <template>
-    <el-form ref="form" :model="config" :rules="rules" label-width="80px">
+    <el-form ref="form" :model="value" :rules="rules" label-width="80px">
         <el-row>
             <el-col :span="24">
                 <el-form-item label="链接地址" prop="url">
-                    <el-input v-model="config.url" placeholder="请输入链接地址"></el-input>
+                    <el-input v-model="value.url" placeholder="请输入链接地址"></el-input>
                 </el-form-item>
             </el-col>
         </el-row>
@@ -32,17 +32,17 @@ const rules = reactive({
         <el-row style="margin-top: 20px">
             <el-col :span="6">
                 <el-form-item label="设置时长">
-                    <el-switch v-model="config.switch"></el-switch>
+                    <el-switch v-model="value.switch"></el-switch>
                 </el-form-item>
             </el-col>
-            <el-col v-if="config.switch" :span="18">
+            <el-col v-if="value.switch" :span="18">
                 <el-form-item label="时长">
-                    <el-input-number v-model="config.time" :min="1"></el-input-number>&nbsp;&nbsp;&nbsp;秒
+                    <el-input-number v-model="value.time" :min="1"></el-input-number>&nbsp;&nbsp;&nbsp;秒
                 </el-form-item>
             </el-col>
         </el-row>
         <el-form-item label="是否暂停">
-            <el-switch v-model="config.pause"></el-switch>
+            <el-switch v-model="value.pause"></el-switch>
         </el-form-item>
     </el-form>
 </template>
