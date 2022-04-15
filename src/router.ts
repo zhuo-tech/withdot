@@ -7,10 +7,7 @@ import HomeRouter, { ROUTER_PATH_HOME } from '@/pages/home/HomeRouter'
 import MaterialRouter from '@/pages/materials/MaterialRouter'
 import PayRouter from '@/pages/pay/PayRouter'
 
-import OrderRouter from '@/pages/orders/OrderRouter'
-import SettingRouter from '@/pages/settings/SettingRouter'
 import UserRouter from '@/pages/users/UserRouter'
-import WeiXinConfigItem from '@/pages/weixin/weixinRouter'
 import WorksRouter from '@/pages/works/WorksRouter'
 import QuestionRouter from '@/pages/question/QuestionRouter'
 import { LoggerLevel } from '@/tool/log/LoggerLevel'
@@ -37,7 +34,6 @@ const routes: RouteRecordRaw[] = [
     UserRouter,
     QuestionRouter,
     PayRouter,
-    WeiXinConfigItem,
     ...AccountRouter,
     ...ErrorRouter,
 ]
