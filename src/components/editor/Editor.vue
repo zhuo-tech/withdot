@@ -18,7 +18,7 @@
 <script lang="ts" setup>
 import '@wangeditor/editor/dist/css/style.css'
 import { FileService, INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
-import { IEditorConfig } from '@wangeditor/editor'
+import { IEditorConfig, IToolbarConfig } from '@wangeditor/editor'
 // 引入 css
 import { onBeforeUnmount, ref, shallowRef, watch, inject, computed } from 'vue'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
@@ -34,12 +34,15 @@ const emits = defineEmits(['changeValue'])
 // 编辑器实例，必须用 shallowRef
 const editorRef = shallowRef()
 
+const toolbarConfig: Partial<IToolbarConfig> = {
+    excludeKeys: ['fullScreen'],
+}
+
 // 内容 HTML
 let valueHtml = ref('')
 
 const fileService: FileService = inject(INJECT_KEY_FILE_SERVICE) as FileService
 
-const toolbarConfig = {}
 const editorConfig: Partial<IEditorConfig> = {
     placeholder: '请输入内容...',
     MENU_CONF: {
