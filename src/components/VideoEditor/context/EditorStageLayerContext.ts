@@ -1,11 +1,14 @@
 import { CoreDot } from '@/model/entity/CoreDot'
 import { Throttling } from '@/tool/annotation/Decorator'
 import { ObjectUtil, StrUtil } from 'typescript-util'
+import { reactive, watch } from 'vue'
 
 type PropsType = {
     list: Array<CoreDot>,
-    width: number,
-    height: number,
+    box: {
+        width: number,
+        height: number,
+    }
 }
 
 /**
@@ -20,19 +23,22 @@ export class EditorStageLayerContext {
     private static readonly Z_INDEX_DEFAULT = 1
 
     public stageLayerRef: HTMLDivElement
-
-    private readonly props: Readonly<PropsType>
-
     private selectIndex: number | null
     private selectOffsetX = 0
     private selectOffsetY = 0
-
     private pTop: number = 0
     private pLeft: number = 0
-    private indexStyleMapping: Record<number, CSSStyleDeclaration> = {}
+    private indexStyleMapping: Record<number, CSSStyleDeclaration> = reactive({})
+    private readonly props: Readonly<PropsType>
 
     constructor(props: Readonly<PropsType>) {
         this.props = props
+
+        watch(() => props.box, () => {
+            this.onResize()
+        }, {
+            deep: true,
+        })
     }
 
     public getStyle(index: number) {
@@ -78,7 +84,10 @@ export class EditorStageLayerContext {
             return
         }
 
-        const {top, left, width, height} = this.stageLayerRef.getBoundingClientRect()
+        // props.box 和 stageLayerRef 的宽高实际是相同的
+        const {top, left} = this.stageLayerRef.getBoundingClientRect()
+        const {width, height} = this.props.box
+
         const {selectOffsetX: sox, selectOffsetY: soy} = this
         const {clientX, clientY} = event
 
@@ -109,7 +118,7 @@ export class EditorStageLayerContext {
         let value = 0
         switch (action) {
             case '+1':
-                 value = Math.min(old + 1, EditorStageLayerContext.Z_INDEX_MAX)
+                value = Math.min(old + 1, EditorStageLayerContext.Z_INDEX_MAX)
                 break
             case '-1':
                 value = Math.max(old - 1, EditorStageLayerContext.Z_INDEX_MIN)
@@ -127,12 +136,30 @@ export class EditorStageLayerContext {
         this.setPosition(index, {z: value})
     }
 
+    /**
+     * 容器大小发生变化时, 重设定位样式
+     */
+    private onResize() {
+        const {width, height} = this.props.box
+
+        this.props.list.forEach((dot, index) => {
+            if (ObjectUtil.isEmpty(dot.position)) {
+                return
+            }
+            const {x, y} = dot.position
+
+            const style = this.indexStyleMapping[index]
+            style.top = y * height + 'px'
+            style.left = x * width + 'px'
+        })
+    }
+
     private setPosition(index: number, style: Partial<CoreDot['position']>) {
         let dot = this.props.list[index]
         if (ObjectUtil.isNull(dot.position)) {
             dot.position = {} as any
         }
-        dot.position = {... dot.position, ... style}
+        dot.position = {...dot.position, ...style}
     }
 
 }
