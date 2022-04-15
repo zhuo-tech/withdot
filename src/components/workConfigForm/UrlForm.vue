@@ -1,16 +1,10 @@
 <script lang="ts" setup>
 import { reactive } from 'vue'
 
-
 const props = defineProps({
     value: {
         type: Object,
         required: true,
-        default:()=>({
-            switch: false,
-            time: 3,
-            pause: true,
-        })
     },
 })
 const rules = reactive({

@@ -4,7 +4,29 @@ import ImgForm from '@/components/workConfigForm/ImgForm.vue'
 import TextForm from '@/components/workConfigForm/TextForm.vue'
 import UrlForm from '@/components/workConfigForm/UrlForm.vue'
 import { CoreDotType } from '@/model/entity/CoreDot'
+import { ObjectUtil } from 'typescript-util'
 import { defineComponent } from 'vue'
+
+const formDataDefault: Partial<Record<CoreDotType, any>> = {
+    [CoreDotType.文本]: {
+        switch: false,
+        time: 3,
+        pause: true,
+    },
+    [CoreDotType.书签]: {},
+    [CoreDotType.图片]: {
+        switch: false,
+        time: 3,
+        pause: true,
+    },
+    [CoreDotType.表单]: {},
+    [CoreDotType.链接]: {
+        switch: false,
+        time: 3,
+        pause: true,
+    },
+    [CoreDotType.题目]: {},
+}
 
 export default defineComponent({
     name: 'DotConfigForm',
@@ -31,11 +53,38 @@ export default defineComponent({
         input: (configData: any) => {
 
         },
+        update: (configData: any) => {
+
+        },
     },
     components: {
         ImgForm,
         TextForm,
         UrlForm,
+    },
+    data() {
+        const getValueByType = (propsValue: any, type: CoreDotType) => {
+            if (ObjectUtil.isNotEmpty(propsValue)) {
+                return propsValue
+            }
+            return ObjectUtil.copy(formDataDefault[type])
+        }
+        return {
+            getValueByType,
+            formData: getValueByType(this.value, this.type as CoreDotType),
+        }
+    },
+    watch: {
+        value() {
+            this.formData = this.getValueByType(this.value, this.type as CoreDotType)
+        },
+        formData: {
+            deep: true,
+            handler: function (nv) {
+                this.$emit('input', nv)
+                this.$emit('update', nv)
+            },
+        },
     },
     render() {
         const type: CoreDotType = this.$props.type as any
@@ -67,7 +116,13 @@ export default defineComponent({
             default:
         }
 
+        const propValue = {
+            ...this.$props,
+            value: this.formData,
+        }
         // @ts-ignore
-        return <ConfigForm { ...this.$props }></ConfigForm>
+        delete propValue.type
+        // @ts-ignore
+        return <ConfigForm ref="configFormRef" { ...propValue }></ConfigForm>
     },
 })
