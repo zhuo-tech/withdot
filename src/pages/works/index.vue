@@ -7,6 +7,7 @@ import { reactive, ref } from 'vue'
 import Dialog from './components/Dialog.vue'
 
 let data = ref()
+let loading = ref(false)
 const page = reactive({               //分页器参数
     current: 1,
     size: 10,
@@ -54,9 +55,11 @@ const handleDelete = (row: any) => {
 }
 
 const getListData = () => {
+    loading.value = true
     dataList(page, query).then(response => {
         data.value = response.data
         page.total = response.total
+        loading.value = false
     }).catch(err => {
         ElMessage.error(err)
     })
@@ -77,7 +80,7 @@ getListData()
     <div>
         <el-button class="create" type="primary" :icon="Plus" @click="createWorks">新增</el-button>
     </div>
-    <el-table :data="data" stripe style="width: 100%">
+    <el-table :data="data" stripe style="width: 100%" v-loading="loading">
         <el-table-column label="序号" type="index" width="80"></el-table-column>
         <el-table-column label="标题" prop="name" width="250"></el-table-column>
         <el-table-column label="素材" prop="name" width="300"></el-table-column>

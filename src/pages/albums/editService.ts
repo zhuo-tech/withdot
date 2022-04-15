@@ -76,6 +76,7 @@ export default class EditService {
             return
         }
         this.albumsDetail = res.data
+        console.log(this.albumsDetail,'专辑')
         this.Editform.form.title = res.data.title
         this.Editform.form.cover = res.data.cover
         this.Editform.form.coverHref = res.data.coverHref

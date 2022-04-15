@@ -18,7 +18,7 @@ const changeValue = (value: any) => {
         <el-form-item label="文本内容">
             <Editor v-model:value="config.text" @changeValue="changeValue" />
         </el-form-item>
-        <el-row>
+        <el-row  style="margin-top: 20px">
             <el-col :span="12">
                 <el-form-item label="设置时长">
                     <el-switch v-model="config.switch"></el-switch>
