@@ -21,8 +21,8 @@ const context = reactive(new VideoEditorContext())
 
     <!-- 播放器 -->
     <VideoPlayer :point-list="context.pointList">
-        <template v-slot:stage="{list}">
-            <EditorStageLayer :height="1920" :list="list" :width="1080" />
+        <template v-slot:stage="{list, box}">
+            <EditorStageLayer :box="box" :list="list" />
         </template>
     </VideoPlayer>
 

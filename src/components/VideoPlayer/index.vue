@@ -49,7 +49,7 @@ const videoRef: VideoWrapperContext = ref({}) as any
                       @timeChange="time => videoRef.setPlayTime(time)"
                       @update:playing="videoRef.togglePlayState()" />
         <div class="stage-wrapper">
-            <slot name="stage" :list="pointList">
+            <slot :box="context.boxWidthHeight" :list="pointList" name="stage">
                 <StageLayer :list="pointList" />
             </slot>
         </div>
