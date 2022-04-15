@@ -10,7 +10,7 @@ const props = defineProps<{
 <template>
     <el-dialog v-model="service.formData.visible"
                destroy-on-close
-               :title="service.formStatus? '添加题目':'编辑题目'"
+               :title="service.formStatus? '新建题目':'编辑题目'"
                top="2vh"
                width="70%"
                @close="service.formData.initForm()">

@@ -1,4 +1,5 @@
 import { CoreDot } from '@/model/entity/CoreDot'
+import { Throttling } from '@/tool/annotation/Decorator'
 import { ObjectUtil, StrUtil } from 'typescript-util'
 
 type PropsType = {
@@ -69,9 +70,7 @@ export class EditorStageLayerContext {
         this.stageLayerRef.style.pointerEvents = 'none'
     }
 
-    /**
-     * TODO: 需要防抖 -- 连续长时间拖动会妨碍视频播放
-     */
+    @Throttling(60)
     public onMouseMove(event: MouseEvent) {
         let index = this.selectIndex
 

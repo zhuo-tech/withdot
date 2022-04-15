@@ -1,3 +1,4 @@
+
 <script lang="ts">
 import { ElMessage } from 'element-plus'
 import { defineComponent, onMounted, reactive, toRefs } from "vue";
@@ -127,8 +128,8 @@ export default defineComponent({
 
 <style lang="less" scoped>
 .pages {
-    margin-top: 10px;
-    display: flex;
-    justify-content: flex-end;
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
 }
 </style>

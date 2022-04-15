@@ -1,3 +1,4 @@
+
 <script lang="ts">
 import { PayNotifyRecord } from "@/model/entity/PayNotifyRecord";
 import { ElMessage } from 'element-plus'
@@ -103,6 +104,7 @@ export default defineComponent({
             v-model:limit="queryParam.size" @size-change="handleSizeChange" @current-change="handleCurrentChange"
             :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper" />
 
+>>>>>>> fa176a5637b4a40e93c2ab49396f31c2c16246b5
     </el-card>
 
 </template>

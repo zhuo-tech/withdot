@@ -4,12 +4,65 @@ import { reactive, ref } from "vue"
 import { cloud } from "@/cloud"
 import { PayChannel } from "@/model/entity/PayChannel"
 import { PayChannelService } from "../service/PayChannelService"
-import CrudPagination from '@/components/CrudPagination/CrudPagination'
+import { onMounted, onUpdated, onUnmounted } from "vue";
+
+//============================================================数据=============================================
 
 const log = getLogger("支付渠道")
+const service = new PayChannelService()
+let notifyList = ref<PayChannel[]>([])
+const total = ref(0) // 总数
+const size = ref(10) 
+const current = ref(1)
 
-const DB = cloud.database() // 数据库
 
+//============================================================函数=============================================
+onMounted(()=>{
+    count()
+    page(current.value)
+})
+
+/**
+ * 分页查询支付渠道列表
+ * @param current  当前页
+ * @param size  分页大小
+ */
+const page = async (current:number) => {
+    notifyList.value = await service.page(size.value, current)
+}
+
+
+/**
+ * 统计汇总
+ */
+const count = async () => {
+    total.value = await service.count()
+}
+
+/**
+ * 生成序列号
+ * @param index 序号
+ * @returns 递增序号
+ */
+const genSn = (index: number) => {
+    return index += 1
+}
+
+
+
+
+/**
+ * 逻辑删除
+ * @param index 下标
+ * @param row  记录
+ */
+const handleDelete = async (index: number, row: PayChannel) => {
+    await service.removeById(row._id)
+    notifyList.value = await service.page(current.value, size.value)
+}
+
+
+// =======================================================
 //支付类型选项
 const wxPay = ref("")
 const wxOptions = [
@@ -45,7 +98,6 @@ const PayChannelForm = reactive({
 
 const hide = ref(true) //搜索显隐
 
-const tableData = ref()//表单参数
 
 const controlRefresh = ref(false)//刷新
 const lookOver = ref(false) //查看
@@ -56,17 +108,8 @@ function sweepaway() {
   channel.value = ""
 }
 
-//获取数据
-const list = async () => {
-  const service = new PayChannelService()
-  tableData.value = await service.list()
-  let sortord = 1
-  tableData.value.forEach((item: { sort: number }) => {
-    item.sort = sortord
-    sortord++
-  })
-}
-list()
+
+
 
 //隐藏头部
 function showhide() {
@@ -77,21 +120,20 @@ function showhide() {
 //刷新
 const refresh = () => {
   controlRefresh.value = true
+  
   setTimeout(() => {
     controlRefresh.value = false
-  }, 2000)
+  }, 1000)
 }
 
 //添加
-async function saveHandler() {
-  const o = PayChannelForm
-  await DB.collection(PayChannel.TABLE_NAME).add({
-    o,
-  })
-  addPageTable.value = false
-}
-
-
+// async function saveHandler() {
+//   const o = PayChannelForm
+//   await DB.collection(PayChannel.TABLE_NAME).add({
+//     o,
+//   })
+//   addPageTable.value = false
+// }
 </script>
 
 <template>
@@ -115,20 +157,14 @@ async function saveHandler() {
       </el-select>
 
       <div class="but">
-        <div class="seek">
-          <img alt="" class="icon" src="../../../assets/icon/ss.png" />
-          搜索
-        </div>
-        <div class="empty" @click="sweepaway()">
-          <img alt="" class="icon1" src="../../../assets/icon/sc.png" />
-          清空
-        </div>
+        <el-button  size="default" type="primary" icon="Search">搜索</el-button>
+       <el-button @click="sweepaway()" size="default"  type="primary" icon="Delete">清空</el-button>
       </div>
     </div>
 
     <div class="addbox">
-      <div class="add" @click="addPageTable = true">
-        <div class="addbut">+ 新增</div>
+      <div>
+        <el-button @click="addPageTable = true" size="default" type="primary" >+ 新增</el-button>
       </div>
 
       <!-- Form -->
@@ -165,23 +201,19 @@ async function saveHandler() {
       <div class="hintbox">
         <el-tooltip content="刷新" effect="dark" placement="top">
           <el-button v-loading.fullscreen.lock="controlRefresh" class="lod" type="primary" @click="refresh">
-            <div class="hint">
-              <img alt="" class="ico" src="../../../assets/icon/sx.png" />
-            </div>
+                  <el-button class="hint" icon="refresh" circle />
           </el-button>
         </el-tooltip>
 
         <el-tooltip content="搜索" effect="dark" placement="top">
-          <div class="hint" @click="showhide()">
-            <img alt="" class="ico" src="../../../assets/icon/sss.png" />
-          </div>
+            <el-button class="hint" @click="showhide()" icon="Search" circle />
         </el-tooltip>
       </div>
     </div>
 
     <div class="formbox">
-      <el-table :data="tableData" border style="width: 100%">
-        <el-table-column label="序号" prop="sort" width="60" />
+      <el-table :data="notifyList" border style="width: 100%">
+        <el-table-column label="序号" type="index" :sn="genSn" width="60" />
         <el-table-column label="appid" prop="appId" />
         <el-table-column label="渠道名称" prop="channelName" />
         <el-table-column label="商户号" prop="channelMchId" />
@@ -190,17 +222,18 @@ async function saveHandler() {
         <el-table-column label="配置参数" prop="param" />
         <el-table-column label="创建时间" prop="createTime" />
         <el-table-column label="操作" prop="operation">
-          <template #default>
-            <el-button @click="lookOver = true" size="small" type="text">查看</el-button>
-            <el-button @click="redact = true" size="small" type="text">编辑</el-button>
-            <el-button size="small" type="text">删除</el-button>
+          <template #default="scope">
+            <el-button @click="lookOver = true" icon="Search" size="small" type="text">查看</el-button>
+            <el-button @click="redact = true" size="small" icon="Edit"  type="text">编辑</el-button>
+             <el-button @click="handleDelete(scope.$index, scope.row)" size="small" type="text" icon="Delete" >删除
+                    </el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
 
-    <el-dialog v-model="lookOver" title="查看" width="30%">
-      <div style="width: 60px; text-align: right; margin-bottom: 10px">
+    <el-dialog  :data="notifyList" v-model="lookOver" title="查看" width="30%">
+      <div style="width: 60px; text-align: right; margin-bottom: 10px"  >
         appid:<span></span>
       </div>
       <div style="width: 60px; text-align: right; margin-bottom: 10px">
@@ -256,8 +289,9 @@ async function saveHandler() {
         </span>
       </template>
     </el-dialog>
-       <div class="pages">
-            <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="1" />
+        <div class="pages">
+            <el-pagination :total="total" :page-size="size" @current-change="page" background
+                layout="total, prev, pager, next, jumper" />
         </div>
   </el-card>
 </template>
@@ -284,50 +318,9 @@ async function saveHandler() {
 
   .but {
     display: flex;
-    margin: 10px 0 0 180px;
+    margin: 0px 0 0 180px;
     font-size: 15px;
     font-weight: 400;
-
-    .seek {
-      width: 70px;
-      height: 30px;
-      display: flex;
-      border: solid 1px;
-      font-size: 14px;
-      line-height: 30px;
-      margin: -5px 30px 0 0;
-      border-radius: 5px;
-      background-color: #409eff;
-      color: #fff;
-      text-align: center;
-      cursor: pointer;
-
-      .icon {
-        margin: 2px 0 0 5px;
-        width: 23px;
-        height: 23px;
-      }
-    }
-
-    .empty {
-      font-size: 14px;
-      width: 70px;
-      height: 30px;
-      display: flex;
-      border: solid 1px #c0c4cc;
-      line-height: 30px;
-      margin-top: -5px;
-      border-radius: 5px;
-      color: #606266;
-      text-align: center;
-      cursor: pointer;
-
-      .icon1 {
-        margin: 7px 2px 0 10px;
-        width: 15px;
-        height: 15px;
-      }
-    }
   }
 }
 
@@ -342,22 +335,6 @@ async function saveHandler() {
   margin-top: 20px;
   justify-content: space-between;
 
-  .add {
-    display: flex;
-
-    .addbut {
-      font-size: 14px;
-      width: 70px;
-      height: 30px;
-      text-align: center;
-      background-color: #409eff;
-      border: solid 1px;
-      line-height: 30px;
-      border-radius: 5px;
-      color: #fff;
-      cursor: pointer;
-    }
-  }
 
   .hintbox {
     display: flex;

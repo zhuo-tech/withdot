@@ -31,8 +31,8 @@ export class PayNotifyRecordService {
 
     /**
      * 分页查询支付通知信息
-     * @param current 分页大小
-     * @param size  偏移量
+     * @param current 当前页
+     * @param size  分页大小
      * @returns 支付通知分页列表
      */
     async page(current: number, size: number): Promise<BaseMo<PayNotifyRecord>> {
@@ -76,6 +76,7 @@ export class PayNotifyRecordService {
         };
     }
 
+  
     /**
      * 统计
      * @returns 总记录数

@@ -18,6 +18,10 @@ export default defineComponent({
             type: String,
             default: '100px',
         },
+        labelSuffix: {
+            type: String,
+            default: ':',
+        },
         value: {
             type: Object,
             required: true,
@@ -35,22 +39,21 @@ export default defineComponent({
     },
     render() {
         const type: CoreDotType = this.$props.type as any
-        const value = this.$props.value
 
-        let ConfigForm = <span>{ type }</span>
+        let ConfigForm = <span>暂不支持的类型: { type }</span>
 
         switch (type) {
             case CoreDotType.链接:
-                ConfigForm = <UrlForm value={ value }></UrlForm>
+                ConfigForm = <UrlForm></UrlForm>
                 break
             case CoreDotType.书签:
 
                 break
             case CoreDotType.图片:
-                ConfigForm = <ImgForm value={ value }></ImgForm>
+                ConfigForm = <ImgForm></ImgForm>
                 break
             case CoreDotType.文本:
-                ConfigForm = <TextForm value={ value }></TextForm>
+                ConfigForm = <TextForm></TextForm>
                 break
             case CoreDotType.热区:
 
@@ -65,6 +68,6 @@ export default defineComponent({
         }
 
         // @ts-ignore
-        return <ConfigForm></ConfigForm>
+        return <ConfigForm { ...this.$props }></ConfigForm>
     },
 })
