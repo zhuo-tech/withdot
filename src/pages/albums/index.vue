@@ -3,13 +3,9 @@ import { reactive } from 'vue'
 import AddForm from './components/AddForm.vue'
 import AlbumsService from './AlbumsService'
 import { filterTime } from '@/utils/utils'
-import { Delete, Edit, Warning, Plus } from '@element-plus/icons-vue'
-
 const service = reactive(new AlbumsService())
-
 service.getAlbumList()
 </script>
-
 <template>
     <el-card class="box-card">
         <template #header>
@@ -17,7 +13,7 @@ service.getAlbumList()
         </template>
         <el-row :gutter="10">
             <el-col :span="6" :offset="22">
-                <el-button type="primary" :icon="Plus" @click="service.clickAddForm()">新增</el-button>
+                <el-button type="primary" icon="Plus" @click="service.clickAddForm()">新增</el-button>
             </el-col>
         </el-row>
         <el-row :gutter="10" style="margin-top: 20px">
@@ -38,16 +34,16 @@ service.getAlbumList()
                     </el-table-column>
                     <el-table-column fixed="right" label="操作" width="180">
                         <template #default="scope">
-                            <el-button :icon="Edit" type="text" @click="service.handleEdit(scope.row)">编辑</el-button>
+                            <el-button icon="Edit" type="text" @click="service.handleEdit(scope.row)">编辑</el-button>
                             <el-divider direction="vertical" />
-                            <el-popconfirm :icon="Warning"
+                            <el-popconfirm icon="Warning"
                                            cancel-button-text="手滑了"
                                            confirm-button-text="确认删除"
                                            icon-color="red"
                                            title=" 操作无法撤销, 确定要删除吗 ？"
                                            @confirm="service.handleDelete(scope.row)">
                                 <template #reference>
-                                    <el-button :icon="Delete" type="text">删除</el-button>
+                                    <el-button icon="Delete" type="text">删除</el-button>
                                 </template>
                             </el-popconfirm>
                         </template>
@@ -71,7 +67,8 @@ service.getAlbumList()
             </el-col>
         </el-row>
     </el-card>
-    <AddForm :service="service"></AddForm>
+    
+    <AddForm :service="service"/>
 </template>
 
 <style lang="less" scoped></style>
