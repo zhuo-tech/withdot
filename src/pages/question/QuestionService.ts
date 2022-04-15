@@ -7,9 +7,8 @@ import { FormInstance } from 'element-plus/es'
 import { reactive, ref } from 'vue'
 
 export const questionTypeList = [
-    {label: '单选题', value: QuestionTypeEnum.RADIO},
-    {label: '多选题', value: QuestionTypeEnum.MULTI},
-    {label: '判断题', value: QuestionTypeEnum.JUDGE},
+    {label: '选择', value: QuestionTypeEnum.XUANZE},
+    {label: '填空', value: QuestionTypeEnum.TIANKONG},
     {label: '简答题', value: QuestionTypeEnum.SAQ},
 ]
 
@@ -20,6 +19,11 @@ export enum questionType {
     saq = '简答题'
 }
 
+export const questionButtonList = [
+    {questionName: '选择', type: QuestionTypeEnum.XUANZE},
+    {questionName: '简答', type: QuestionTypeEnum.SAQ},
+    {questionName: '填空', type: QuestionTypeEnum.TIANKONG},
+]
 
 export default class QuestionService {
     public DB = cloud.database().collection(CoreQuestionRepo.TABLE_NAME)
@@ -38,14 +42,42 @@ export default class QuestionService {
     public queryData = reactive({
         label: '',
     })
-    public formData = reactive({
-        visible: false,
-        formIsLoading: false,
+    public topicButton = reactive({
+        showAddTopic: false,
         show() {
-            this.visible = true
+            this.showAddTopic = true
         },
         close() {
-            this.visible = false
+            this.showAddTopic = false
+        },
+    })
+    public formData = reactive({
+        formIsLoading: false,
+        selectVisible: false,
+        tkVisible: false,
+        saqVisible: false,
+        tkShow() {
+            this.tkVisible = true
+        },
+        tkClose() {
+            this.tkVisible = false
+        },
+        saqShow() {
+            this.saqVisible = true
+        },
+        saqClose() {
+            this.saqVisible = false
+        },
+        selectShow() {
+            this.selectVisible = true
+        },
+        selectClose() {
+            this.selectVisible = false
+        },
+        allClose() {
+            this.saqClose()
+            this.tkClose()
+            this.saqClose()
         },
         initForm() {
             this.form = {
@@ -77,8 +109,23 @@ export default class QuestionService {
     public searchQuestion = () => {
         this.showQuery.value = !this.showQuery.value
     }
-    public addQuestion = () => {
-        this.formData.show()
+
+    /**
+     * 点击新建题目
+     * @param {string} type 题目类型
+     */
+    public addQuestion = (type: string) => {
+        this.formData.form.type = type
+        switch (type) {
+            case QuestionTypeEnum.XUANZE:
+                this.formData.selectShow()
+                break
+            case QuestionTypeEnum.TIANKONG:
+                this.formData.tkShow()
+                break
+            case QuestionTypeEnum.SAQ:
+                this.formData.saqShow()
+        }
         this.formStatus.value = true
     }
     /**
@@ -149,7 +196,7 @@ export default class QuestionService {
             type: row.type,
         }
         this.formStatus.value = false
-        this.formData.show()
+        this.formData.selectShow()
     }
 
     /**
@@ -212,7 +259,7 @@ export default class QuestionService {
                 current: this.data.value.page.currentPage,
                 size: this.data.value.page.pageSize,
             })
-            .orderBy('updateTime','desc')
+            .orderBy('updateTime', 'desc')
             .get()
     }
     private getListCount = async (whereFlag: any) => {
@@ -256,7 +303,7 @@ export default class QuestionService {
             } else {
                 ElMessage.success('题目编辑修改成功')
             }
-            this.formData.close()
+            this.formData.allClose()
             this.formData.initForm()
             this.getList()
         }, 1000)

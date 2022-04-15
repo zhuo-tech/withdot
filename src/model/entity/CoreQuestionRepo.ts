@@ -19,10 +19,9 @@ export class CoreQuestionRepo implements BaseEntity {
      * 题目内容；富文本
      */
     public content?: string
-
     /**
      * 题目类型
-     * RADIO 单选题; MULTI 多选题; JUDGE 判断题; SAQ 简单题
+     * select 选择; JUDGE 判断题; SAQ 简单题
      */
     public type: QuestionTypeEnum
 

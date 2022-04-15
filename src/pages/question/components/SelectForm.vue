@@ -8,12 +8,13 @@ const props = defineProps<{
 </script>
 
 <template>
-    <el-dialog v-model="service.formData.visible"
+    <el-dialog v-model="service.formData.selectVisible"
                destroy-on-close
                :title="service.formStatus? '新建题目':'编辑题目'"
                top="2vh"
                width="70%"
                @close="service.formData.initForm()">
+        选择
         <el-form :ref="el => service.formRef = el" :model="service.formData.form" :rules="service.rules" label-width="80px">
             <el-form-item label="题目标题" prop="label">
                 <el-input v-model="service.formData.form.label" placeholder="请输入题目标题"></el-input>
