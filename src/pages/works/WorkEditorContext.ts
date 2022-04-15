@@ -44,7 +44,6 @@ export class WorkEditorContext {
             .withOne(withArg)
             .one()
             .then(work => {
-                this.log.trace('初始化数据: ', work)
                 if (ObjectUtil.isEmpty(work)) {
                     this.log.warn('无效的ID: ', this.workId)
                     // 也许需要路由退出?

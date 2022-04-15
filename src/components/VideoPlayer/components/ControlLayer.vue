@@ -1,24 +1,59 @@
 <script lang="ts" setup>
 import { TimeUnit } from 'typescript-util'
-import { inject, onBeforeUnmount, reactive } from 'vue'
+import { reactive } from 'vue'
 import { ControlLayer } from '../context/ControlLayer'
-import { PlayerContext } from '../context/PlayerContext'
-import { DraggableLeaveEvent } from '../service/DraggableLeaveEvent'
 import DoubleSpeed from './DoubleSpeed.vue'
 import ProgressBar from './ProgressBar.vue'
 
 /**
  * 控制器层
- * @inject service {@link PlayerContext}
+ * @props playTime {number} 播放时间
+ * @props PlaybackRate {number} 播放速率
+ * @props volume {number} 音量
+ * @props buffTime {number} 缓冲时间
+ * @props minDuration {number} 最小播放时间
+ * @props maxDuration {number} 最大播放时间
  */
-const service = inject(PlayerContext.INJECTION_KEY) as PlayerContext
-const {videoElement, playerBoxElement, minDuration} = service
-const controlLayer = reactive(new ControlLayer())
-
-const eventKey = service.eventCenter.addEventListener(DraggableLeaveEvent.NAME, (event) => {
-    controlLayer.suppressionLastMinute = event.timestamp
+const props = defineProps({
+    playTime: {
+        type: Number,
+        default: 0,
+    },
+    playbackRate: {
+        type: Number,
+        default: 1,
+    },
+    volume: {
+        type: Number,
+        default: 100,
+    },
+    bufferTime: {
+        type: Number,
+        default: 1,
+    },
+    minDuration: {
+        type: Number,
+        default: 0,
+    },
+    maxDuration: {
+        type: Number,
+        default: 0,
+    },
+    playing: {
+        type: Boolean,
+        default: false,
+    },
 })
-onBeforeUnmount(() => service.eventCenter.removeEventListener(DraggableLeaveEvent.NAME, eventKey))
+
+const emits = defineEmits<{
+    (event: 'update:playbackRate', time: number): void
+    (event: 'update:volume', time: number): void
+    (event: 'update:playing', status: boolean): void
+    (event: 'timeChange', time: number): void
+    (event: 'fullScreenToggle'): void
+}>()
+
+const controlLayer = reactive(new ControlLayer())
 
 </script>
 
@@ -49,12 +84,12 @@ onBeforeUnmount(() => service.eventCenter.removeEventListener(DraggableLeaveEven
          @mouseout="controlLayer.preventClosing=false"
          @mouseover="controlLayer.preventClosing=true">
         <!--进度条-->
-        <ProgressBar v-model:value="videoElement.playTime"
-                     :buffer-value="videoElement.bufferTime"
+        <ProgressBar v-model:value="playTime"
+                     :buffer-value="bufferTime"
                      :format-tips="(t) => TimeUnit.SECOND.display(t)"
-                     :max="videoElement.maxDuration"
+                     :max="maxDuration"
                      :min="minDuration"
-                     @change="(time) => videoElement.setPlayTime(time)">
+                     @change="time => emits('timeChange', time)">
             <slot></slot>
         </ProgressBar>
         <!-- 控制按钮 -->
@@ -62,25 +97,24 @@ onBeforeUnmount(() => service.eventCenter.removeEventListener(DraggableLeaveEven
             <div class="left">
                 <!-- 播放按钮 -->
                 <el-tooltip placement="top">
-                    <el-icon @click="videoElement.togglePlayState()">
-                        <video-play v-show="!videoElement.playing" />
-                        <video-pause v-show="videoElement.playing" />
+                    <el-icon @click="() => emits('update:playing', !playing)">
+                        <video-play v-show="!playing" />
+                        <video-pause v-show="playing" />
                     </el-icon>
                     <template #content>
-                        <span v-show="!videoElement.playing">播放</span>
-                        <span v-show="videoElement.playing">暂停</span>
+                        <span v-show="!playing">播放</span>
+                        <span v-show="playing">暂停</span>
                     </template>
                 </el-tooltip>
                 <!-- 时间 -->
                 <div class="time">
-                    {{ TimeUnit.SECOND.display(videoElement.playTime) }} /
-                    {{ TimeUnit.SECOND.display(videoElement.maxDuration) }}
+                    {{ TimeUnit.SECOND.display(playTime) }} /
+                    {{ TimeUnit.SECOND.display(maxDuration) }}
                 </div>
             </div>
             <div class="right">
                 <!-- 倍速 -->
-                <DoubleSpeed v-model:value="videoElement.playbackRate" />
-
+                <DoubleSpeed :value="playbackRate" @update:value="value => emits('update:playbackRate', value)" />
                 <!-- 设置 -->
                 <el-tooltip placement="top">
                     <el-icon>
@@ -90,20 +124,19 @@ onBeforeUnmount(() => service.eventCenter.removeEventListener(DraggableLeaveEven
                         设置
                     </template>
                 </el-tooltip>
-
                 <!-- 音量 -->
                 <el-tooltip placement="top">
                     <el-icon>
                         <headset />
                     </el-icon>
                     <template #content>
-                        <el-slider v-model="videoElement.volume" height="200px" vertical />
+                        <el-slider :model-value="volume" height="200px" vertical @input="value => emits('update:volume', value)" />
                     </template>
                 </el-tooltip>
 
                 <!-- 全屏 -->
                 <el-tooltip placement="top">
-                    <el-icon @click="playerBoxElement.toggleFullScreen()">
+                    <el-icon @click="() => emits('fullScreenToggle')">
                         <full-screen />
                     </el-icon>
                     <template #content>

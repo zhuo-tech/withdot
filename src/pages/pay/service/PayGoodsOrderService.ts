@@ -6,7 +6,9 @@ import { LogicDelete } from '@/model/LogicDelete';
 import { ObjectUtil } from 'typescript-util';
 
 /**
- * 商品订单
+ * 商品订单服务
+ * @author HK
+ * @date 2022年04月01日 17点13分
  */
 export class PayGoodsOrderService {
 

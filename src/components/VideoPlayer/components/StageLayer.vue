@@ -10,7 +10,6 @@ import Draggable from './Draggable.vue'
 const props = defineProps<{
     list: Array<CoreDot>
 }>()
-
 </script>
 
 <template>

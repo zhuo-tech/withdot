@@ -3,7 +3,7 @@ import { reactive } from 'vue'
 import AddForm from './components/AddForm.vue'
 import AlbumsService from './AlbumsService'
 import { filterTime } from '@/utils/utils'
-import { Delete, Edit, Warning } from '@element-plus/icons-vue'
+import { Delete, Edit, Warning, Plus } from '@element-plus/icons-vue'
 
 const service = reactive(new AlbumsService())
 
@@ -16,8 +16,8 @@ service.getAlbumList()
             <div>专辑管理</div>
         </template>
         <el-row :gutter="10">
-            <el-col :span="6">
-                <el-button type="primary" @click="service.clickAddForm()">创建新专辑</el-button>
+            <el-col :span="6" :offset="22">
+                <el-button type="primary" :icon="Plus" @click="service.clickAddForm()">新增</el-button>
             </el-col>
         </el-row>
         <el-row :gutter="10" style="margin-top: 20px">
@@ -33,7 +33,7 @@ service.getAlbumList()
                     </el-table-column>
                     <el-table-column label="创建时间" min-width="200" prop="createTime">
                         <template #default="scope">
-                            <span>{{ filterTime(scope.createTime) }}</span>
+                            <span>{{ filterTime(scope.row.createTime) }}</span>
                         </template>
                     </el-table-column>
                     <el-table-column fixed="right" label="操作" width="180">

@@ -35,7 +35,7 @@ export class CoreDot implements BaseEntity {
 
     display: DotDisplayType
 
-    position?: {
+    position: {
         x: number
         y: number
         z?: number
@@ -77,7 +77,7 @@ export enum DotDisplayType {
 /**
  * 打点配置
  */
-type DotConfig = CoreExamDotConfig | CoreTextDotConfig
+type DotConfig = CoreExamDotConfig | CoreTextDotConfig | CoreImageDotConfig  | CoreUrlDotConfig
 
 
 /**
@@ -92,9 +92,44 @@ export interface CoreExamDotConfig {
 
 /**
  * 文本
+ * @property text 文本内容
+ * @property switch 是否设置展示时长 false
+ * @property time 时长/s 默认3s
+ * @property pause 是否暂停 默认是（当播放器播放到打点的位置时候，如果开启了则视频播放暂停）
  */
 export interface CoreTextDotConfig {
     text: string
+    switch: boolean
+    pause: boolean
+    time: number
 }
 
 
+/**
+ * 图片
+ * @property url 图片地址
+ * @property switch 是否设置展示时长 false
+ * @property time 时长/s 默认3s
+ * @property pause 是否暂停 默认是（当播放器播放到打点的位置时候，如果开启了则视频播放暂停）
+ */
+ export interface CoreImageDotConfig {
+    url: string
+    switch: boolean
+    pause: boolean
+    time: number
+}
+
+
+/**
+ * 链接
+ * @property url 链接地址
+ * @property switch 是否设置展示时长 false
+ * @property time 时长/s 默认3s
+ * @property pause 是否暂停 默认是（当播放器播放到打点的位置时候，如果开启了则视频播放暂停）
+ */
+ export interface CoreUrlDotConfig {
+    url: string
+    switch: boolean
+    pause: boolean
+    time: number
+}

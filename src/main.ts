@@ -10,7 +10,6 @@ import { createVueRouterInstantiate } from '@/router'
 import * as ElIconModules from '@element-plus/icons-vue'
 // @ts-ignore
 import * as echarts from 'echarts'
-
 // 初始化日志
 export const getLogger = new LoggerFactory().getLogger
 
@@ -30,7 +29,8 @@ export const VueApplication = createApp(App)
 export const VueRouter = createVueRouterInstantiate()
 VueApplication.config.globalProperties.$echarts = echarts
 
-VueApplication.use(VueRouter)
+VueApplication
+    .use(VueRouter)
     .use(createPinia())
     .use(ElementPlus)
     .mount('#app')

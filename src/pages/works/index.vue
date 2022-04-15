@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import { dataList, del } from '@/api/works'
 import { filterTime } from '@/utils/utils'
-import { Delete, Edit, Warning } from '@element-plus/icons-vue'
+import { Delete, Edit, Warning,Plus } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { reactive, ref } from 'vue'
 import Dialog from './components/Dialog.vue'
 
 let data = ref()
+let loading = ref(false)
 const page = reactive({               //分页器参数
     current: 1,
     size: 10,
@@ -54,9 +55,11 @@ const handleDelete = (row: any) => {
 }
 
 const getListData = () => {
+    loading.value = true
     dataList(page, query).then(response => {
         data.value = response.data
         page.total = response.total
+        loading.value = false
     }).catch(err => {
         ElMessage.error(err)
     })
@@ -75,16 +78,16 @@ getListData()
         <el-tag v-for="(item,index) in 4" :key="index" class="ml-2" type="success">Tag 2</el-tag>
     </div>
     <div>
-        <el-button class="create" type="primary" @click="createWorks">创建作品</el-button>
+        <el-button class="create" type="primary" :icon="Plus" @click="createWorks">新增</el-button>
     </div>
-    <el-table :data="data" stripe style="width: 100%">
+    <el-table :data="data" stripe style="width: 100%" v-loading="loading">
         <el-table-column label="序号" type="index" width="80"></el-table-column>
         <el-table-column label="标题" prop="name" width="250"></el-table-column>
         <el-table-column label="素材" prop="name" width="300"></el-table-column>
         <el-table-column label="标签" prop="address" width="300"></el-table-column>
         <el-table-column label="创建时间" min-width="200" prop="createTime">
             <template #default="scope">
-                <span>{{ filterTime(scope.createTime) }}</span>
+                <span>{{ filterTime(scope.row.createTime) }}</span>
             </template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="180">
