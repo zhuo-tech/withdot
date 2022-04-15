@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { EditorStageLayerContext } from '../context/EditorStageLayerContext'
 import { CoreDot } from '@/model/entity/CoreDot'
 import { onMounted, reactive } from 'vue'
+import { EditorStageLayerContext } from '../context/EditorStageLayerContext'
 import Draggable from './Draggable.vue'
 
 /**
@@ -11,8 +11,10 @@ import Draggable from './Draggable.vue'
  */
 const props = defineProps<{
     list: Array<CoreDot>,
-    width: number,
-    height: number,
+    box: {
+        width: number,
+        height: number,
+    }
 }>()
 
 const context = reactive(new EditorStageLayerContext(props))

@@ -5,7 +5,7 @@ import { CommonEnum } from '@/model/CommonEnum';
 import { PayNotifyRecord } from "@/model/entity/PayNotifyRecord"
 import { LogicDelete } from '@/model/LogicDelete';
 import { ObjectUtil } from 'typescript-util';
-import { PayNotifyQo } from './qo/PayNotifyQo';
+import { PayNotifyRecordQo } from '@/pages/pay/service/qo/PayNotifyRecordQo';
 
 /**
  * 支付通知服务
@@ -31,8 +31,8 @@ export class PayNotifyRecordService {
 
     /**
      * 分页查询支付通知信息
-     * @param current 分页大小
-     * @param size  偏移量
+     * @param current 当前页
+     * @param size  分页大小
      * @returns 支付通知分页列表
      */
     async page(current: number, size: number): Promise<BaseMo<PayNotifyRecord>> {
@@ -54,12 +54,12 @@ export class PayNotifyRecordService {
      * @param q 查询对象
      * @returns 支付通知分页列表
      */
-    async pageByParams(q: PayNotifyQo): Promise<BaseMo<PayNotifyRecord>> {
+    async pageByParams(q: PayNotifyRecordQo): Promise<BaseMo<PayNotifyRecord>> {
         const dbTemplate = cloud.database();
         const { current, size, orderNo } = q
         const p = { delFlag: LogicDelete.NORMAL }
         if (orderNo) {
-            p['orderId'] = orderNo
+            p['orderNo'] = orderNo
         }
         const res = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
             .where(p)
@@ -76,6 +76,7 @@ export class PayNotifyRecordService {
         };
     }
 
+  
     /**
      * 统计
      * @returns 总记录数
@@ -96,7 +97,7 @@ export class PayNotifyRecordService {
         this.init(obj, CommonEnum.ACTION_ADD)
         const { id, error } = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME).add({ obj })
         if (ObjectUtil.isNull(id)) {
-            this.log.error("save exam error `{}` ", error)
+            this.log.error(`save notify error -> ${error}`)
             throw new Error(error)
         }
         return id as string
@@ -114,7 +115,7 @@ export class PayNotifyRecordService {
             .collection(PayNotifyRecord.TABLE_NAME)
             .doc(obj._id)
             .update({ obj })
-        this.log.debug("更新支付通知记录", result)
+        this.log.debug(`更新支付通知记录 -> ${result}`)
         return true
     }
 
@@ -129,21 +130,7 @@ export class PayNotifyRecordService {
             .collection(PayNotifyRecord.TABLE_NAME)
             .doc(id)
             .update({ delFlag: LogicDelete.DELETED })
-        this.log.debug("删除支付通知 `{}` ", result)
-        return true
-    }
-
-    /**
-    * 删除
-    * @param id 主键
-    * @returns true
-    */
-    async removeById(id: string,): Promise<boolean> {
-        const dbTemplate = cloud.database()
-        const res = dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
-            .where({ _id: id })
-            .remove()
-        this.log.debug("删除支付通知")
+        this.log.debug(`删除支付通知 -> ${result}`)
         return true
     }
 
