@@ -1,7 +1,6 @@
 import { getLogger } from '@/main'
 import { LoggerLevel } from '@/tool/log/LoggerLevel'
 import { TimeUnit } from 'typescript-util'
-import { computed } from 'vue'
 
 /**
  * 播放器包装
@@ -31,34 +30,6 @@ export class VideoWrapperContext {
      * 内部维护的视频当前播放时间, 单位 秒; <br>
      */
     public playTime = 0
-
-    // TODO: ....
-    public volume = computed({
-        get: () => {
-            // console.debug('读取音量', this.videoRef.volume * 100)
-            return this.videoRef.volume * 100
-        },
-        set: (value) => {
-            // console.debug('设置音量', value)
-            this.videoRef.volume = value / 100
-        },
-    }, {
-        onTrack: (event) => {
-            // console.debug('收集', event)
-        },
-        onTrigger: (event) => {
-            // console.debug('触发', event)
-        },
-    })
-
-    public playbackRate = computed({
-        get: () => {
-            return this.videoRef.playbackRate
-        },
-        set: (value) => {
-            this.videoRef.playbackRate = value
-        },
-    })
 
     public setPlayTime(time: number) {
         this.videoRef.currentTime = time
@@ -99,29 +70,6 @@ export class VideoWrapperContext {
         }
     }
 
-    /**
-     * 视频缓冲时间
-     */
-    public get bufferTime() {
-        if (!this.videoRef) {
-            return 0
-        }
-        const buffer: TimeRanges = this.videoRef.buffered
-        if (buffer.length <= 0) {
-            return 0
-        }
-
-        // 只看最后一个 TimeRanges 的结束时间
-        return buffer.end(buffer.length - 1)
-    }
-
-    public get showEnd() {
-        if (this.playing) {
-            return false
-        }
-        return this.status === ExtendedState.PLAY_FINISHED
-    }
-
     public onLoadedData(event: Event) {
         this.status = this.videoRef.readyState
         this.log.trace('加载数据', this.videoRef.readyState, event)
@@ -155,6 +103,45 @@ export class VideoWrapperContext {
     public onLoadMetaData(event: Event) {
         this.status = this.videoRef.readyState
         // this.log.debug('load meta data')
+    }
+
+    public get volume() {
+        return this.videoRef.volume * 100
+    }
+
+    public set volume(value: number) {
+        this.videoRef.volume = value / 100
+    }
+
+    public get playbackRate() {
+        return this.videoRef.playbackRate
+    }
+
+    public set playbackRate(value: number) {
+        this.videoRef.playbackRate = value
+    }
+
+    /**
+     * 视频缓冲时间
+     */
+    public get bufferTime() {
+        if (!this.videoRef) {
+            return 0
+        }
+        const buffer: TimeRanges = this.videoRef.buffered
+        if (buffer.length <= 0) {
+            return 0
+        }
+
+        // 只看最后一个 TimeRanges 的结束时间
+        return buffer.end(buffer.length - 1)
+    }
+
+    public get showEnd() {
+        if (this.playing) {
+            return false
+        }
+        return this.status === ExtendedState.PLAY_FINISHED
     }
 
 }

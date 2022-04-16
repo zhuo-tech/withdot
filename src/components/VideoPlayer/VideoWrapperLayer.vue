@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { MediaReadyState, VideoWrapperContext } from '../context/VideoWrapperContext'
+import { MediaReadyState, VideoWrapperContext } from './context/VideoWrapperContext'
 import { reactive } from 'vue'
 
 /**
@@ -16,7 +16,7 @@ defineExpose(context)
 <template>
 <div v-loading="context.status < MediaReadyState.HAVE_FUTURE_DATA" class="video-wrapper">
     <video :ref="el => context.videoRef = el"
-           src="../resource/test.mp4"
+           src="./resource/height.mp4"
            @loadeddata="(event) => context.onLoadedData(event)"
            @loadedmetadata="(event) => context.onLoadMetaData(event)"
            @loadstart="(event) => context.onLoadStart(event)"
