@@ -62,7 +62,7 @@ const {formRule, tagOption, close, formSubmit} = props.service
                         v-model:href="formData.href"
                         :drag="true"
                         :limit="1"
-                        listType="picture"
+                        listType="text"
                         @input="UploadFileOnInput" />
         </el-form-item>
 

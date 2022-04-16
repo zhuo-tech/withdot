@@ -94,12 +94,17 @@ const onUploadSuccess = (response: LafUploadResponse, uploadFile: UploadFile, up
     updateModel(uploadFiles, propsValue)
 }
 const onRemove = (uploadFile: UploadFile) => {
-    log.trace('移除文件', uploadFile.response)
+    log.trace('移除文件', uploadFile.response, '文件列表', fileList)
     updateModel(fileList as any, propsValue)
 }
 
 function updateModel(fileList: UploadFiles, propValue: typeof propsValue) {
     if (CollUtil.isEmpty(fileList)) {
+        emit('update:href', StrUtil.EMPTY)
+        emit('update:hrefs', [])
+        emit('update:fileInfo', undefined as any)
+        emit('update:fileInfoList', [])
+        emit('input', [])
         return
     }
     const fileInfo = fileList.filter(i => i.status === 'success')
@@ -171,26 +176,6 @@ const previewControl = reactive<{
     <template #tip>
         <div class="el-upload__tip">
             {{ tips || 'jpg/png 小于 500KB 的文件。' }}
-        </div>
-    </template>
-
-    <!-- 文件列表 -->
-    <template #file="{file}">
-        <div class="fileStyle">
-            <ShowFile :file="file.response"></ShowFile>
-            <span class="el-upload-list__item-actions">
-                <span class="el-upload-list__item-preview" @click="previewControl.onPreview(file)">
-                    <el-icon>
-                        <zoom-in />
-                    </el-icon>
-                </span>
-                <span class="el-upload-list__item-delete" @click="onRemove(file)">
-                    <el-icon>
-                        <Delete />
-                    </el-icon>
-                </span>
-            </span>
-            <div class="cover"></div>
         </div>
     </template>
 

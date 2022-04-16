@@ -21,7 +21,7 @@ export default class MaterialService extends BasisCrud<CoreMaterial> {
 
     public formRule: Partial<Record<keyof CoreMaterial, Array<RuleItem>>> = {
         title: [{type: 'string', max: 128, min: 1, message: '不能为空, 最多128字符', trigger: 'blur', required: true}],
-        tag: [{type: 'array', message: '不能为空', trigger: 'blur', required: true}],
+        tag: [{type: 'array', message: '不能为空', trigger: 'blur', required: false}],
         file: [{type: 'object', message: '请上传', trigger: 'blur', required: true}],
     }
 
