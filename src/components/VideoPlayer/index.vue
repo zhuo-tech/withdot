@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ControlModel } from '@/components/VideoPlayer/service/ControlModel'
 import { CoreDot } from '@/model/entity/CoreDot'
-import { onMounted, reactive, Ref, ref, unref } from 'vue'
+import { defineExpose, onMounted, reactive, Ref, ref, unref } from 'vue'
 import { ControlModelAdapter, PlayerContext } from './context/PlayerContext'
 import { VideoWrapperContext } from './context/VideoWrapperContext'
 import ControlLayer from './ControlLayer.vue'
@@ -46,6 +46,8 @@ const videoRef: VideoWrapperContext = ref({}) as any
 
 const controlProp: Ref<ControlModel> = ref({} as any)
 onMounted(() => controlProp.value = new ControlModelAdapter(unref(videoRef), context.playerBoxElement))
+
+defineExpose(controlProp)
 </script>
 
 <template>

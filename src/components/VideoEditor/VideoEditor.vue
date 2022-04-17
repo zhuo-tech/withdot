@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import EditorStageLayer from '@/components/VideoEditor/components/EditorStageLayer.vue'
 import VideoPlayer from '@/components/VideoPlayer/index.vue'
-import { reactive } from 'vue'
+import { ControlModel } from '@/components/VideoPlayer/service/ControlModel'
+import { reactive, Ref, ref } from 'vue'
 import AddPoint from './components/AddPoint.vue'
 import List from './components/List.vue'
 import { VideoEditorContext } from './context/VideoEditorContext'
@@ -11,6 +12,9 @@ import { VideoEditorContext } from './context/VideoEditorContext'
  */
 const context = reactive(new VideoEditorContext())
 
+const playerRef: Ref<ControlModel> = ref({} as any)
+const setPlayerRef = (el: Ref<ControlModel>) => playerRef.value = el.value
+
 </script>
 
 <template>
@@ -19,7 +23,7 @@ const context = reactive(new VideoEditorContext())
     <AddPoint :current-play-time="0" />
 
     <!-- 播放器 -->
-    <VideoPlayer :point-list="context.pointList">
+    <VideoPlayer :ref="setPlayerRef" :point-list="context.pointList">
         <template v-slot:stage="{list, box}">
             <EditorStageLayer :box="box" :list="list" />
         </template>
@@ -38,7 +42,7 @@ const context = reactive(new VideoEditorContext())
             </template>
             <template v-slot:operating="{item, index}">
                 <el-button type="primary" @click="context.controlDrawer.show()">
-                    显示列表
+                    显示列表 -- {{ playerRef.time }}
                 </el-button>
             </template>
         </List>
