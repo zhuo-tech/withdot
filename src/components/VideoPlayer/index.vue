@@ -39,8 +39,8 @@ const emits = defineEmits<{
 
 const context: PlayerContext = reactive(new PlayerContext(props)) as any
 const videoRef: VideoWrapperContext = ref({}) as any
-const controlProp: Ref<ControlModel> = ref({} as any)
 
+const controlProp: Ref<ControlModel> = ref({} as any)
 onMounted(() => controlProp.value = new ControlModelAdapter(unref(videoRef), context.playerBoxElement))
 </script>
 
