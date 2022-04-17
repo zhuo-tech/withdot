@@ -6,10 +6,12 @@ import { StudentService } from "@/pages/student/StudentService";
 import { StudentQo } from "@/pages/student/StudentQo";
 import { CoreStudent } from "@/model/entity/CoreStudent";
 import { getIsPayLabel } from '@/model/CommonEnum';
+import { useRouter } from 'vue-router'
 const NAME = StudentService.name
 export default {
     name: NAME,
     setup() {
+        const router = useRouter()
         const L = getLogger("学员列表");
         const S = new StudentService();
         const Q = new StudentQo(1, 10);
@@ -28,11 +30,11 @@ export default {
         const handleSn = (index: number): number => {
             return (index += 1)
         }
-        const handlePayType = (row: CoreStudent): string => {
+        const fmtIsPay = (row: CoreStudent): string => {
             return getIsPayLabel(row.isPay)
         }
-        const handleDetail = (index: number, row: CoreStudent) => {
-            //TODO
+        const handleDetail = (id: number) => {
+            router.push({ path: '/student/detail', query: { id } })
         }
         const handleCurrentChange = (current: number) => {
             L.debug(`current -> ${current} `)
@@ -56,7 +58,8 @@ export default {
         }
         return {
             ...toRefs(state),
-            handlePayType,
+            fmtIsPay,
+            handleDetail,
             handleSearch,
             handlePage,
             handleSizeChange,
@@ -96,11 +99,12 @@ export default {
             <el-table-column label="学员头像" prop="avatar" />
             <el-table-column label="学员姓名" prop="name" />
             <el-table-column label="手机号码" prop="phone" />
-            <el-table-column label="是否付费" prop="isPay" :formatter="getIsPayLabel"/>
+            <el-table-column label="是否付费" prop="isPay" :formatter="fmtIsPay" />
             <el-table-column label="注册时间" prop="createTime" />
             <el-table-column fixed="right" label="操作" width="120">
-                <template #scope>
-                    <el-button size="small" type="text" icon="View" @click="handleDetail(scope.$index, scope.row)">查看
+                <template #default="scope">
+                    <el-button size="small" type="text" icon="View" @click="handleDetail(scope.row._id)">
+                        查看
                     </el-button>
                 </template>
             </el-table-column>

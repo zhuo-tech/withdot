@@ -18,7 +18,7 @@ export class StudentService {
     async pageByParams(q: StudentQo): Promise<BaseMo<CoreStudent>> {
         const dbTemplate = cloud.database();
         const { current, size, isPay } = q
-        const p = { delFlag: LogicDelete.NORMAL }
+        const p = {}
         if (isPay) {
             p['isPay'] = isPay
         }
