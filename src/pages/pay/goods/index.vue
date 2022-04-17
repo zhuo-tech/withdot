@@ -6,62 +6,70 @@ import { getLogger } from "@/main";
 import { PayGoodsOrderQo } from "@/pages/pay/service/qo/PayGoodsOrderQo";
 import { PayGoodsOrder } from '@/model/entity/PayGoodsOrder';
 import { getPayStatLabel, StatusOptions } from '@/model/PayStatusEnum';
-
-export default defineComponent({
+const NAME = PayGoodsOrder.name
+export default {
+    name: NAME,
     setup() {
-        const L = getLogger("交易记录");
+        const L = getLogger("商品订单记录");
         const S = new PayGoodsOrderService();
         const Q = new PayGoodsOrderQo(1, 10)
-        const R = reactive({
+        const state = reactive({
             tableKey: 0,
             list: Array<PayGoodsOrder>(),
             total: 0,
             listLoading: true,
             queryParam: Q,
             statusOptions: StatusOptions,
-            genSn(index: number) {
-                return (index += 1)
-            },
-            fmtPayStatus(row: PayGoodsOrder): string {
-                return getPayStatLabel(row.status)
-            },
-            async handleDelete(index: number, obj: PayGoodsOrder) {
-                await S.removeById(obj._id)
-                ElMessage.success({
-                    message: '删除成功',
-                    type: 'success',
-                    duration: 2000
-                })
-            },
-            handleCurrentChange(current: number) {
-                L.debug(`current -> ${current} `)
-                R.queryParam.current = current
-                R.getList(R.queryParam)
-            },
-            handleSizeChange(size: number) {
-                R.queryParam.size = size
-                L.debug(`size -> ${size} `)
-                R.getList(R.queryParam)
-            },
-            async getList(queryParam: PayGoodsOrderQo) {
-                R.listLoading = true
-                const res = await S.page(queryParam);
-                R.list = res.record ?? []
-                R.total = res.total ?? 0
-                setTimeout(() => { R.listLoading = false }, 0.5 * 1000)
-            },
-            handleSearch() {
-                R.getList(R.queryParam)
-            }
         })
+        const genSn = (index: number): number => {
+            return (index += 1)
+        }
+        const fmtPayStatus = (row: PayGoodsOrder): string => {
+            return getPayStatLabel(row.status)
+        }
+        const handleDelete = async (index: number, obj: PayGoodsOrder) => {
+            await S.removeById(obj._id)
+            ElMessage.success({
+                message: '删除成功',
+                type: 'success',
+                duration: 2000
+            })
+        }
+        const handleCurrentChange = (current: number) => {
+            L.debug(`current -> ${current} `)
+            state.queryParam.current = current
+            handlePage(state.queryParam)
+        }
+        const handleSizeChange = (size: number) => {
+            state.queryParam.size = size
+            L.debug(`size -> ${size} `)
+            handlePage(state.queryParam)
+        }
+        const handlePage = async (queryParam: PayGoodsOrderQo) => {
+            state.listLoading = true
+            const res = await S.page(queryParam);
+            state.list = res.record ?? []
+            state.total = res.total ?? 0
+            state.listLoading = false
+        }
+        const handleSearch = () => {
+            handlePage(state.queryParam)
+        }
         onMounted(() => {
-            R.getList(R.queryParam)
+            handlePage(state.queryParam)
         })
         return {
-            ...toRefs(R)
+            ...toRefs(state),
+            genSn,
+            fmtPayStatus,
+            handleSearch,
+            handlePage,
+            handleSizeChange,
+            handleCurrentChange,
+            handleDelete,
         }
     }
-})
+}
 </script>
 
 <template>

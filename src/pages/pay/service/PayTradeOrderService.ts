@@ -5,6 +5,7 @@ import { LogicDelete } from '@/model/LogicDelete';
 import { ObjectUtil } from 'typescript-util';
 import { BaseMo } from '@/model/BaseMo';
 import { PayTradeOrderQo } from '@/pages/pay/service/qo/PayTradeOrderQo';
+import { getLogger } from "@/main";
 
 /**
  * 交易记录服务
@@ -12,6 +13,8 @@ import { PayTradeOrderQo } from '@/pages/pay/service/qo/PayTradeOrderQo';
  * @date 2022年04月01日 17点13分
  */
 export class PayTradeOrderService {
+
+    private readonly log = getLogger('PayTradeOrderService')
 
     /**
      * 列表查询交易信息
