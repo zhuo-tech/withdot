@@ -16,8 +16,7 @@ const context = reactive(new VideoEditorContext())
 <template>
 <div class="video-editor-box">
 
-    <AddPoint :current-play-time="0">
-    </AddPoint>
+    <AddPoint :current-play-time="0" />
 
     <!-- 播放器 -->
     <VideoPlayer :point-list="context.pointList">

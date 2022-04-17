@@ -8,6 +8,10 @@ import { reactive } from 'vue'
  *  - video dom 对象注册
  *  - TODO: 处理视频资源加载, 清晰度切换
  */
+const props = defineProps<{
+    src: string
+}>()
+
 const context = reactive(new VideoWrapperContext())
 
 defineExpose(context)
@@ -16,7 +20,7 @@ defineExpose(context)
 <template>
 <div v-loading="context.status < MediaReadyState.HAVE_FUTURE_DATA" class="video-wrapper">
     <video :ref="el => context.videoRef = el"
-           src="./resource/height.mp4"
+           :src="src"
            @loadeddata="(event) => context.onLoadedData(event)"
            @loadedmetadata="(event) => context.onLoadMetaData(event)"
            @loadstart="(event) => context.onLoadStart(event)"

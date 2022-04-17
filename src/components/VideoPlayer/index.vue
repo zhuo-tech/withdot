@@ -19,6 +19,10 @@ const props = defineProps({
         type: AspectRatio,
         default: () => AspectRatio.DEFAULT,
     },
+    src: {
+        type: String,
+        default: 'https://7dd2f8e8-6102-492c-a522-b5a7db2ab00a.lafyun.com/file/public/2af6438d-846d-4fb7-b385-0dd7e23686b4.mp4',
+    },
     pointList: {
         type: Array,
         default: () => ([]),
@@ -51,7 +55,7 @@ onMounted(() => controlProp.value = new ControlModelAdapter(unref(videoRef), con
     <div id="player" :ref="el => context.playerBoxElement.setElement(el)">
 
         <!--suppress JSUndeclaredVariable -->
-        <VideoWrapperLayer :ref="el => videoRef = el" />
+        <VideoWrapperLayer :ref="el => videoRef = el" :src="src" />
         <!--suppress RequiredAttributes -->
         <ControlLayer v-if="showControl" :model="controlProp" />
 

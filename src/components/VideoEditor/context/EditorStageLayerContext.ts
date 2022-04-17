@@ -22,6 +22,12 @@ export class EditorStageLayerContext {
     private static readonly Z_INDEX_MIN = 0
     private static readonly Z_INDEX_DEFAULT = 1
 
+    private static readonly POSITION_DEFAULT: CoreDot['position'] = {
+        x: 0.5,
+        y: 0.5,
+        z: 1,
+    }
+    private readonly props: Readonly<PropsType>
     public stageLayerRef: HTMLDivElement
     private selectIndex: number | null
     private selectOffsetX = 0
@@ -29,10 +35,15 @@ export class EditorStageLayerContext {
     private pTop: number = 0
     private pLeft: number = 0
     private indexStyleMapping: Record<number, CSSStyleDeclaration> = reactive({})
-    private readonly props: Readonly<PropsType>
 
     constructor(props: Readonly<PropsType>) {
         this.props = props
+
+        this.props.list.forEach((item, index) => {
+            if (ObjectUtil.isEmpty(item.position)) {
+                this.setPosition(index, EditorStageLayerContext.POSITION_DEFAULT)
+            }
+        })
 
         watch(() => props.box, () => {
             this.onResize()
@@ -91,10 +102,7 @@ export class EditorStageLayerContext {
         const {selectOffsetX: sox, selectOffsetY: soy} = this
         const {clientX, clientY} = event
 
-        if (ObjectUtil.isEmpty(this.indexStyleMapping[index])) {
-            this.indexStyleMapping[index] = {} as any
-        }
-        const style = this.indexStyleMapping[index]
+        const style = this.tryGetStyleMapping(index)
 
         // 设置 XY
         const y = clientY - top - soy
@@ -107,10 +115,7 @@ export class EditorStageLayerContext {
     }
 
     public setZIndex(action: '+1' | '-1' | 'max' | 'min', index: number) {
-        if (ObjectUtil.isEmpty(this.indexStyleMapping[index])) {
-            this.indexStyleMapping[index] = {} as any
-        }
-        const style = this.indexStyleMapping[index]
+        const style = this.tryGetStyleMapping(index)
 
         const position = this.props.list[index].position
         let old = position?.z ?? EditorStageLayerContext.Z_INDEX_DEFAULT
@@ -148,7 +153,7 @@ export class EditorStageLayerContext {
             }
             const {x, y} = dot.position
 
-            const style = this.indexStyleMapping[index]
+            const style = this.tryGetStyleMapping(index)
             style.top = y * height + 'px'
             style.left = x * width + 'px'
         })
@@ -160,6 +165,15 @@ export class EditorStageLayerContext {
             dot.position = {} as any
         }
         dot.position = {...dot.position, ...style}
+    }
+
+    private tryGetStyleMapping(index: number) {
+        const style = this.indexStyleMapping[index]
+        if (ObjectUtil.isNotEmpty(style)) {
+            return style
+        }
+        this.indexStyleMapping[index] = {} as any
+        return this.indexStyleMapping[index]
     }
 
 }
