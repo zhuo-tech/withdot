@@ -1,8 +1,8 @@
 import { cloud } from "@/cloud";
 import { BaseMo } from "@/model/BaseMo";
 import { CoreStudent } from "@/model/entity/CoreStudent";
-import { LogicDelete } from "@/model/LogicDelete";
 import { StudentQo } from "@/pages/student/StudentQo";
+import { getLogger } from "@/main";
 
 /**
  * 学生服务
@@ -10,6 +10,9 @@ import { StudentQo } from "@/pages/student/StudentQo";
  * @date 2022年04月01日 17点13分
  */
 export class StudentService {
+
+    private readonly log = getLogger('StudentService')
+
     /**
      * 分页查询学生信息
      * @param q  查询参数
