@@ -1,12 +1,13 @@
 <script lang="ts" setup>
+import { ControlModel } from '@/components/VideoPlayer/service/ControlModel'
 import { CoreDot } from '@/model/entity/CoreDot'
-import { reactive, ref } from 'vue'
-import ControlLayer from './components/ControlLayer.vue'
-import StageLayer from './components/StageLayer.vue'
-import VideoWrapperLayer from './components/VideoWrapperLayer.vue'
-import { PlayerContext } from './context/PlayerContext'
+import { onMounted, reactive, Ref, ref, unref } from 'vue'
+import { ControlModelAdapter, PlayerContext } from './context/PlayerContext'
 import { VideoWrapperContext } from './context/VideoWrapperContext'
+import ControlLayer from './ControlLayer.vue'
 import { AspectRatio } from './service/AspectRatio'
+import StageLayer from './StageLayer.vue'
+import VideoWrapperLayer from './VideoWrapperLayer.vue'
 
 /**
  * 播放器
@@ -22,11 +23,25 @@ const props = defineProps({
         type: Array,
         default: () => ([]),
     },
+    playTime: {
+        type: Number,
+        default: 0,
+    },
+    showControl: {
+        type: Boolean,
+        default: true,
+    },
 })
+
+const emits = defineEmits<{
+    (event: 'update:playTime', time: number): void
+}>()
 
 const context: PlayerContext = reactive(new PlayerContext(props)) as any
 const videoRef: VideoWrapperContext = ref({}) as any
+const controlProp: Ref<ControlModel> = ref({} as any)
 
+onMounted(() => controlProp.value = new ControlModelAdapter(unref(videoRef), context.playerBoxElement))
 </script>
 
 <template>
@@ -38,16 +53,8 @@ const videoRef: VideoWrapperContext = ref({}) as any
         <!--suppress JSUndeclaredVariable -->
         <VideoWrapperLayer :ref="el => videoRef = el" />
         <!--suppress RequiredAttributes -->
-        <ControlLayer v-model:playback-rate="videoRef.playbackRate"
-                      v-model:volume="videoRef.volume"
-                      :buffer-time="videoRef.bufferTime"
-                      :max-duration="videoRef.maxDuration"
-                      :min-duration="0"
-                      :play-time="videoRef.playTime"
-                      :playing="videoRef.playing"
-                      @fullScreenToggle="context.playerBoxElement.toggleFullScreen()"
-                      @timeChange="time => videoRef.setPlayTime(time)"
-                      @update:playing="videoRef.togglePlayState()" />
+        <ControlLayer v-if="showControl" :model="controlProp" />
+
         <div class="stage-wrapper">
             <slot :box="context.boxWidthHeight" :list="pointList" name="stage">
                 <StageLayer :list="pointList" />
@@ -73,5 +80,4 @@ const videoRef: VideoWrapperContext = ref({}) as any
     height: 100%
     top: 0
     left: 0
-
 </style>

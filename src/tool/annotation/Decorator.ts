@@ -40,8 +40,10 @@ export function Debounce(timeInterval: number) {
             if (timer != null) {
                 window.clearTimeout(timer)
             }
-            timer = window.setTimeout(() => {
-                primitiveFun.apply(this, arguments)
+            const _this = this
+            const arg = arguments
+            timer = window.setTimeout(function () {
+                primitiveFun.apply(_this, arg)
                 timer = null
             }, timeInterval)
         }
