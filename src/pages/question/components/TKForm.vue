@@ -1,34 +1,36 @@
 <script lang="ts" setup>
 import QuestionService from '@/pages/question/QuestionService'
-import { ref } from 'vue'
 
 const props = defineProps<{
     service: QuestionService
 }>()
+
+const tk = '${}'
+const addTK = () => {
+    props.service.formData.form.label = props.service.formData.form.label.concat(`${ tk }`)
+}
 </script>
 
 <template>
     <el-dialog v-model="service.formData.tkVisible"
                :title="service.formStatus? '新建题目':'编辑题目'"
                destroy-on-close
-               top="2vh"
+               top="15vh"
                width="40%"
                @close="service.formData.initForm()">
-        <el-form :ref="el => service.formRef = el" :model="service.formData.form" :rules="service.rules" label-width="80px">
-            <div contenteditable class="tkText">
-            </div>
+        <el-form :ref="el => service.formRef = el" :model="service.formData.form" :rules="service.rules" label-position="top" label-width="80px">
+            <el-form-item label="题目">
+                <el-input v-model="service.formData.form.label"
+                          :autosize="{ minRows: 2, maxRows: 4 }"
+                          placeholder="请输入"
+                          type="textarea" />
+            </el-form-item>
             <div class="tkButton">
-                <div>
+                <div @click="addTK()">
                     <el-icon>
                         <circle-plus />
                     </el-icon>
                     <span>添加填空</span>
-                </div>
-                <div>
-                    <el-icon>
-                        <remove />
-                    </el-icon>
-                    <span>删除填空</span>
                 </div>
             </div>
         </el-form>
@@ -56,14 +58,16 @@ const props = defineProps<{
         cursor: pointer;
     }
 }
-.tkText{
+
+.tkText {
     width: 100%;
     min-height: 100px;
     max-height: 300px;
     margin: 10px;
     border: 1px solid #888888;
 }
-.tkText:focus{
+
+.tkText:focus {
     border-radius: 0;
     border: 1px solid #888888;
 }

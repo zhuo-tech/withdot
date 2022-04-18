@@ -130,6 +130,7 @@ export default class QuestionService {
      *搜索按钮
      */
     public searchQuestion = () => {
+        this.topicButton.close()
         this.showQuery.value = !this.showQuery.value
     }
 
