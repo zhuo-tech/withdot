@@ -1,82 +1,72 @@
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { ref, reactive, ComponentInternalInstance } from "vue";
+import { cloud } from "@/cloud";
 import { Search } from "@element-plus/icons-vue";
 import { onMounted, onUpdated, onUnmounted } from "vue";
+import card from "../Exam/entering.vue";
 // ======================================数据===================================================
+const db = cloud.database();
 interface User {
+    typeText: string;
     order: number;
-    name: string;
+    label: string;
     type: string;
 }
+
+const show = ref(true); // 展示此组件
+const showChildren = ref(false); // 展示录入组件
 const inputValue = ref(""); // 搜索框
 const value = ref(""); // 下拉框
 // 下拉框选项
 const options = [
     {
-        value: "Option1",
-        label: "Option1",
+        value: "radio",
+        label: "单选题",
     },
     {
-        value: "Option2",
-        label: "Option2",
+        value: "multi",
+        label: "多选题",
     },
     {
-        value: "Option3",
-        label: "Option3",
+        value: "judge",
+        label: "判断题",
     },
     {
-        value: "Option4",
-        label: "Option4",
-    },
-    {
-        value: "Option5",
-        label: "Option5",
+        value: "saq",
+        label: "简答题",
     },
 ];
-// 所有题目数据
-const tableData: User[] = [
-    {
-        order: 1,
-        name: "公王蚊子会咬人吗",
-        type: "选择题",
-    },
-    {
-        order: 2,
-        name: "公蚊子会咬人吗",
-        type: "选择题",
-    },
-    {
-        order: 3,
-        name: "公蚊子会咬人吗",
-        type: "选择题",
-    },
-    {
-        order: 4,
-        name: "公蚊子怪咬人吗",
-        type: "选择题",
-    },
-    {
-        order: 5,
-        name: "奥太热门怪兽",
-        type: "选择题",
-    },
-];
-let tempTableData = ref<User[]>(tableData); // 表格显示数据
+
+let tableData: User[] = []; // 所有题目数据
+const tempTableData = ref<User[]>(tableData); // 表格显示数据
 const multipleSelection = ref<User[]>([]); // 保存已选中的数据
 
 // ======================================函数===================================================
 
 onMounted(() => {
-    console.log("onMounted");
+    getList();
 });
-// 表格选中回调
-const handleSelectionChange = (val: User[]) => {
-    multipleSelection.value = val;
-    console.log(val, "选中了");
-};
+
+// 获取初始列表
+async function getList() {
+    const res = await db.collection("core_question_repo").get();
+    tableData = res.data;
+    let orderNumber = 1;
+    tableData.forEach((item) => {
+        item.order = orderNumber++; // 设置序号
+        if (item.type === "radio") item.typeText = "单选题";
+        if (item.type === "multi") item.typeText = "多选题";
+        if (item.type === "judge") item.typeText = "判断题";
+        if (item.type === "saq") item.typeText = "简答题";
+    });
+    search(); // 赋值给tempTableData
+    console.log(tableData, "获取列表");
+}
 
 //搜索框值变化时触发
 function search() {
+    // 保存现在列表里的数据用来搜索
+    const tempArr = tempTableData.value;
     tempTableData.value = [];
 
     let reg = new RegExp(inputValue.value);
@@ -86,76 +76,102 @@ function search() {
         return;
     }
     // 根据input值来模糊匹配
-    tableData.forEach((item) => {
-        if (item.name.match(reg)) {
+    tempArr.forEach((item) => {
+        if (item.label.match(reg)) {
             tempTableData.value.push(item);
         }
     });
 }
+
+// 下拉框选中回调
+function selectChange(val: string) {
+    console.log(val);
+    tempTableData.value = tableData.filter((item) => item.type === val);
+}
+
+// 表格选中回调
+const handleSelectionChange = (val: User[]) => {
+    multipleSelection.value = val;
+};
+
+// 关闭此组件
+function closeCard() {
+    show.value = false;
+}
+
+// 关闭此组件并展示孩子
+function showChild() {
+    show.value = false;
+    showChildren.value = true;
+}
 </script>
 
 <template>
-    <div class="choice">
-        <div class="title">选择题目</div>
-        <div class="tips">请选择题目后进行题目编辑</div>
-        <div class="selected">
-            <div class="selectedTitle">已选择</div>
-            <div
-                v-for="(item, index) in multipleSelection"
-                :key="index"
-                class="selectedList"
+    <div>
+        <div v-show="show" class="choice">
+            <div class="title">选择题目</div>
+            <div class="tips">请选择题目后进行题目编辑</div>
+            <div class="selected">
+                <div class="selectedTitle">已选择</div>
+                <div
+                    v-for="(item, index) in multipleSelection"
+                    :key="index"
+                    class="selectedList"
+                >
+                    {{ item.order }}
+                </div>
+            </div>
+            <div class="search">
+                <el-input
+                    class="input"
+                    @input="search"
+                    v-model="inputValue"
+                    size="default"
+                    placeholder="搜索"
+                    :suffix-icon="Search"
+                />
+                <img src="" alt="" />
+
+                <el-select
+                    v-model="value"
+                    size="default"
+                    class="select"
+                    placeholder="分类"
+                    @change="selectChange"
+                >
+                    <el-option
+                        v-for="item in options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    />
+                </el-select>
+            </div>
+
+            <el-table
+                ref="multipleTableRef"
+                :data="tempTableData"
+                style="width: 100%"
+                @selection-change="handleSelectionChange"
             >
-                {{ item.order }}
+                <el-table-column type="selection" width="55" />
+                <el-table-column label="序号" width="120">
+                    <template #default="scope">{{ scope.row.order }}</template>
+                </el-table-column>
+                <el-table-column property="label" label="问题" width="420" />
+                <el-table-column
+                    property="typeText"
+                    label="分类"
+                    show-overflow-tooltip
+                />
+            </el-table>
+
+            <div class="button">
+                <div @click="closeCard" class="cancel">取消</div>
+                <div @click="showChild" class="ok">确定</div>
             </div>
         </div>
-        <div class="search">
-            <el-input
-                class="input"
-                @input="search"
-                v-model="inputValue"
-                size="default"
-                placeholder="搜索"
-                :suffix-icon="Search"
-            />
-            <img src="" alt="" />
-
-            <el-select
-                v-model="value"
-                size="default"
-                class="select"
-                placeholder="分类"
-            >
-                <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                />
-            </el-select>
-        </div>
-
-        <el-table
-            ref="multipleTableRef"
-            :data="tempTableData"
-            style="width: 100%"
-            @selection-change="handleSelectionChange"
-        >
-            <el-table-column type="selection" width="55" />
-            <el-table-column label="序号" width="120">
-                <template #default="scope">{{ scope.row.order }}</template>
-            </el-table-column>
-            <el-table-column property="name" label="问题" width="420" />
-            <el-table-column
-                property="type"
-                label="分类"
-                show-overflow-tooltip
-            />
-        </el-table>
-
-        <div class="button">
-            <div class="cancel">取消</div>
-            <div class="ok">确定</div>
-        </div>
+        <card :list="multipleSelection" v-show="!showChildren" />
     </div>
 </template>
 
@@ -194,7 +210,6 @@ function search() {
             margin: 10px 10px 0 0;
         }
         .selectedList {
-            display: flex;
             width: 30px;
             height: 30px;
             border-color: rgb(187, 187, 187);
@@ -203,7 +218,7 @@ function search() {
             border-radius: 50px;
             font-size: 14px;
             line-height: 30px;
-            padding: 0 0 0 9px;
+            text-align: center;
             margin: 10px 10px 0 0;
         }
     }
@@ -215,7 +230,7 @@ function search() {
             height: 30px;
         }
         .select {
-            width: 80px;
+            width: 100px;
             margin: 0 0 0 30px;
         }
     }

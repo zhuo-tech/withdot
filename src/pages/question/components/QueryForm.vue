@@ -42,7 +42,7 @@ const props = defineProps<{
             <el-row justify="end" type="flex">
                 <el-button :icon="CirclePlusFilled"
                            type="primary"
-                           @click="service.topicButton.showAddTopic=!service.topicButton.showAddTopic">新建题目
+                           @click="service.topicButton.showAddTopic=!service.topicButton.showAddTopic;service.showQuery=false">新建题目
                 </el-button>
                 <el-button :icon="Search" type="primary" @click="service.searchQuestion()" />
                 <el-button v-loading="service.tableIsLoading"
