@@ -12,7 +12,7 @@ const props = defineProps({
 <template>
     <el-form ref="form" :model="value" label-width="80px" class="box">
         <el-form-item label="文本内容">
-            <Editor v-model:value="value.text" @changeValue="changeValue" />
+            <Editor v-model:value="value.text" />
         </el-form-item>
         <el-row  style="margin-top: 20px">
             <el-col :span="12">

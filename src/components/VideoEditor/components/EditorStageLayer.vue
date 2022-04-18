@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { CoreDot } from '@/model/entity/CoreDot'
-import { onMounted, reactive } from 'vue'
+import { reactive } from 'vue'
 import { EditorStageLayerContext } from '../context/EditorStageLayerContext'
 import Draggable from './Draggable.vue'
 
@@ -19,7 +19,6 @@ const props = defineProps<{
 
 const context = reactive(new EditorStageLayerContext(props))
 
-onMounted(() => context.updateReferencePoint())
 </script>
 
 <template>
@@ -32,9 +31,9 @@ onMounted(() => context.updateReferencePoint())
                :key="index"
                :index="index"
                :item="item"
-               :style="context.getStyle(index)"
-               @setZIndex="action => context.setZIndex(action, index)"
-               @mousedown="event => context.onMouseDown(event, index)"/>
+               :style="context.styleMap[index]"
+               @mousedown="event => context.onMouseDown(event, index)"
+               @setZIndex="action => context.setZIndex(action, index)" />
 </div>
 </template>
 

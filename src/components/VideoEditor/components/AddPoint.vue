@@ -22,7 +22,7 @@ const context = reactive(new AddPointContext())
 
 function formSubmit() {
     emits('submit', context.formData)
-    context.formData = AddPointContext.formDataDefault()
+    context.close()
 }
 
 </script>
@@ -54,14 +54,6 @@ function formSubmit() {
                 <el-input v-model="context.formData.label" placeholder="标签"></el-input>
             </el-form-item>
 
-            <el-form-item label="开始时间">
-
-            </el-form-item>
-
-            <el-form-item label="结束时间">
-
-            </el-form-item>
-
             <el-form-item label="时间">
                 <div class="select-play-time">
                     <slot class="schedule" name="header"></slot>
@@ -70,7 +62,7 @@ function formSubmit() {
             </el-form-item>
 
             <el-form-item label-width="0px">
-                <DotConfigForm :type="context.currentType" :value="context.formData.config" />
+                <DotConfigForm :type="context.currentType" v-model:value="context.formData.config" />
             </el-form-item>
         </el-form>
     </el-tabs>

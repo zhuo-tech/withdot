@@ -1,10 +1,10 @@
-import { PlayerContext } from '@/components/VideoPlayer/context/PlayerContext'
+import { getUserInfo } from '@/api/token'
 import { getLogger } from '@/main'
-import { CoreDot, CoreDotType, DotDisplayType } from '@/model/entity/CoreDot'
+import { CoreDot, CoreDotType } from '@/model/entity/CoreDot'
+import CoreMaterial from '@/model/entity/CoreMaterial'
+import { CoreWork } from '@/model/entity/CoreWork'
 import { AddLocation, Comment, Crop, Document, ElementPlus, Link, PictureFilled } from '@element-plus/icons-vue'
-import { InjectionKey } from '@vue/runtime-core'
 import { LafClient } from 'laf-db-query-wrapper'
-import { ObjectUtil } from 'typescript-util'
 import { reactive } from 'vue'
 
 export const DotTypeOption: Array<{ icon: any, type: CoreDotType, label: string }> = [
@@ -17,17 +17,21 @@ export const DotTypeOption: Array<{ icon: any, type: CoreDotType, label: string 
     {icon: Link, type: CoreDotType.链接, label: '链接'},
 ]
 
+export type PropsType = {
+    data: CoreWork & { material: CoreMaterial }
+}
+
 /**
  * 视频编辑器
  * @author LL
  * @date 2022年04月11日 15点04分
  */
 export class VideoEditorContext {
-    public static readonly INJECTION_KEY: InjectionKey<PlayerContext> = Symbol.for(VideoEditorContext.name)
     // noinspection JSUnusedLocalSymbols
-    private log = getLogger(VideoEditorContext.name)
+    private readonly log = getLogger(VideoEditorContext.name)
     // noinspection JSUnusedLocalSymbols
     private readonly client = new LafClient<CoreDot>(CoreDot.TABLE_NAME)
+    private readonly props: PropsType
     /**
      * 当前打点类型
      */
@@ -45,18 +49,28 @@ export class VideoEditorContext {
         },
     }
 
-    constructor() {
-        ObjectUtil.toArray(CoreDotType)
-            .filter((t, i) => i < 3)
-            .forEach((kv, index) => {
-                let dot = new CoreDot()
-                dot.type = kv.value
-                dot._id = String(index)
-                dot.label = kv.key
-                dot.display = index % 2 === 0 ? DotDisplayType.BUTTON : DotDisplayType.EXPANDED
-                dot.createTime = Date.now()
-                this.pointList.push(dot)
-            })
+    constructor(props: PropsType) {
+        this.props = props
+    }
+
+    public createDot(dto: CoreDot, startTime: number) {
+        const {_id: workId} = this.props.data
+
+        // 基础信息初始化
+        dto.workId = workId
+        dto.type = this.currentType
+        dto.position = {} as any
+        dto.start = startTime
+
+        this.pointList.push(dto)
+    }
+
+    public async saveDot(dto: CoreDot) {
+        dto.createTime = Date.now()
+        dto.updateTime = Date.now()
+        dto.createBy = (await getUserInfo())?._id as string
+
+        await this.client.insert(dto)
     }
 
 }

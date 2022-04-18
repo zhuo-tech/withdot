@@ -1,6 +1,6 @@
 import { CoreDot } from '@/model/entity/CoreDot'
 import { Throttling } from '@/tool/annotation/Decorator'
-import { ObjectUtil, StrUtil } from 'typescript-util'
+import { ObjectUtil } from 'typescript-util'
 import { reactive, watch } from 'vue'
 
 type PropsType = {
@@ -10,6 +10,8 @@ type PropsType = {
         height: number,
     }
 }
+
+type RightMenuAction = '+1' | '-1' | 'max' | 'min'
 
 /**
  *
@@ -32,43 +34,39 @@ export class EditorStageLayerContext {
     private selectIndex: number | null
     private selectOffsetX = 0
     private selectOffsetY = 0
-    private pTop: number = 0
-    private pLeft: number = 0
-    private indexStyleMapping: Record<number, CSSStyleDeclaration> = reactive({})
+
+    public styleMap: Record<number, Partial<CSSStyleDeclaration>> = reactive({})
 
     constructor(props: Readonly<PropsType>) {
         this.props = props
 
+        watch(() => props.list, () => this.bulkUpdateStyles(), {deep: true, immediate: true})
+        watch(() => props.box, () => this.bulkUpdateStyles(), {deep: true})
+    }
+
+    private bulkUpdateStyles() {
         this.props.list.forEach((item, index) => {
             if (ObjectUtil.isEmpty(item.position)) {
                 this.setPosition(index, EditorStageLayerContext.POSITION_DEFAULT)
             }
-        })
-
-        watch(() => props.box, () => {
-            this.onResize()
-        }, {
-            deep: true,
+            this.styleMap[index] = this.updateStyle(index)
         })
     }
 
-    public getStyle(index: number) {
-        const style = this.indexStyleMapping[index]
-        if (ObjectUtil.isEmpty(style)) {
-            return StrUtil.EMPTY
-        }
+    private updateStyle(index: number): Partial<CSSStyleDeclaration> {
+        // noinspection JSUnusedLocalSymbols
+        const {x, y, z, width, height} = this.props.list[index].position
+        const {width: pw, height: ph} = this.props.box
 
         let zi = this.selectIndex === index
             ? EditorStageLayerContext.ADSORPTION_Z_INDEX
-            : style.zIndex ?? EditorStageLayerContext.Z_INDEX_DEFAULT
+            : z ?? EditorStageLayerContext.Z_INDEX_DEFAULT
 
-        return `top: ${ style.top }; left: ${ style.left }; zIndex: ${ zi }`
-    }
-
-    public updateReferencePoint() {
-        const {offsetTop: top, offsetLeft: left} = this.stageLayerRef
-        this.pTop = top
-        this.pLeft = left
+        return {
+            top: y * ph + 'px',
+            left: x * pw + 'px',
+            zIndex: String(zi)
+        }
     }
 
     public onMouseDown(event: MouseEvent, index: number) {
@@ -90,7 +88,6 @@ export class EditorStageLayerContext {
     @Throttling(60)
     public onMouseMove(event: MouseEvent) {
         let index = this.selectIndex
-
         if (index === null || index === undefined) {
             return
         }
@@ -102,21 +99,14 @@ export class EditorStageLayerContext {
         const {selectOffsetX: sox, selectOffsetY: soy} = this
         const {clientX, clientY} = event
 
-        const style = this.tryGetStyleMapping(index)
-
         // 设置 XY
         const y = clientY - top - soy
         const x = clientX - left - sox
 
-        style.top = y + 'px'
-        style.left = x + 'px'
-
         this.setPosition(index, {x: x / width, y: y / height})
     }
 
-    public setZIndex(action: '+1' | '-1' | 'max' | 'min', index: number) {
-        const style = this.tryGetStyleMapping(index)
-
+    public setZIndex(action: RightMenuAction, index: number) {
         const position = this.props.list[index].position
         let old = position?.z ?? EditorStageLayerContext.Z_INDEX_DEFAULT
 
@@ -136,27 +126,7 @@ export class EditorStageLayerContext {
                 break
             default:
         }
-        // 设置 Z
-        style.zIndex = String(value)
         this.setPosition(index, {z: value})
-    }
-
-    /**
-     * 容器大小发生变化时, 重设定位样式
-     */
-    private onResize() {
-        const {width, height} = this.props.box
-
-        this.props.list.forEach((dot, index) => {
-            if (ObjectUtil.isEmpty(dot.position)) {
-                return
-            }
-            const {x, y} = dot.position
-
-            const style = this.tryGetStyleMapping(index)
-            style.top = y * height + 'px'
-            style.left = x * width + 'px'
-        })
     }
 
     private setPosition(index: number, style: Partial<CoreDot['position']>) {
@@ -165,15 +135,6 @@ export class EditorStageLayerContext {
             dot.position = {} as any
         }
         dot.position = {...dot.position, ...style}
-    }
-
-    private tryGetStyleMapping(index: number) {
-        const style = this.indexStyleMapping[index]
-        if (ObjectUtil.isNotEmpty(style)) {
-            return style
-        }
-        this.indexStyleMapping[index] = {} as any
-        return this.indexStyleMapping[index]
     }
 
 }

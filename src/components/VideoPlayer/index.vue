@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ControlModel } from '@/components/VideoPlayer/service/ControlModel'
 import { CoreDot } from '@/model/entity/CoreDot'
-import { defineExpose, onMounted, reactive, Ref, ref, unref } from 'vue'
+import { onMounted, reactive, Ref, ref, unref } from 'vue'
 import { ControlModelAdapter, PlayerContext } from './context/PlayerContext'
 import { VideoWrapperContext } from './context/VideoWrapperContext'
 import ControlLayer from './ControlLayer.vue'
@@ -21,7 +21,7 @@ const props = defineProps({
     },
     src: {
         type: String,
-        default: 'https://7dd2f8e8-6102-492c-a522-b5a7db2ab00a.lafyun.com/file/public/2af6438d-846d-4fb7-b385-0dd7e23686b4.mp4',
+        required: true,
     },
     pointList: {
         type: Array,
