@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import EditorStageLayer from '@/components/VideoEditor/components/EditorStageLayer.vue'
+import Timeline from '@/components/VideoEditor/components/Timeline'
 import VideoPlayer from '@/components/VideoPlayer/index.vue'
 import { ControlModel } from '@/components/VideoPlayer/service/ControlModel'
 import CoreMaterial from '@/model/entity/CoreMaterial'
@@ -22,7 +23,7 @@ const fileService: FileService = inject(INJECT_KEY_FILE_SERVICE) as FileService
 const context = reactive(new VideoEditorContext(props))
 const playerRef: Ref<ControlModel> = ref({} as any)
 
-const setPlayerRef = (el: Ref<ControlModel>) => playerRef.value = el.value
+const setPlayerRef = (el: Ref<ControlModel>) => playerRef.value = el?.value
 
 </script>
 
@@ -37,6 +38,9 @@ const setPlayerRef = (el: Ref<ControlModel>) => playerRef.value = el.value
             <EditorStageLayer :box="box" :list="list" />
         </template>
     </VideoPlayer>
+
+    <!-- timeline -->
+    <Timeline :start="playerRef.minTime" :end="playerRef.maxTime" :current="playerRef.time" @select="time => playerRef.setPlayTime(time)" />
 
     <!-- 底部列表 -->
     <div>
