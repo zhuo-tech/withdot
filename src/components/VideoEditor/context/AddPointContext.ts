@@ -17,18 +17,16 @@ export class AddPointContext {
 
     public onMenuSelect(type: CoreDotType) {
         this.currentType = type
-
-        console.debug('Select ', this)
         this.show()
     }
 
     public show() {
-        console.debug('显示??? ', this)
         this.formIsShow = true
     }
 
     public close() {
         this.formIsShow = false
+        this.formData = AddPointContext.formDataDefault()
     }
 
     public static formDataDefault() {

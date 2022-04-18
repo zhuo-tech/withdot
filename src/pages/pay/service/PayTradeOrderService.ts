@@ -1,10 +1,17 @@
 import { cloud } from '@/cloud';
-import { getLogger } from '@/main';
 import { CommonEnum } from '@/model/CommonEnum';
 import { PayTradeOrder } from "@/model/entity/PayTradeOrder"
 import { LogicDelete } from '@/model/LogicDelete';
 import { ObjectUtil } from 'typescript-util';
+import { BaseMo } from '@/model/BaseMo';
+import { PayTradeOrderQo } from '@/pages/pay/service/qo/PayTradeOrderQo';
+import { getLogger } from "@/main";
 
+/**
+ * 交易记录服务
+ * @author HK
+ * @date 2022年04月01日 17点13分
+ */
 export class PayTradeOrderService {
 
     private readonly log = getLogger('PayTradeOrderService')
@@ -20,20 +27,32 @@ export class PayTradeOrderService {
         return res.data
     }
 
-
     /**
-     * 分页查询交易信息
-     * @param size  偏移量
-     * @param current 分页大小
-     * @returns 交易分页列表
+     * 分页查询
+     * @param q 查询对象
+     * @returns 分页列表
      */
-    async page(size: number, current: number): Promise<Array<PayTradeOrder>> {
+    async page(q: PayTradeOrderQo): Promise<BaseMo<PayTradeOrder>> {
         const dbTemplate = cloud.database();
+        const { current, size, status, orderNo } = q
+        const p = { delFlag: LogicDelete.NORMAL }
+        if (status) {
+            p['status'] = status
+        }
+        if (orderNo) {
+            p['orderId'] = orderNo
+        }
+        console.log(p)
         const res = await dbTemplate.collection(PayTradeOrder.TABLE_NAME)
-            .skip(size * (current - 1))
+            .where(p)
             .limit(size)
+            .skip(size * (current - 1))
             .get<PayTradeOrder>()
-        return res.data
+        const { total } = await dbTemplate.collection(PayTradeOrder.TABLE_NAME).where(p).count()
+        return {
+            total,
+            record: res.data
+        };
     }
 
     /**
@@ -56,7 +75,7 @@ export class PayTradeOrderService {
         this.init(obj, CommonEnum.ACTION_ADD)
         const { id, error } = await dbTemplate.collection(PayTradeOrder.TABLE_NAME).add({ obj })
         if (ObjectUtil.isNull(id)) {
-            this.log.error("save exam error `{}` ", error)
+            this.log.error(`save exam error -> ${error}`)
             throw new Error(error)
         }
         return id as string
@@ -74,7 +93,7 @@ export class PayTradeOrderService {
             .collection(PayTradeOrder.TABLE_NAME)
             .doc(obj._id)
             .update({ obj })
-        this.log.debug("更新交易记录 `{}` ", result)
+        this.log.debug(`更新交易记录 -> ${result}`)
         return true
     }
 
@@ -86,9 +105,9 @@ export class PayTradeOrderService {
     async removeById(id: string): Promise<boolean> {
         const dbTemplate = cloud.database()
         const res = dbTemplate.collection(PayTradeOrder.TABLE_NAME)
-            .where({ _id: id })
-            .remove()
-        this.log.debug("删除交易 `{}` ", res)
+            .doc(id)
+            .update({ delFlag: LogicDelete.DELETED })
+        this.log.debug(`删除交易 -> ${res}`)
         return true
     }
 

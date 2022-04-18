@@ -21,7 +21,7 @@ const context = reactive(new WorkEditorContext(useRoute().params.id as string))
     </el-page-header>
 
     <div class="content-area">
-        <VideoEditor />
+        <VideoEditor :data="context.workData" />
     </div>
 </el-card>
 

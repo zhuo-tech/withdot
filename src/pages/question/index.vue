@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-import { QuestionTypeEnum } from '@/model/QuestionTypeEnum'
+import SAQForm from '@/pages/question/components/SAQForm.vue'
 import QuestionService,{questionType} from '@/pages/question/QuestionService'
 import { reactive } from 'vue'
 import QueryForm from './components/QueryForm.vue'
-import Form from './components/Form.vue'
+import SelectForm from './components/SelectForm.vue'
+import TKForm from './components/TKForm.vue'
+import SQAForm from './components/SAQForm.vue'
 import { Delete, Edit, Warning } from '@element-plus/icons-vue'
 import { filterTime } from '@/utils/utils'
 
@@ -72,7 +74,9 @@ service.getList()
             </el-col>
         </el-row>
     </el-card>
-    <Form :service="service" />
+    <SelectForm :service="service" />
+    <SAQForm :service="service" />
+    <TKForm :service="service" />
 </template>
 
 <style lang="less" scoped>

@@ -1,12 +1,16 @@
 import { cloud } from '@/cloud';
-import { getLogger } from '@/main';
 import { CommonEnum } from '@/model/CommonEnum';
 import { PayChannel } from "@/model/entity/PayChannel"
+import { PayNotifyRecord } from '@/model/entity/PayNotifyRecord'
 import { LogicDelete } from '@/model/LogicDelete';
 import { ObjectUtil } from 'typescript-util';
+import { PayChannelQo } from './PayChannelQo'
+import { getLogger } from "@/main";
 
 /**
  * 支付渠道
+ * @author HK
+ * @date 2022年04月01日 17点13分
  */
 export class PayChannelService {
 
@@ -20,8 +24,10 @@ export class PayChannelService {
         const dbTemplate = cloud.database();
         const res = await dbTemplate.collection(PayChannel.TABLE_NAME)
             .get<PayChannel>()
+
         return res.data
     }
+    
 
 
     /**
@@ -38,6 +44,27 @@ export class PayChannelService {
             .get<PayChannel>()
         return res.data
     }
+
+
+     /**
+     * 分页查询支付通知信息
+     * @param current 当前页
+     * @param size  分页大小
+     * @returns 支付通知分页列表
+     */
+      async pageByParams(current: number,size: number,params: PayChannelQo): Promise<Array<PayNotifyRecord>> {
+        const dbTemplate = cloud.database();
+        const res = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
+            .where({
+                delFlag: LogicDelete.NORMAL,
+                orderNo: params.orderNo
+            })
+            .limit(size)
+            .skip(size * (current - 1))
+            .get<PayNotifyRecord>()
+        return res.data
+    }
+
 
     /**
      * 统计

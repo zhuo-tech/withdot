@@ -1,59 +1,46 @@
 <script lang="ts" setup>
-import ProgressBar from '@/components/VideoPlayer/components/ProgressBar.vue'
-import { PlayerContext } from '@/components/VideoPlayer/context/PlayerContext'
+import EditorStageLayer from '@/components/VideoEditor/components/EditorStageLayer.vue'
 import VideoPlayer from '@/components/VideoPlayer/index.vue'
-import { TimeUnit } from 'typescript-util'
-import { provide, reactive } from 'vue'
+import { ControlModel } from '@/components/VideoPlayer/service/ControlModel'
+import CoreMaterial from '@/model/entity/CoreMaterial'
+import { CoreWork } from '@/model/entity/CoreWork'
+import { FileService, INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
+import { inject, reactive, Ref, ref } from 'vue'
 import AddPoint from './components/AddPoint.vue'
-import IconLabel from './components/IconLabel'
 import List from './components/List.vue'
-import { DotTypeOption, VideoEditorContext } from './context/VideoEditorContext'
+import { VideoEditorContext } from './context/VideoEditorContext'
 
 /**
  * 编辑器
- * @provide {@link VideoEditorContext}
- * @provide {@link PlayerContext} 向下注入播放器的上下文 替换播放器自身
  */
-const context = reactive(new VideoEditorContext())
-provide(VideoEditorContext.INJECTION_KEY, context as any)
-provide(PlayerContext.INJECTION_KEY, context.playerContext as any)
+const props = defineProps<{
+    data: CoreWork & { material: CoreMaterial }
+}>()
 
-const {pointList, playerContext} = context
-const {videoElement, minDuration} = playerContext
+const fileService: FileService = inject(INJECT_KEY_FILE_SERVICE) as FileService
 
-const controlDrawer = reactive({
-    isShow: false,
-    show() {
-        this.isShow = true
-    },
-    close() {
-        this.isShow = false
-    },
-})
+const context = reactive(new VideoEditorContext(props))
+const playerRef: Ref<ControlModel> = ref({} as any)
+
+const setPlayerRef = (el: Ref<ControlModel>) => playerRef.value = el.value
 
 </script>
 
 <template>
 <div class="video-editor-box">
 
-    <AddPoint :current-play-time="playerContext.videoElement.playTime">
-        <template #header>
-            <ProgressBar v-model:value="videoElement.playTime"
-                         :buffer-value="videoElement.bufferTime"
-                         :format-tips="(t) => TimeUnit.SECOND.display(t)"
-                         :max="videoElement.maxDuration"
-                         :min="minDuration"
-                         @change="(time) => videoElement.setPlayTime(time)">
-            </ProgressBar>
-        </template>
-    </AddPoint>
+    <AddPoint :current-play-time="playerRef.time" @submit="formData => context.createDot(formData, playerRef.time)" />
 
     <!-- 播放器 -->
-    <VideoPlayer :point-list="pointList"></VideoPlayer>
+    <VideoPlayer :ref="setPlayerRef" :point-list="context.pointList" :src="fileService.showUrl(data.material?.href)">
+        <template v-slot:stage="{list, box}">
+            <EditorStageLayer :box="box" :list="list" />
+        </template>
+    </VideoPlayer>
 
     <!-- 底部列表 -->
     <div>
-        <List :list="pointList">
+        <List :list="context.pointList">
             <template v-slot:prefix>
                 <el-icon>
                     <postcard />
@@ -63,18 +50,18 @@ const controlDrawer = reactive({
                 {{ item }}
             </template>
             <template v-slot:operating="{item, index}">
-                <el-button type="primary" @click="controlDrawer.show()">
-                    显示列表
+                <el-button type="primary" @click="context.controlDrawer.show()">
+                    显示列表 -- {{ playerRef.time }}
                 </el-button>
             </template>
         </List>
     </div>
     <!-- 侧边抽屉 -->
-    <el-drawer v-model="controlDrawer.isShow">
+    <el-drawer v-model="context.controlDrawer.isShow">
         <template #title>
             <h1>啊~ 抽屉列表-----------------</h1>
         </template>
-        <List :list="pointList">
+        <List :list="context.pointList">
             <template v-slot:prefix>
                 <el-icon>
                     <postcard />

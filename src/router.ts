@@ -7,10 +7,7 @@ import HomeRouter, { ROUTER_PATH_HOME } from '@/pages/home/HomeRouter'
 import MaterialRouter from '@/pages/materials/MaterialRouter'
 import PayRouter from '@/pages/pay/PayRouter'
 
-import OrderRouter from '@/pages/orders/OrderRouter'
-import SettingRouter from '@/pages/settings/SettingRouter'
-import UserRouter from '@/pages/users/UserRouter'
-import WeiXinConfigItem from '@/pages/weixin/weixinRouter'
+import StudentRouter from '@/pages/student/StudentRouter'
 import WorksRouter from '@/pages/works/WorksRouter'
 import QuestionRouter from '@/pages/question/QuestionRouter'
 import { LoggerLevel } from '@/tool/log/LoggerLevel'
@@ -20,7 +17,6 @@ import {
     createRouter,
     createWebHistory,
     NavigationGuard,
-    NavigationGuardNext,
     NavigationGuardWithThis,
     NavigationHookAfter,
     RouteLocationNormalized,
@@ -31,15 +27,12 @@ import {
 
 const routes: RouteRecordRaw[] = [
     HomeRouter,
-    PayRouter,
     MaterialRouter,
     WorksRouter,
     AlbumsRouter,
-    UserRouter,
-    OrderRouter,
-    SettingRouter,
-    WeiXinConfigItem,
+    StudentRouter,
     QuestionRouter,
+    PayRouter,
     ...AccountRouter,
     ...ErrorRouter,
 ]

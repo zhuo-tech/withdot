@@ -4,6 +4,7 @@ import { TimeUnit } from 'typescript-util'
 import { reactive } from 'vue'
 import { AddPointContext } from '../context/AddPointContext'
 import { DotTypeOption } from '../context/VideoEditorContext'
+import DotConfigForm from './DotConfigForm'
 import IconLabel from './IconLabel'
 
 const props = defineProps({
@@ -21,7 +22,7 @@ const context = reactive(new AddPointContext())
 
 function formSubmit() {
     emits('submit', context.formData)
-    context.formData = AddPointContext.formDataDefault()
+    context.close()
 }
 
 </script>
@@ -53,26 +54,17 @@ function formSubmit() {
                 <el-input v-model="context.formData.label" placeholder="标签"></el-input>
             </el-form-item>
 
-            <el-form-item label="开始时间">
-
-            </el-form-item>
-
-            <el-form-item label="结束时间">
-
-            </el-form-item>
-
             <el-form-item label="时间">
                 <div class="select-play-time">
                     <slot class="schedule" name="header"></slot>
                     <div class="display">{{ TimeUnit.SECOND.display(currentPlayTime) }}</div>
                 </div>
             </el-form-item>
-        </el-form>
 
-        <!-- SLOT -->
-        <div>
-            <slot :config="context.formData.config" name="configForm"></slot>
-        </div>
+            <el-form-item label-width="0px">
+                <DotConfigForm :type="context.currentType" v-model:value="context.formData.config" />
+            </el-form-item>
+        </el-form>
     </el-tabs>
 
     <div slot="footer" class="drawer-body-footer" style="display: flex; justify-content: right">

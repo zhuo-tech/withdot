@@ -12,6 +12,9 @@ export class CoreStudent implements BaseEntity {
     phone: number
     userId: number
     avatar: string
-    lastLoginTime:number
-    isPay:number  //0 付费学员 1 未付费学员
+    lastLoginTime: number
+    /**
+     * 0 付费学员 1 未付费学员
+     */
+    isPay: string
 }
