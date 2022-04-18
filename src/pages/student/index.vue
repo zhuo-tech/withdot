@@ -7,7 +7,7 @@ import { StudentQo } from "@/pages/student/StudentQo";
 import { CoreStudent } from "@/model/entity/CoreStudent";
 import { getIsPayLabel } from '@/model/CommonEnum';
 import { useRouter } from 'vue-router'
-const NAME = StudentService.name
+const NAME = CoreStudent.name
 export default {
     name: NAME,
     setup() {
