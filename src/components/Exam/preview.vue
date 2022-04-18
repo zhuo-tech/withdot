@@ -1,30 +1,60 @@
 <script setup lang="ts">
+import { ElMessage } from "element-plus";
+
 import { ref, reactive } from "vue";
 import { onMounted, onUpdated, onUnmounted } from "vue";
 // ======================================数据===================================================
+const current = ref(0); // 当前问题
+const index = ref(-1); // 标识选中的答案
+const showText = ref(false); // 控制回答正确文字
+
+const props = defineProps({
+    list: {
+        type: Array,
+        required: true,
+    },
+});
 
 // ======================================函数===================================================
 
 onMounted(() => {
     console.log("onMounted");
 });
+
+// 选中答案触发
+function press(isAnswer: boolean, itemIndex: number) {
+    if (!isAnswer) return ElMessage.error("回答错误");
+    showText.value = true;
+    index.value = itemIndex;
+    // 下一题 顺便把控制答案的数值还原
+    setTimeout(() => {
+        current.value++;
+        showText.value = false;
+        index.value = -1;
+    }, 1000);
+
+    return;
+}
 </script>
 
 <template>
     <div class="choice">
         <div class="title">预览</div>
-
         <div class="top">
-            <div class="topText">共六题</div>
+            <div class="topText">共{{ list?.length }}题</div>
         </div>
         <div class="middle">
-            <div class="type">多选题</div>
-            <div class="name">为什么大象不会飞</div>
+            <div class="type">{{ list[current]?.typeText }}</div>
+            <div class="name">{{ list[current]?.label }}</div>
         </div>
-        <div class="answerList">
-            <div class="a">A</div>
-            <div class="answerText">选项1</div>
-            <div class="right">回答正确</div>
+        <div
+            @click="press(item.isAnswer, itemIndex)"
+            :class="[index === itemIndex ? 'answerList' : 'answerList1']"
+            v-for="(item, itemIndex) in list[current]?.options"
+        >
+            <div class="a">{{ item.index }}</div>
+            <div class="answerText">{{ item.value }}</div>
+            <div v-show="showText && item.isAnswer" class="right">回答正确</div>
         </div>
     </div>
 </template>
@@ -85,6 +115,28 @@ onMounted(() => {
         color: rgb(53, 151, 238);
         border-radius: 50px;
         line-height: 36px;
+        .a {
+            margin: 0 0 0 20px;
+        }
+        .answerText {
+            margin: 0 0 0 20px;
+        }
+        .right {
+            margin: 0 0 0 480px;
+        }
+    }
+    .answerList1 {
+        display: flex;
+        margin: 30px 0 0 0;
+        width: 671px;
+        height: 36px;
+        border-color: rgb(240, 240, 240);
+        border-width: 1px;
+        border-style: solid;
+        color: #101010;
+        border-radius: 50px;
+        line-height: 36px;
+        cursor: pointer;
         .a {
             margin: 0 0 0 20px;
         }
