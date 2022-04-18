@@ -19,6 +19,10 @@ const props = defineProps({
         type: AspectRatio,
         default: () => AspectRatio.DEFAULT,
     },
+    src: {
+        type: String,
+        required: true,
+    },
     pointList: {
         type: Array,
         default: () => ([]),
@@ -39,9 +43,11 @@ const emits = defineEmits<{
 
 const context: PlayerContext = reactive(new PlayerContext(props)) as any
 const videoRef: VideoWrapperContext = ref({}) as any
-const controlProp: Ref<ControlModel> = ref({} as any)
 
+const controlProp: Ref<ControlModel> = ref({} as any)
 onMounted(() => controlProp.value = new ControlModelAdapter(unref(videoRef), context.playerBoxElement))
+
+defineExpose(controlProp)
 </script>
 
 <template>
@@ -51,7 +57,7 @@ onMounted(() => controlProp.value = new ControlModelAdapter(unref(videoRef), con
     <div id="player" :ref="el => context.playerBoxElement.setElement(el)">
 
         <!--suppress JSUndeclaredVariable -->
-        <VideoWrapperLayer :ref="el => videoRef = el" />
+        <VideoWrapperLayer :ref="el => videoRef = el" :src="src" />
         <!--suppress RequiredAttributes -->
         <ControlLayer v-if="showControl" :model="controlProp" />
 

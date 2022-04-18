@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import QuestionService, { questionTypeList } from '@/pages/question/QuestionService'
-import Editor from '@/components/editor/Editor.vue'
+import QuestionService from '@/pages/question/QuestionService'
+import { ref } from 'vue'
 
 const props = defineProps<{
     service: QuestionService
@@ -9,28 +9,32 @@ const props = defineProps<{
 
 <template>
     <el-dialog v-model="service.formData.tkVisible"
-               destroy-on-close
                :title="service.formStatus? '新建题目':'编辑题目'"
+               destroy-on-close
                top="2vh"
-               width="70%"
+               width="40%"
                @close="service.formData.initForm()">
-        填空
         <el-form :ref="el => service.formRef = el" :model="service.formData.form" :rules="service.rules" label-width="80px">
-            <el-form-item label="题目标题" prop="label">
-                <el-input v-model="service.formData.form.label" placeholder="请输入题目标题"></el-input>
-            </el-form-item>
-            <el-form-item label="题目类型" prop="type">
-                <el-select v-model="service.formData.form.type" placeholder="请选择题目类型">
-                    <el-option v-for="item in questionTypeList" :key="item" :label="item.label" :value="item.value" />
-                </el-select>
-            </el-form-item>
-            <el-form-item label="题目内容">
-                <Editor v-model:value="service.formData.form.content" @changeValue="service.changeValue" />
-            </el-form-item>
+            <div contenteditable class="tkText">
+            </div>
+            <div class="tkButton">
+                <div>
+                    <el-icon>
+                        <circle-plus />
+                    </el-icon>
+                    <span>添加填空</span>
+                </div>
+                <div>
+                    <el-icon>
+                        <remove />
+                    </el-icon>
+                    <span>删除填空</span>
+                </div>
+            </div>
         </el-form>
         <template #footer>
         <span class="dialog-footer">
-            <el-button @click="service.formData.close()">取 消</el-button>
+            <el-button @click="service.formData.allClose()">取 消</el-button>
             <el-button :loading="service.formData.formIsLoading" type="primary" @click="service.formSubmit">
                 {{ service.formData.formIsLoading ? '提交中 ...' : '确 定' }}
             </el-button>
@@ -40,4 +44,27 @@ const props = defineProps<{
 </template>
 
 <style lang="less" scoped>
+.tkButton {
+    display: flex;
+    justify-content: center;
+
+    > div {
+        margin-left: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+    }
+}
+.tkText{
+    width: 100%;
+    min-height: 100px;
+    max-height: 300px;
+    margin: 10px;
+    border: 1px solid #888888;
+}
+.tkText:focus{
+    border-radius: 0;
+    border: 1px solid #888888;
+}
 </style>

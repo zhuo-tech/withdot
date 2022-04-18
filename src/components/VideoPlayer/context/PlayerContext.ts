@@ -1,6 +1,7 @@
-import { VideoWrapperContext } from '@/components/VideoPlayer/context/VideoWrapperContext'
-import { ControlModel } from '@/components/VideoPlayer/service/ControlModel'
-import { onMounted, onUnmounted, reactive } from 'vue'
+import { useResizeMonitor } from '@/tool/hooks/useResizeMonitor'
+import { reactive } from 'vue'
+import { VideoWrapperContext } from '../context/VideoWrapperContext'
+import { ControlModel } from '../service/ControlModel'
 import { DivWrapper } from '../service/DivWrapper'
 
 /**
@@ -30,17 +31,7 @@ export class PlayerContext {
 
     constructor(props: any) {
         this.props = props
-        onMounted(this.resize)
-        this.playerBoxElement.onInitializeFinish(() => window.addEventListener('resize', this.resize, {passive: true}))
-        onUnmounted(() => window.removeEventListener('resize', this.resize))
-
-        this.playerBoxElement.onInitializeFinish(() => {
-            const ro = new ResizeObserver((entries, observer) => {
-                // TODO: 应对 window 监听 的不足
-                console.debug('观测: ....', entries)
-            })
-            ro.observe(this.playerBoxElement.element)
-        })
+        useResizeMonitor(this.resize, () => this.playerBoxElement.element)
     }
 }
 

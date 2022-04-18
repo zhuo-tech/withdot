@@ -21,7 +21,7 @@ const prop = defineProps({
 })
 
 const emits = defineEmits<{
-    (event: 'setZIndex', action: RightMenuAction ): void
+    (event: 'setZIndex', action: RightMenuAction): void
 }>()
 
 const context = reactive(new DraggableContext(prop))
@@ -33,7 +33,7 @@ const rightMenuClick = (action: RightMenuAction) => {
 
 </script>
 <template>
-<div class="draggable"  @contextmenu.prevent.stop="context.rightMenuShow">
+<div class="draggable" @contextmenu.prevent.stop="context.rightMenuShow">
 
     <!-- 右键菜单 -->
     <el-collapse-transition>

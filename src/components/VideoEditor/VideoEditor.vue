@@ -1,7 +1,11 @@
 <script lang="ts" setup>
 import EditorStageLayer from '@/components/VideoEditor/components/EditorStageLayer.vue'
 import VideoPlayer from '@/components/VideoPlayer/index.vue'
-import { reactive } from 'vue'
+import { ControlModel } from '@/components/VideoPlayer/service/ControlModel'
+import CoreMaterial from '@/model/entity/CoreMaterial'
+import { CoreWork } from '@/model/entity/CoreWork'
+import { FileService, INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
+import { inject, reactive, Ref, ref } from 'vue'
 import AddPoint from './components/AddPoint.vue'
 import List from './components/List.vue'
 import { VideoEditorContext } from './context/VideoEditorContext'
@@ -9,18 +13,26 @@ import { VideoEditorContext } from './context/VideoEditorContext'
 /**
  * 编辑器
  */
-const context = reactive(new VideoEditorContext())
+const props = defineProps<{
+    data: CoreWork & { material: CoreMaterial }
+}>()
+
+const fileService: FileService = inject(INJECT_KEY_FILE_SERVICE) as FileService
+
+const context = reactive(new VideoEditorContext(props))
+const playerRef: Ref<ControlModel> = ref({} as any)
+
+const setPlayerRef = (el: Ref<ControlModel>) => playerRef.value = el.value
 
 </script>
 
 <template>
 <div class="video-editor-box">
 
-    <AddPoint :current-play-time="0">
-    </AddPoint>
+    <AddPoint :current-play-time="playerRef.time" @submit="formData => context.createDot(formData, playerRef.time)" />
 
     <!-- 播放器 -->
-    <VideoPlayer :point-list="context.pointList">
+    <VideoPlayer :ref="setPlayerRef" :point-list="context.pointList" :src="fileService.showUrl(data.material?.href)">
         <template v-slot:stage="{list, box}">
             <EditorStageLayer :box="box" :list="list" />
         </template>
@@ -39,7 +51,7 @@ const context = reactive(new VideoEditorContext())
             </template>
             <template v-slot:operating="{item, index}">
                 <el-button type="primary" @click="context.controlDrawer.show()">
-                    显示列表
+                    显示列表 -- {{ playerRef.time }}
                 </el-button>
             </template>
         </List>
