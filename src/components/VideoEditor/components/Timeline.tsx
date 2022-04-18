@@ -122,8 +122,7 @@ export default defineComponent({
                 return
             }
             this.hoverValue = parseInt(ele.dataset['timeValue'] ?? '')
-            this.hoverLeft = ele.getBoundingClientRect().left - this.containerRect.left
-
+            this.hoverLeft = ele.getBoundingClientRect().right - this.containerRect.left
         },
 
         onMouseclick(event: MouseEvent) {
