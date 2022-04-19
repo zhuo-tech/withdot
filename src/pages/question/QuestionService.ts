@@ -24,10 +24,10 @@ export const questionButtonList = [
     {questionName: '填空', type: QuestionTypeEnum.TIANKONG},
 ]
 
-type FormDataType ={
+type FormDataType = {
     _id: string,
     label: string,
-    content:string|Array<any>,
+    content: string | Array<any>,
     type: string,
 }
 
@@ -37,7 +37,7 @@ export default class QuestionService {
     public tableIsLoading = ref(false)
     public formRef: FormInstance
     public data: any = ref({
-        list:[],
+        list: [],
         page: {
             currentPage: 1,
             pageSize: 10,
@@ -97,7 +97,7 @@ export default class QuestionService {
         form: {
             _id: '',
             label: '',
-            content:'',
+            content: '',
             type: '',
         } as FormDataType,
     })
@@ -106,16 +106,39 @@ export default class QuestionService {
      * 选择题数据
      */
     public selectList = reactive({
-        content:[
-            {answer:'',value:false}
+        content: [
+            {answer: '', value: false},
         ] as Array<any>,
-        addOptions(){
-          let item = {answer:'',value:false}
+        addOptions() {
+            let item = {answer: '', value: false}
             this.content.push(item)
         },
-        deleteOptions(id:number){
-            this.content.splice(id,1)
+        deleteOptions(id: number) {
+            this.content.splice(id, 1)
+        },
+        initContent(){
+            this.content=[
+                {answer: '', value: false},
+            ]
         }
+    })
+
+    public tkList = reactive({
+        content: [
+            {answer: ''},
+        ] as Array<any>,
+        addOptions() {
+            let item = {answer: ''}
+            this.content.push(item)
+        },
+        deleteOptions(id: number) {
+            this.content.splice(id, 1)
+        },
+        initContent() {
+            this.content = [
+                {answer: ''},
+            ]
+        },
     })
     public rules = reactive({
         label: [
@@ -123,6 +146,9 @@ export default class QuestionService {
         ],
         type: [
             {required: true, message: '选择题目类型', trigger: 'blur'},
+        ],
+        content: [
+            {required: true, message: '请输入答案', trigger: 'blur'},
         ],
     })
 
@@ -219,17 +245,18 @@ export default class QuestionService {
             content: row.content,
             type: row.type,
         }
-        switch (row.type){
+        switch (row.type) {
             case QuestionTypeEnum.XUANZE:
                 this.selectList.content = this.formData.form.content as Array<any>
                 this.formData.selectShow()
-                break;
+                break
             case QuestionTypeEnum.TIANKONG:
                 this.formData.tkShow()
-                break;
+                break
             case QuestionTypeEnum.SAQ:
+                this.selectList.content = this.formData.form.content as Array<any>
                 this.formData.saqShow()
-                break;
+                break
         }
         this.formStatus.value = false
     }
@@ -276,15 +303,20 @@ export default class QuestionService {
     }
 
     private formSubmitFn = async () => {
-        if (this.formData.form.type === QuestionTypeEnum.XUANZE){
-            this.formData.form.content = this.selectList.content
+        switch (this.formData.form.type) {
+            case QuestionTypeEnum.XUANZE:
+                this.formData.form.content = this.selectList.content
+                break
+            case QuestionTypeEnum.TIANKONG:
+                this.formData.form.content = this.tkList.content
+                break
         }
         return await this.DB
             .add({
                 ...this.formData.form,
-                delFlag:LogicDelete.NORMAL,
-                createTime:Date.now(),
-                updateTime:Date.now()
+                delFlag: LogicDelete.NORMAL,
+                createTime: Date.now(),
+                updateTime: Date.now(),
             })
     }
 

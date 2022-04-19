@@ -8,11 +8,11 @@ const props = defineProps<{
 
 <template>
     <el-dialog v-model="service.formData.selectVisible"
-               :title="service.formStatus? '新建题目':'编辑题目'"
+               :title="service.formStatus? '新建选择题':'编辑题目'"
                destroy-on-close
                top="15vh"
                width="40%"
-               @close="service.formData.initForm()">
+               @close="service.formData.initForm();service.selectList.initContent()">
         <el-form :ref="el => service.formRef = el" :model="service.formData.form" :rules="service.rules" label-width="80px" label-position="top">
             <el-form-item label="题目" prop="label">
                 <el-input v-model="service.formData.form.label"
@@ -32,7 +32,7 @@ const props = defineProps<{
 
         <template #footer>
         <span class="dialog-footer">
-            <el-button @click="service.formData.allClose()">取 消</el-button>
+            <el-button @click="service.formData.allClose();service.selectList.initContent()">取 消</el-button>
             <el-button :loading="service.formData.formIsLoading" type="primary" @click="service.formSubmit">
                 {{ service.formData.formIsLoading ? '提交中 ...' : '确 定' }}
             </el-button>
