@@ -1,9 +1,9 @@
 // noinspection JSXNamespaceValidation
 
 import ImgForm from '@/components/workConfigForm/ImgForm.vue'
+import QuestionForm from '@/components/workConfigForm/QuestionsForm.vue'
 import TextForm from '@/components/workConfigForm/TextForm.vue'
 import UrlForm from '@/components/workConfigForm/UrlForm.vue'
-import QuestionForm from '@/components/workConfigForm/QuestionsForm.vue'
 import { CoreDot, CoreDotType } from '@/model/entity/CoreDot'
 import { ObjectUtil } from 'typescript-util'
 import { defineComponent } from 'vue'
@@ -68,7 +68,7 @@ export default defineComponent({
         ImgForm,
         TextForm,
         UrlForm,
-        QuestionForm
+        QuestionForm,
     },
     data() {
         const getValueByType = (propsValue: any, type: CoreDotType) => {
