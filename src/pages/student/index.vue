@@ -47,6 +47,7 @@ export default {
             handlePage(state.queryParam)
         }
         const handleSearch = () => {
+            L.debug(`search params queryParam-> ${state.queryParam}`)
             handlePage(state.queryParam)
         }
         const handlePage = async (params: StudentQo): Promise<void> => {
@@ -79,13 +80,11 @@ export default {
         <el-row :gutter="24">
             <el-col :span="12">
                 <el-form v-model="queryParam" ref="queryParamRef">
-                    <el-form-item>
-                        <el-checkbox-group>
-                            <el-radio-group v-model="queryParam.isPay" size="large">
-                                <el-radio-button label="免费" />
-                                <el-radio-button label="付费" />
-                            </el-radio-group>
-                        </el-checkbox-group>
+                    <el-form-item> 
+                        <el-radio-group v-model="queryParam.isPay" size="large" @change="handleSearch()">
+                            <el-radio-button label="1">免费</el-radio-button>
+                            <el-radio-button label="0">付费</el-radio-button>
+                        </el-radio-group>
                     </el-form-item>
                 </el-form>
             </el-col>
