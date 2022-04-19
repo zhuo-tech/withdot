@@ -18,3 +18,4 @@ export class CoreStudent implements BaseEntity {
      */
     isPay: string
 }
+
