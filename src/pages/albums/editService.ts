@@ -140,12 +140,11 @@ export default class EditService {
      * 编辑专辑
      */
     private async editUpdata() {
-        const res = await DB.collection(CoreAlbum.TABLE_NAME)
+        return await DB.collection(CoreAlbum.TABLE_NAME)
             .where({
                 _id: this.getUrl_Id,
                 delFlag: LogicDelete.NORMAL,
             })
             .update(this.Editform.form)
-        return res
     }
 }
