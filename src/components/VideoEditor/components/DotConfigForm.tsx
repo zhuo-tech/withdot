@@ -3,6 +3,7 @@
 import ImgForm from '@/components/workConfigForm/ImgForm.vue'
 import TextForm from '@/components/workConfigForm/TextForm.vue'
 import UrlForm from '@/components/workConfigForm/UrlForm.vue'
+import QuestionForm from '@/components/workConfigForm/QuestionsForm.vue'
 import { CoreDot, CoreDotType } from '@/model/entity/CoreDot'
 import { ObjectUtil } from 'typescript-util'
 import { defineComponent } from 'vue'
@@ -26,7 +27,11 @@ const formDataDefault: Partial<Record<CoreDotType, any>> = {
     },
     [CoreDotType.表单]: {},
     [CoreDotType.书签]: {},
-    [CoreDotType.题目]: {},
+    [CoreDotType.题目]: {
+        switch: false,
+        time: 3,
+        pause: true,
+    },
     [CoreDotType.热区]: {},
     [CoreDotType.链接]: {},
 }
@@ -63,6 +68,7 @@ export default defineComponent({
         ImgForm,
         TextForm,
         UrlForm,
+        QuestionForm
     },
     data() {
         const getValueByType = (propsValue: any, type: CoreDotType) => {
@@ -112,7 +118,7 @@ export default defineComponent({
 
                 break
             case CoreDotType.题目:
-
+                ConfigForm = <QuestionForm></QuestionForm>
                 break
             default:
         }

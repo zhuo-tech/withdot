@@ -1,0 +1,97 @@
+.timeline-container
+    --container-bgc: rgba(0, 0, 0, .5)
+    --container-prospect: #FFF
+    --tick-color: #323131
+    --item-height-hour: 60px
+    --item-height-minute: 40px
+    --item-height-second: 20px
+
+    --hover-pointer-color: rgba(237, 220, 39, 0.8)
+    --current-item-color: #37a6d5
+
+
+.timeline-container
+    display: flex
+    min-height: 100px
+    position: relative
+
+    background-color: var(--container-bgc)
+    color: var(--container-prospect)
+    margin: 20px 0
+
+    // 悬停刻度
+    .hover-pointer
+        position: absolute
+        width: 10px
+        height: 100%
+        left: 0
+        transform: translateX(-100%)
+        border-right: 3px solid var(--hover-pointer-color)
+
+        .scale-value
+            position: absolute
+            top: 50%
+
+    // 画线
+    .timeline-item .current-item
+        border-right: 3px solid var(--current-item-color)
+
+    .timeline-item:before
+        content: ''
+        position: absolute
+        top: 0
+        left: 0
+        width: 100%
+        height: 100%
+
+    .hour:before
+        max-height: 60px
+        border-right: 3px solid var(--tick-color)
+
+    .minute:before
+        max-height: 40px
+        border-right: 2px solid var(--tick-color)
+
+    .second:before
+        max-height: 20px
+        border-right: 1px solid var(--tick-color)
+
+    .timeline-item:last-child
+        border: none
+
+    // 刻度标识
+    .start-tips,
+    .end-tips
+        content: ''
+        top: 0
+        display: block
+        position: absolute
+
+    .hour
+        .start-tips,
+        .end-tips
+            top: var(--item-height-hour)
+
+    .minute
+        .start-tips,
+        .end-tips
+            top: var(--item-height-second)
+
+    .second
+        .start-tips,
+        .end-tips
+            top: var(--item-height-second)
+
+    .start-tips
+        left: 0
+        transform: translate(-50%, 100%)
+
+    .end-tips
+        right: 0
+        transform: translate(50%, 100%)
+
+.timeline-container .timeline-item
+    display: flex
+    flex: 1 1 auto
+    position: relative
+    box-sizing: border-box

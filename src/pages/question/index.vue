@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import SAQForm from '@/pages/question/components/SAQForm.vue'
-import QuestionService,{questionType} from '@/pages/question/QuestionService'
+import QuestionService,{QuestionType} from '@/pages/question/QuestionService'
 import { reactive } from 'vue'
 import QueryForm from './components/QueryForm.vue'
 import SelectForm from './components/SelectForm.vue'
@@ -28,7 +28,7 @@ service.getList()
             <el-table-column label="题目标题" prop="label"></el-table-column>
             <el-table-column label="题目类型" prop="type" width="180">
                 <template #default="scope">
-                    <span>{{ questionType[scope.row.type] }}</span>
+                    <span>{{ QuestionType[scope.row.type] }}</span>
                 </template>
             </el-table-column>
             <el-table-column label="创建时间" prop="createTime" width="280">

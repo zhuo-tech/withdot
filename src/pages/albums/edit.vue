@@ -90,7 +90,7 @@ service.getAlbumsList()
             </el-col>
         </el-row>
     </el-card>
-    <Dialog :aleryWorkList="albumsDetail.workList" :service="service" :subassembly="subassembly" @getNewList="service.getAlbumsList()"></Dialog>
+    <Dialog :alreadyWorkList="albumsDetail.workList" :service="service" :subassembly="subassembly" @getNewList="service.getAlbumsList()"></Dialog>
     <Form :service="service"></Form>
 </template>
 <style lang="less" scoped>

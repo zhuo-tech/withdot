@@ -1,6 +1,6 @@
 <script lang="ts">
 import { ElMessage } from 'element-plus'
-import { defineComponent, onMounted, reactive, toRefs } from "vue";
+import { onMounted, reactive, toRefs } from "vue";
 import { PayGoodsOrderService } from "@/pages/pay/service/PayGoodsOrderService";
 import { getLogger } from "@/main";
 import { PayGoodsOrderQo } from "@/pages/pay/service/qo/PayGoodsOrderQo";

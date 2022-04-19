@@ -1,11 +1,14 @@
 <script lang="ts" setup>
 import EditorStageLayer from '@/components/VideoEditor/components/EditorStageLayer.vue'
+import Timeline from '@/components/VideoEditor/components/Timeline'
 import VideoPlayer from '@/components/VideoPlayer/index.vue'
 import { ControlModel } from '@/components/VideoPlayer/service/ControlModel'
+import { CoreDot } from '@/model/entity/CoreDot'
 import CoreMaterial from '@/model/entity/CoreMaterial'
 import { CoreWork } from '@/model/entity/CoreWork'
 import { FileService, INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
-import { inject, reactive, Ref, ref } from 'vue'
+import { CollUtil, KeyValue, ObjectUtil } from 'typescript-util'
+import { computed, inject, reactive, Ref, ref } from 'vue'
 import AddPoint from './components/AddPoint.vue'
 import List from './components/List.vue'
 import { VideoEditorContext } from './context/VideoEditorContext'
@@ -22,7 +25,12 @@ const fileService: FileService = inject(INJECT_KEY_FILE_SERVICE) as FileService
 const context = reactive(new VideoEditorContext(props))
 const playerRef: Ref<ControlModel> = ref({} as any)
 
-const setPlayerRef = (el: Ref<ControlModel>) => playerRef.value = el.value
+const setPlayerRef = (el: Ref<ControlModel>) => playerRef.value = el?.value
+
+const zIndexMap = computed<Partial<KeyValue<string, Array<CoreDot>>>>(() => {
+    const map: Record<string, Array<CoreDot>> = CollUtil.groupBy(context.pointList, dot => String(dot?.position?.z))
+    return ObjectUtil.toArray(map)
+})
 
 </script>
 
@@ -37,6 +45,21 @@ const setPlayerRef = (el: Ref<ControlModel>) => playerRef.value = el.value
             <EditorStageLayer :box="box" :list="list" />
         </template>
     </VideoPlayer>
+
+    <!-- timeline -->
+    <div class="timeline-wrapper">
+        <Timeline :current="playerRef.time" :end="playerRef.maxTime" :start="playerRef.minTime" @select="time => playerRef.setPlayTime(time)" />
+        <div class="dot-time-list">
+            <div v-for="(kv, index) in zIndexMap" :key="index" class="row">
+                <div>
+                    {{ kv.key }}
+                </div>
+                <div v-for="(oneDot, dotIndex) in kv.value" :key="dotIndex" class="item">
+                    {{ oneDot.label }}
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- 底部列表 -->
     <div>
