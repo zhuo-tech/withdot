@@ -47,6 +47,10 @@ export interface ControlModel {
      */
     pause?: () => void
     /**
+     * 切换播放状态
+     */
+    togglePlaybackStatus?: () => void
+    /**
      * 切换全屏状态
      */
     toggleFullScreen?: () => void

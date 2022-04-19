@@ -1,11 +1,10 @@
 import { getUserInfo } from '@/api/token'
 import { getLogger } from '@/main'
-import { CoreDot, CoreDotType, DotDisplayType } from '@/model/entity/CoreDot'
+import { CoreDot, CoreDotType } from '@/model/entity/CoreDot'
 import CoreMaterial from '@/model/entity/CoreMaterial'
 import { CoreWork } from '@/model/entity/CoreWork'
 import { AddLocation, Comment, Crop, Document, ElementPlus, Link, PictureFilled } from '@element-plus/icons-vue'
 import { LafClient } from 'laf-db-query-wrapper'
-import { ObjectUtil } from 'typescript-util'
 import { reactive } from 'vue'
 
 export const DotTypeOption: Array<{ icon: any, type: CoreDotType, label: string }> = [
@@ -52,22 +51,6 @@ export class VideoEditorContext {
 
     constructor(props: PropsType) {
         this.props = props
-
-        ObjectUtil.toArray(CoreDotType)
-            .forEach((kv, index) => {
-                const dot = new CoreDot()
-                dot.type = kv.value
-                dot._id = String(index)
-                dot.label = kv.key
-                dot.display = index % 2 === 0 ? DotDisplayType.BUTTON : DotDisplayType.EXPANDED
-                dot.createTime = Date.now()
-                dot.position = {z: index % 3} as any
-
-                dot.start = index * 70
-                dot.end = dot.start + ((index % 5) + 1) * 60
-
-                this.pointList.push(dot)
-            })
     }
 
     public createDot(dto: CoreDot, startTime: number) {
@@ -76,7 +59,6 @@ export class VideoEditorContext {
         // 基础信息初始化
         dto.workId = workId
         dto.type = this.currentType
-        dto.position = {} as any
         dto.start = startTime
 
         this.pointList.push(dto)

@@ -10,17 +10,10 @@ import ProgressBar from './components/ProgressBar.vue'
  * 控制器层
  */
 const props = defineProps<{
+    show: boolean
     model: ControlModel
 }>()
 const controlLayer = reactive(new ControlLayer())
-
-function togglePlaybackState() {
-    if (props.model?.playing) {
-        props.model.pause?.()
-    } else {
-        props.model.play?.()
-    }
-}
 
 </script>
 
@@ -29,10 +22,11 @@ function togglePlaybackState() {
      @mousemove="controlLayer.show()"
      @mouseout="controlLayer.close()"
      @mouseover="controlLayer.show()"
-     @click.self="togglePlaybackState">
+     @click.self="model.togglePlaybackStatus()">
 
     <!-- 顶部 -->
     <div :class="{ 'opaque': controlLayer.isShow }"
+         v-if="show"
          class="header"
          @mouseout="controlLayer.preventClosing=false"
          @mouseover="controlLayer.preventClosing=true">
@@ -48,7 +42,7 @@ function togglePlaybackState() {
     </div>
 
     <!-- 底部 -->
-    <div :class="{ 'opaque': controlLayer.isShow }"
+    <div v-if="show" :class="{ 'opaque': controlLayer.isShow }"
          class="footer"
          @mouseout="controlLayer.preventClosing=false"
          @mouseover="controlLayer.preventClosing=true">
@@ -65,7 +59,7 @@ function togglePlaybackState() {
             <div class="left">
                 <!-- 播放按钮 -->
                 <el-tooltip placement="top">
-                    <el-icon @click.stop="togglePlaybackState">
+                    <el-icon @click.stop="model.togglePlaybackStatus()">
                         <video-play v-show="!model.playing" />
                         <video-pause v-show="model.playing" />
                     </el-icon>

@@ -63,7 +63,10 @@ export default defineComponent({
         this.ro.observe(this.containerRef)
     },
     unmounted() {
-        this.ro.unobserve(this.containerRef)
+        // 避免 vite 刷新时错误
+        if (this.containerRef) {
+            this.ro.unobserve(this.containerRef)
+        }
     },
     methods: {
 
@@ -71,6 +74,10 @@ export default defineComponent({
          * 刷新容器高度
          */
         refreshContainerWidth() {
+            // vite 刷新时错误
+            if (!this.containerRef) {
+                return
+            }
             this.containerWidth = this.containerRef.getBoundingClientRect().width
         },
 

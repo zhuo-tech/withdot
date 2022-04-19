@@ -35,13 +35,7 @@ export class CoreDot implements BaseEntity {
 
     display: DotDisplayType
 
-    position: {
-        x: number
-        y: number
-        z?: number
-        width?: number
-        height?: number
-    }
+    position: CoreDotPosition
 
     config: DotConfig
 
@@ -51,6 +45,30 @@ export class CoreDot implements BaseEntity {
     createBy: string
     updateBy: string
 
+}
+
+/**
+ * 打点定位属性
+ */
+export class CoreDotPosition {
+    /**
+     * 新增打点时的初始位置
+     */
+    public static readonly DEFAULT = new CoreDotPosition(0.5, 0.5, 1, 0, 0)
+
+    x: number
+    y: number
+    z?: number
+    width?: number
+    height?: number
+
+    constructor(x: number = 0, y: number = 0, z: number = 0, width: number = 0, height: number = 0) {
+        this.x = x
+        this.y = y
+        this.z = z
+        this.width = width
+        this.height = height
+    }
 }
 
 /**
@@ -71,14 +89,20 @@ export enum CoreDotType {
  */
 export enum DotDisplayType {
     BUTTON = 'button',
-    EXPANDED = 'expanded'
+    EXPANDED = 'expanded',
+    HIDE = 'hide'
+}
+
+export const DotDisplayTypeShow: Record<string, DotDisplayType> = {
+    '收起': DotDisplayType.BUTTON,
+    '展开': DotDisplayType.EXPANDED,
+    '隐藏': DotDisplayType.HIDE,
 }
 
 /**
  * 打点配置
  */
-type DotConfig = CoreExamDotConfig | CoreTextDotConfig | CoreImageDotConfig  | CoreUrlDotConfig
-
+type DotConfig = CoreExamDotConfig | CoreTextDotConfig | CoreImageDotConfig | CoreUrlDotConfig
 
 /**
  * 视频打点考试配置

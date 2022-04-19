@@ -59,7 +59,7 @@ defineExpose(controlProp)
         <!--suppress JSUndeclaredVariable -->
         <VideoWrapperLayer :ref="el => videoRef = el" :src="src" />
         <!--suppress RequiredAttributes -->
-        <ControlLayer v-if="showControl" :model="controlProp" />
+        <ControlLayer :model="controlProp" :show="showControl" />
 
         <div class="stage-wrapper">
             <slot :box="context.boxWidthHeight" :list="pointList" name="stage">

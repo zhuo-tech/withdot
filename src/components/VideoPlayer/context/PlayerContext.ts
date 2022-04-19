@@ -52,6 +52,10 @@ export class ControlModelAdapter implements ControlModel {
         this.videoBoxElement.toggleFullScreen()
     }
 
+    public togglePlaybackStatus(): void {
+        this.playing ? this.pause() : this.play()
+    }
+
     constructor(videoContext: VideoWrapperContext, videoBoxElement: DivWrapper) {
         this.videoContext = videoContext
         this.videoBoxElement = videoBoxElement
