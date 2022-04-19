@@ -22,10 +22,11 @@ const props = defineProps<{
 const fileService: FileService = inject(INJECT_KEY_FILE_SERVICE) as FileService
 
 const context = reactive(new VideoEditorContext(props))
-const playerRef: Ref<ControlModel> = ref({} as any)
 
+const playerRef: Ref<ControlModel> = ref({} as any)
 const setPlayerRef = (el: Ref<ControlModel>) => playerRef.value = el?.value
 
+const timelineRef = ref({})
 </script>
 
 <template>
@@ -41,8 +42,14 @@ const setPlayerRef = (el: Ref<ControlModel>) => playerRef.value = el?.value
     </VideoPlayer>
 
     <!-- timeline -->
-    <TimeBubble :list="context.pointList">
-        <Timeline :current="playerRef.time" :end="playerRef.maxTime" :start="playerRef.minTime" @select="time => playerRef.setPlayTime(time)" />
+    <TimeBubble :container-width="timelineRef['containerWidth']"
+                :list="context.pointList"
+                :time-period="{start: playerRef.minTime, end: playerRef.maxTime}">
+        <Timeline ref="timelineRef"
+                  :current="playerRef.time"
+                  :end="playerRef.maxTime"
+                  :start="playerRef.minTime"
+                  @select="time => playerRef.setPlayTime(time)" />
     </TimeBubble>
 
     <!-- 底部列表 -->
