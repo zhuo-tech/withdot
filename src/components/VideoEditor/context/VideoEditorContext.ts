@@ -63,6 +63,9 @@ export class VideoEditorContext {
                 dot.createTime = Date.now()
                 dot.position = {z: index % 3} as any
 
+                dot.start = index * 70
+                dot.end = dot.start + ((index % 5) + 1) * 60
+
                 this.pointList.push(dot)
             })
     }

@@ -1,18 +1,9 @@
 // noinspection JSXNamespaceValidation
 
+import { Period } from '@/model/Period'
 import { TimeUnit } from 'typescript-util'
 import { defineComponent } from 'vue'
 import '../style/TimelineStyle.sass'
-
-class Period {
-    start: number
-    end: number
-
-    constructor(start: number, end: number) {
-        this.start = start
-        this.end = end
-    }
-}
 
 const DOMRectEmpty: DOMRect = {
     width: 0,
@@ -25,8 +16,10 @@ const DOMRectEmpty: DOMRect = {
 
 type DataType = {
     containerRef: HTMLDivElement
+    containerWidth: number
     hoverLeft: number
     hoverValue: number
+    ro: ResizeObserver
 }
 
 export default defineComponent({
@@ -45,6 +38,7 @@ export default defineComponent({
         },
     },
     emits: ['select'],
+    expose: ['containerWidth'],
     computed: {
         integerRange() {
             const {start, end} = this
@@ -57,11 +51,29 @@ export default defineComponent({
     data(): DataType {
         return {
             containerRef: null,
+            containerWidth: 0,
             hoverLeft: 0,
             hoverValue: 0,
+            ro: new ResizeObserver(() => this.refreshContainerWidth()),
         } as any
     },
+    mounted() {
+        // 初始化, 并监听容器大小变化
+        this.refreshContainerWidth()
+        this.ro.observe(this.containerRef)
+    },
+    unmounted() {
+        this.ro.unobserve(this.containerRef)
+    },
     methods: {
+
+        /**
+         * 刷新容器高度
+         */
+        refreshContainerWidth() {
+            this.containerWidth = this.containerRef.getBoundingClientRect().width
+        },
+
         /**
          * @param {number} start 单位 秒
          * @param {number} end 单位 秒

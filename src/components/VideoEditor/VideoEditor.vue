@@ -1,14 +1,13 @@
 <script lang="ts" setup>
 import EditorStageLayer from '@/components/VideoEditor/components/EditorStageLayer.vue'
+import TimeBubble from '@/components/VideoEditor/components/TimeBubble'
 import Timeline from '@/components/VideoEditor/components/Timeline'
 import VideoPlayer from '@/components/VideoPlayer/index.vue'
 import { ControlModel } from '@/components/VideoPlayer/service/ControlModel'
-import { CoreDot } from '@/model/entity/CoreDot'
 import CoreMaterial from '@/model/entity/CoreMaterial'
 import { CoreWork } from '@/model/entity/CoreWork'
 import { FileService, INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
-import { CollUtil, KeyValue, ObjectUtil } from 'typescript-util'
-import { computed, inject, reactive, Ref, ref } from 'vue'
+import { inject, reactive, Ref, ref } from 'vue'
 import AddPoint from './components/AddPoint.vue'
 import List from './components/List.vue'
 import { VideoEditorContext } from './context/VideoEditorContext'
@@ -23,15 +22,11 @@ const props = defineProps<{
 const fileService: FileService = inject(INJECT_KEY_FILE_SERVICE) as FileService
 
 const context = reactive(new VideoEditorContext(props))
-const playerRef: Ref<ControlModel> = ref({} as any)
 
+const playerRef: Ref<ControlModel> = ref({} as any)
 const setPlayerRef = (el: Ref<ControlModel>) => playerRef.value = el?.value
 
-const zIndexMap = computed<Partial<KeyValue<string, Array<CoreDot>>>>(() => {
-    const map: Record<string, Array<CoreDot>> = CollUtil.groupBy(context.pointList, dot => String(dot?.position?.z))
-    return ObjectUtil.toArray(map)
-})
-
+const timelineRef = ref({})
 </script>
 
 <template>
@@ -40,29 +35,25 @@ const zIndexMap = computed<Partial<KeyValue<string, Array<CoreDot>>>>(() => {
     <AddPoint :current-play-time="playerRef.time" @submit="formData => context.createDot(formData, playerRef.time)" />
 
     <!-- 播放器 -->
-    <VideoPlayer :ref="setPlayerRef" :point-list="context.pointList" :src="fileService.showUrl(data.material?.href)">
+    <VideoPlayer :ref="setPlayerRef" :point-list="context.pointList" :show-control="false" :src="fileService.showUrl(data.material?.href)">
         <template v-slot:stage="{list, box}">
             <EditorStageLayer :box="box" :list="list" />
         </template>
     </VideoPlayer>
 
     <!-- timeline -->
-    <div class="timeline-wrapper">
-        <Timeline :current="playerRef.time" :end="playerRef.maxTime" :start="playerRef.minTime" @select="time => playerRef.setPlayTime(time)" />
-        <div class="dot-time-list">
-            <div v-for="(kv, index) in zIndexMap" :key="index" class="row">
-                <div>
-                    {{ kv.key }}
-                </div>
-                <div v-for="(oneDot, dotIndex) in kv.value" :key="dotIndex" class="item">
-                    {{ oneDot.label }}
-                </div>
-            </div>
-        </div>
-    </div>
+    <TimeBubble :container-width="timelineRef['containerWidth']"
+                :list="context.pointList"
+                :time-period="{start: playerRef.minTime, end: playerRef.maxTime}">
+        <Timeline ref="timelineRef"
+                  :current="playerRef.time"
+                  :end="playerRef.maxTime"
+                  :start="playerRef.minTime"
+                  @select="time => playerRef.setPlayTime(time)" />
+    </TimeBubble>
 
     <!-- 底部列表 -->
-    <div>
+    <div v-if="false">
         <List :list="context.pointList">
             <template v-slot:prefix>
                 <el-icon>
