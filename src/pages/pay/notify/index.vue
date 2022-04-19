@@ -78,7 +78,7 @@ export default {
             </div>
         </template>
         <el-row :gutter="24">
-            <el-col :span="12">
+            <el-col :span="4">
                 <el-form v-model="queryParam" ref="queryParamRef">
                     <el-form-item label="订单号">
                         <el-input v-model="queryParam.orderNo" clearable />
