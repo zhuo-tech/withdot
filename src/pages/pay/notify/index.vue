@@ -1,24 +1,22 @@
 
 <script lang="ts">
 import { ElMessage } from 'element-plus'
-import { onMounted, reactive, ref, toRefs } from "vue";
-import { getLogger } from "@/main";
-import { PayNotifyRecordService } from "@/pages/pay/service/PayNotifyRecordService";
-import { PayNotifyRecordQo } from "@/pages/pay/service/qo/PayNotifyRecordQo";
-import { PayNotifyRecord } from "@/model/entity/PayNotifyRecord";
+import { onMounted, reactive, ref, toRefs } from "vue"
+import { getLogger } from "@/main"
+import { PayNotifyRecordService } from "@/pages/pay/service/PayNotifyRecordService"
+import { PayNotifyRecordQo } from "@/pages/pay/service/qo/PayNotifyRecordQo"
+import { PayNotifyRecord } from "@/model/entity/PayNotifyRecord"
 const NAME = PayNotifyRecord.name
 export default {
     name: NAME,
     setup() {
-        const L = getLogger("支付通知");
-        const S = new PayNotifyRecordService();
-        const Q = new PayNotifyRecordQo(1, 10);
-        const total = ref(0)
-        const listLoading = ref(true)
+        const L = getLogger("支付通知")
+        const S = new PayNotifyRecordService()
+        const Q = new PayNotifyRecordQo(1, 10)
         const state = reactive({
             data: Array<PayNotifyRecord>(),
-            total,
-            listLoading,
+            total: 0,
+            listLoading: true,
             queryParam: Q
         })
         L.debug(`[state] -> ${JSON.stringify(state)}`)
@@ -43,7 +41,15 @@ export default {
         }
         const handleDelete = async (index: number, obj: PayNotifyRecord) => {
             L.debug(`delete obj by id [index]-> ${index} [id]-> ${obj._id}`)
-            await S.deleteById(obj._id)
+            const ok = await S.deleteById(obj._id)
+            if (!ok) {
+                ElMessage.success({
+                    message: '删除失败',
+                    type: 'error',
+                    duration: 2000
+                })
+                return
+            }
             ElMessage.success({
                 message: '删除成功',
                 type: 'success',
@@ -53,7 +59,7 @@ export default {
         }
         const handlePage = async (params: PayNotifyRecordQo): Promise<void> => {
             state.listLoading = true
-            const res = await S.pageByParams(params);
+            const res = await S.pageByParams(params)
             state.data = res.record ?? []
             state.total = res.total ?? 0
             state.listLoading = false

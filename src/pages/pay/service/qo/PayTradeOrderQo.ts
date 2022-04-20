@@ -6,8 +6,6 @@ import { BasePage } from "@/model/BasePage"
  * @date 2022年04月01日 17点13分
  */
 export class PayTradeOrderQo extends BasePage {
-    current: number
-    size: number
     status?: string
     orderNo?: string
     constructor(current: number, size: number) {
