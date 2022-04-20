@@ -130,11 +130,7 @@ export async function del(id: string) {
     }
 }
 
-export async function workList(page: any,alreadyWorkList:any) {
-    let _idList:string[] =[]
-    alreadyWorkList.forEach((item:any)=>{
-        _idList.push(item._id)
-    })
+export async function workList(page: any,_idList:any) {
     const _=DB.command
     const r = await DB.collection(CoreWork.TABLE_NAME)
         .where({

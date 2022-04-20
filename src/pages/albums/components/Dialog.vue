@@ -24,7 +24,7 @@ const props = defineProps({
 
 const formIsLoading = ref(false)
 const emits = defineEmits(['getNewList'])
-const form: {workId:Array<string>} = reactive({
+const form: { workId: Array<string> } = reactive({
     workId: [],
 })
 const checkIndex = ref()
@@ -35,10 +35,11 @@ const page = reactive({
     total: 100,
 })
 const getMaterialList = () => {
-    workList(page,props.alreadyWorkList).then(response => {
+    let _idList = props.alreadyWorkList?.map((item: any) => item._id) ?? []
+    workList(page, _idList).then(response => {
         page.total = response?.total as number
         list.value = response?.list
-    }).catch(err => {
+    }).catch((err: string) => {
             ElMessage.error(err)
         },
     )
@@ -72,9 +73,9 @@ const currentPageChange = (val: any) => {
     page.current = val
     getMaterialList()
 }
-const handleSelectionChange = (checkList:any)=>{
-    form.workId=[]
-    checkList.forEach((item:any)=>{
+const handleSelectionChange = (checkList: any) => {
+    form.workId = []
+    checkList.forEach((item: any) => {
         form.workId.push(item._id)
     })
 }
