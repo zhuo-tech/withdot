@@ -152,7 +152,7 @@ export default class AlbumsService {
     }
 
     public handleEdit = (row: any) => {
-        this.router.push(`/albums/edit?_id=${ row._id }`)
+        this.router.push(`/albums/edit?_id=${ row._id }`).then(r => {})
     }
 
     /**

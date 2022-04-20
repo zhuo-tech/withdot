@@ -3,8 +3,6 @@ import { addWorkToAlbums, workList } from '@/api/works'
 import EditService from '@/pages/albums/editService'
 import { filterTime } from '@/utils/utils'
 import { ElMessage } from 'element-plus'
-import { forEach } from 'lodash-es'
-import { log } from 'util'
 import { reactive, ref } from 'vue'
 
 const props = defineProps({
@@ -39,9 +37,6 @@ const page = reactive({
 const getMaterialList = () => {
     workList(page,props.alreadyWorkList).then(response => {
         page.total = response?.total as number
-        // list.value = response?.list.filter(item => {
-        //     return !props.alreadyWorkList?.some(it => (it as any)._id === item._id)
-        // })
         list.value = response?.list
     }).catch(err => {
             ElMessage.error(err)
@@ -49,10 +44,6 @@ const getMaterialList = () => {
     )
 }
 
-const checkMaterial = (index: number, item: any) => {
-    checkIndex.value = index
-    form.workId = item._id
-}
 const initialization = () => {
     props.subassembly.visible = false
     page.current = 1
@@ -66,7 +57,7 @@ const submit = async () => {
         return
     }
     formIsLoading.value = true
-    const _id = props.service?.getUrl_Id
+    const _id = props.service.getUrl_Id()
     await addWorkToAlbums(form, _id)
     setTimeout(() => {
         ElMessage.success('作品添加成功')

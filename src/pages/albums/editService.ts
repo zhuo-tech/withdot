@@ -60,7 +60,8 @@ export default class EditService {
     private route = useRoute()
 
     public getUrl_Id = (): string => {
-        const {query} = this.route
+        const query = this.route.query
+        console.log(query._id)
         return query._id as string
     }
 
@@ -69,13 +70,19 @@ export default class EditService {
      * @param row
      */
     public changeSwitch = (row: any) => {
-        console.log(row)
+        this.changSwitchApi(row).then(() => {
+            setTimeout(() => {
+                ElMessage.success('修改成功')
+            }, 1000)
+        }).catch(err => {
+            ElMessage.error(err)
+        })
     }
 
     public async getAlbumsList() {
         const res = await DB.collection(CoreAlbum.TABLE_NAME)
             .where({
-                _id: this.getUrl_Id,
+                _id: this.getUrl_Id(),
                 delFlag: LogicDelete.NORMAL,
             })
             .getOne()
@@ -84,7 +91,6 @@ export default class EditService {
             return
         }
         this.albumsDetail = res.data
-        console.log(this.albumsDetail, '专辑')
         this.Editform.form.title = res.data.title
         this.Editform.form.cover = res.data.cover
         this.Editform.form.coverHref = res.data.coverHref
@@ -99,11 +105,7 @@ export default class EditService {
                 return
             }
             this.Editform.formIsLoading = true
-            this.editUpdata().then(response => {
-                    if (!response.ok) {
-                        ElMessage.error(response.error)
-                        return
-                    }
+            this.editUpdata().then(() => {
                     setTimeout(() => {
                         this.Editform.formIsLoading = false
                         ElMessage.success('修改成功')
@@ -123,12 +125,11 @@ export default class EditService {
      * @returns {Promise<void>}
      */
     public async deleteWork(row: any) {
-        console.log(row._id)
         let list = this.albumsDetail.workList
         let newList = list.filter(item => (item as any)._id !== row._id)
         const res = await DB.collection(CoreAlbum.TABLE_NAME)
             .where({
-                _id: this.getAlbumsList,
+                _id: this.getUrl_Id(),
                 delFlag: LogicDelete.NORMAL,
             })
             .update({
@@ -148,11 +149,36 @@ export default class EditService {
      * 编辑专辑
      */
     private async editUpdata() {
-        return await DB.collection(CoreAlbum.TABLE_NAME)
+        const res = await DB.collection(CoreAlbum.TABLE_NAME)
             .where({
-                _id: this.getUrl_Id,
+                _id: this.getUrl_Id(),
                 delFlag: LogicDelete.NORMAL,
             })
             .update(this.Editform.form)
+        if (!res.ok) {
+            throw new Error(res.error)
+        }
+        return res
+    }
+
+    private changSwitchApi = async (row: any) => {
+        let list = this.albumsDetail.workList
+        list.forEach((item: any) => {
+            if (item._id === row._id) {
+                console.log(row)
+                item.isPay = row.isPay
+            }
+        })
+        const res = await DB.collection(CoreAlbum.TABLE_NAME)
+            .where({
+                _id: this.getAlbumsList,
+                delFlag: LogicDelete.NORMAL,
+            })
+            .update({
+                workList: list,
+            })
+        if (!res.ok) {
+            throw new Error(res.error)
+        }
     }
 }

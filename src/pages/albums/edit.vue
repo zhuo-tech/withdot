@@ -21,8 +21,8 @@ service.getAlbumsList()
         <el-row :gutter="10" justify="space-between" style="height: 181px;margin-bottom:40px " type="flex">
             <el-col :span="18">
                 <el-row :gutter="10">
-                    <el-col :span="3">
-                        <ShowFile :file="albumsDetail.cover" style="height: 100%; width: 154px;" />
+                    <el-col :span="4">
+                        <ShowFile :file="albumsDetail.cover" style="height: 200px;" />
                     </el-col>
                     <el-col :span="18" class="albumsDetail">
                         <div>{{ albumsDetail.title }}</div>
@@ -54,7 +54,7 @@ service.getAlbumsList()
         <el-row>
             <el-col :span="24">
                 <div class="tableHeader">
-                    <div>作品列表({{ albumsDetail.workList.length }})</div>
+                    <div>作品列表({{ albumsDetail.workList?.length }})</div>
                 </div>
             </el-col>
         </el-row>
@@ -68,7 +68,12 @@ service.getAlbumsList()
                     <el-table-column label="时长" prop="address" width="300"></el-table-column>
                     <el-table-column label="是否收费" prop="isPay" width="300">
                         <template #default="{row}">
-                            <el-switch v-model="row.isPay" active-color="#13ce66" inactive-color="#ff4949"  @change="service.changeSwitch(row)"></el-switch>
+                            <el-switch v-model="row.isPay"
+                                       active-color="#13ce66"
+                                       inactive-color="#ff4949"
+                                       :active-value="0"
+                                       :inactive-value="1"
+                                       @change="service.changeSwitch(row)"></el-switch>
                         </template>
                     </el-table-column>
                     <el-table-column label="发布时间" prop="createTime">

@@ -24,7 +24,7 @@ service.getAlbumList()
                     <el-table-column label="价格(元)" prop="sellingPrice" width="280"></el-table-column>
                     <el-table-column label="作品数量" width="280">
                         <template #default="scope">
-                            <span>{{ scope.row.workList.length }}</span>
+                            <span>{{ scope.row.workList?.length }}</span>
                         </template>
                     </el-table-column>
                     <el-table-column label="创建时间" min-width="200" prop="createTime">
@@ -67,7 +67,7 @@ service.getAlbumList()
             </el-col>
         </el-row>
     </el-card>
-    
+
     <AddForm :service="service"/>
 </template>
 

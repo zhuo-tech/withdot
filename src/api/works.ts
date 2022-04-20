@@ -3,9 +3,7 @@ import { CoreAlbum } from '@/model/entity/CoreAlbum'
 import CoreMaterial from '@/model/entity/CoreMaterial'
 import { CoreWork } from '@/model/entity/CoreWork'
 import { LogicDelete } from '@/model/LogicDelete'
-import exp from 'constants'
 import { ElMessage } from 'element-plus'
-import { forEach } from 'lodash-es'
 
 const DB = cloud.database()
 
@@ -57,6 +55,7 @@ export async function addWork(params: any) {
             name: params.name,
             profile: '',
             content: '',
+            isPay:1,
             material_id: params.materialId,
             createBy: '',
             createTime: Date.now(),
@@ -144,8 +143,7 @@ export async function workList(page: any,alreadyWorkList:any) {
         })
         .count()
     if (!r.ok) {
-        ElMessage.error(r.error)
-        return
+        throw new Error(r.error)
     }
 
     const res = await DB.collection(CoreWork.TABLE_NAME)
@@ -161,8 +159,7 @@ export async function workList(page: any,alreadyWorkList:any) {
         .orderBy('_id', 'asc')
         .get()
     if (!res.ok) {
-        ElMessage.error(res.error)
-        return
+        throw new Error(r.error)
     }
     return {
         list: res.data,
