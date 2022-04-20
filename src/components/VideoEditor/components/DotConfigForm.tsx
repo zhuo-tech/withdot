@@ -60,9 +60,7 @@ export default defineComponent({
         },
     },
     emits: {
-        'update:value': (configData: ConfigType) => {
-            return ObjectUtil.isNotEmpty(configData)
-        },
+        'update:value': (configData: ConfigType) => ObjectUtil.isNotEmpty(configData),
     },
     components: {
         ImgForm,
@@ -89,7 +87,9 @@ export default defineComponent({
         formData: {
             deep: true,
             handler: function (nv) {
-                this.$emit('update:value', nv)
+                if (ObjectUtil.isNotEmpty(nv)) {
+                    this.$emit('update:value', nv)
+                }
             },
         },
     },

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { CoreDotController } from '@/components/VideoEditor/service/CoreDotFilter'
 import DoubleSpeed from '@/components/VideoPlayer/components/DoubleSpeed.vue'
 import VideoPlayer from '@/components/VideoPlayer/index.vue'
 import { ControlModel } from '@/components/VideoPlayer/service/ControlModel'
@@ -7,7 +8,7 @@ import { CoreWork } from '@/model/entity/CoreWork'
 import { FileService, INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
 import { Edit } from '@element-plus/icons-vue'
 import { TimeUnit } from 'typescript-util'
-import { inject, reactive, Ref, ref } from 'vue'
+import { computed, inject, reactive, Ref, ref } from 'vue'
 import AddPoint from './components/AddPoint.vue'
 import EditorStageLayer from './components/EditorStageLayer.vue'
 import List from './components/List.vue'
@@ -30,6 +31,13 @@ const playerRef: Ref<ControlModel> = ref({} as any)
 const setPlayerRef = (el: Ref<ControlModel>) => playerRef.value = el?.value
 
 const timelineRef = ref({})
+
+const controller = new CoreDotController()
+const displayDot = computed(() => {
+    return context.pointList.filter(i => controller.filter(i, {
+        currentPlaybackTime: playerRef.value.time ?? 0,
+    }))
+})
 </script>
 
 <template>
@@ -38,7 +46,7 @@ const timelineRef = ref({})
     <AddPoint :current-play-time="playerRef.time" @submit="formData => context.createDot(formData)" />
 
     <!-- 播放器 -->
-    <VideoPlayer :ref="setPlayerRef" :point-list="context.pointList" :show-control="false" :src="fileService.showUrl(data.material?.href)">
+    <VideoPlayer :ref="setPlayerRef" :point-list="displayDot" :show-control="false" :src="fileService.showUrl(data.material?.href)">
         <template v-slot:stage="{list, box}">
             <EditorStageLayer :box="box" :list="list" @drag="index => context.update(index)" />
         </template>
