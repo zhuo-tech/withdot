@@ -6,7 +6,7 @@ import { CoreWork } from '@/model/entity/CoreWork'
 import { AddLocation, Comment, Crop, Document, ElementPlus, Link, PictureFilled } from '@element-plus/icons-vue'
 import { LafClient } from 'laf-db-query-wrapper'
 import { ObjectUtil, StrUtil } from 'typescript-util'
-import { reactive, watch } from 'vue'
+import { isRef, Ref, ref, unref, watch } from 'vue'
 
 export const DotTypeOption: Array<{ icon: any, type: CoreDotType, label: string }> = [
     {icon: Document, type: CoreDotType.题目, label: '题目'},
@@ -34,7 +34,7 @@ export class VideoEditorContext {
     private readonly client = new LafClient<CoreDot>(CoreDot.TABLE_NAME)
     private readonly props: PropsType
 
-    public pointList = reactive<Array<CoreDot>>([])
+    public pointList: Ref<Array<CoreDot>> = ref<Array<CoreDot>>([])
 
     public controlDrawer = {
         isShow: false,
@@ -61,14 +61,19 @@ export class VideoEditorContext {
     public createDot(dot: CoreDot) {
         dot.workId = this.props.data._id
 
-        this.pointList.push(dot)
+        if (isRef(this.pointList)) {
+            this.pointList.value.push(dot)
+        } else {
+            // @ts-ignore
+            this.pointList.push(dot)
+        }
 
         this.saveDot(dot)
             .then(dot => this.log.trace('保存基础信息', dot))
     }
 
     public update(index: number) {
-        const dot = this.pointList[index]
+        const dot = unref(this.pointList)[index]
         if (ObjectUtil.isEmpty(dot)) {
             return
         }
@@ -86,7 +91,7 @@ export class VideoEditorContext {
         this.client.queryWrapper()
             .eq('workId', workId)
             .list(9999)
-            .then(list => this.pointList = list)
+            .then(list => this.pointList.value = list)
             .catch(err => this.log.warn('init point list => ', err))
     }
 
