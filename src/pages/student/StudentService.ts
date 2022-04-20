@@ -1,10 +1,14 @@
 // noinspection JSMethodCanBeStatic
 
 import { cloud } from '@/cloud'
+import { CoreStudent } from '@/model/entity/CoreStudent'
+import { PayGoodsOrder } from '@/model/entity/PayGoodsOrder'
+import { LogicDelete } from '@/model/LogicDelete'
 import { ElMessage } from 'element-plus'
 import { reactive, ref } from 'vue'
 
-const DB = cloud.database().collection('core_student')
+const DB = cloud.database().collection(CoreStudent.TABLE_NAME)
+const db = cloud.database().collection(PayGoodsOrder.TABLE_NAME)
 
 export default class StudentService {
     //搜索框数据 显示 隐藏
@@ -73,7 +77,7 @@ export default class StudentService {
        this.detail.show()
        this.getDetailApi(id).then(response=>{
            console.log(response)
-           this.detail.data=response.data
+           this.detail.data=response.detailData
 
        }).catch(err=>{
            ElMessage.error(err)
@@ -143,8 +147,21 @@ export default class StudentService {
         if(!detailRes.ok){
             throw new Error(detailRes.error)
         }
+        const payRes = await db
+            .where({
+                userId:id,
+                delFlag:LogicDelete.NORMAL
+            })
+            .orderBy('createTime','desc')
+            .get()
+        if(!payRes.ok){
+            throw new Error(payRes.error)
+        }
         return {
-            data:detailRes.data
+            detailData:{
+                ...detailRes.data,
+                payData:payRes.data
+            }
         }
     }
 }
