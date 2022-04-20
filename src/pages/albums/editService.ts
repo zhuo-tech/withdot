@@ -64,6 +64,14 @@ export default class EditService {
         return query._id as string
     }
 
+    /**
+     * 是否收费开关
+     * @param row
+     */
+    public changeSwitch = (row: any) => {
+        console.log(row)
+    }
+
     public async getAlbumsList() {
         const res = await DB.collection(CoreAlbum.TABLE_NAME)
             .where({
@@ -76,7 +84,7 @@ export default class EditService {
             return
         }
         this.albumsDetail = res.data
-        console.log(this.albumsDetail,'专辑')
+        console.log(this.albumsDetail, '专辑')
         this.Editform.form.title = res.data.title
         this.Editform.form.cover = res.data.cover
         this.Editform.form.coverHref = res.data.coverHref

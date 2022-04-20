@@ -98,9 +98,6 @@ export default class AlbumsService {
             let whereFlag: any = {
                 delFlag: LogicDelete.NORMAL,
             }
-            // if (query.name) {
-            //     whereFlag.title = query.name
-            // }
             const countRes = await this.DB
                 .where(whereFlag)
                 .count()

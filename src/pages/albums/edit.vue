@@ -66,7 +66,11 @@ service.getAlbumsList()
                     <el-table-column type="index" width="100"></el-table-column>
                     <el-table-column label="作品名" prop="name" width="300"></el-table-column>
                     <el-table-column label="时长" prop="address" width="300"></el-table-column>
-                    <el-table-column label="是否收费" prop="address" width="300"></el-table-column>
+                    <el-table-column label="是否收费" prop="isPay" width="300">
+                        <template #default="{row}">
+                            <el-switch v-model="row.isPay" active-color="#13ce66" inactive-color="#ff4949"  @change="service.changeSwitch(row)"></el-switch>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="发布时间" prop="createTime">
                         <template #default="scope">
                             <span>{{ filterTime(scope.row.createTime) }}</span>
