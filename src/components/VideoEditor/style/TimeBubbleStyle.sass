@@ -1,0 +1,83 @@
+.timeline-wrapper
+    --timeline-wrapper-bgc: rgba(0, 0, 0, .7)
+    --timeline-wrapper-min-height: 200px
+    --timeline-wrapper-padding-value: 20px
+
+    --timeline-line-border: 1px solid rgba(0, 0, 0, 1)
+    // 一行的高度, 实际高度参考此值计算: 行数 * 行高 + 刻度高度预留
+    --timeline-line-height: 40px
+
+    --time-item-bgc: rgba(255, 255, 255, .7)
+    --time-item-shadow-color: rgba(252, 252, 252, .7)
+
+// ================================================================================
+
+// 最外层容器 提供统一背景色
+.timeline-wrapper
+    min-height: var(--timeline-wrapper-min-height)
+    position: relative
+    padding: 0 var(--timeline-wrapper-padding-value)
+    margin-bottom: 30px
+
+    background-color: var(--timeline-wrapper-bgc)
+
+
+    .content
+        position: relative
+        width: 100%
+        height: 100%
+
+    // 结构选择器 绕过 scope 样式限制 选择作为背景的 timeline
+    .content > :first-child
+        height: 100%
+
+    // 时间胶囊列表容器
+    .dot-time-list
+        position: absolute
+        width: 100%
+        height: 100%
+        left: 0
+        bottom: 0
+        margin: 0
+
+        display: flex
+        flex-direction: column-reverse
+        pointer-events: none
+
+        .row
+            display: flex
+            border-top: var(--timeline-line-border)
+            padding: 5px
+            position: relative
+            height: var(--timeline-line-height)
+            box-sizing: border-box
+
+            .prefix
+                position: absolute
+                box-sizing: border-box
+                height: var(--timeline-line-height)
+                border-top: var(--timeline-line-border)
+                padding: 5px
+                // 修正莫名其妙的向下偏移1px
+                top: -1px
+                left: 0
+                transform: translateX(-100%)
+
+        .item
+            pointer-events: auto
+            flex: 0 1 auto
+            padding: 3px 5px
+            margin-right: 5px
+            border-radius: 5px
+            background-color: var(--time-item-bgc)
+            box-shadow: 0 0 5px var(--time-item-shadow-color)
+
+            text-align: center
+
+            transition: all linear 0.5s
+            filter: opacity(.5)
+
+            position: absolute
+
+        .item:hover
+            filter: opacity(1)

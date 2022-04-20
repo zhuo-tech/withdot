@@ -1,11 +1,12 @@
-import { PlayerContext } from '@/components/VideoPlayer/context/PlayerContext'
+import { getUserInfo } from '@/api/token'
 import { getLogger } from '@/main'
-import { CoreDot, CoreDotType, DotDisplayType } from '@/model/entity/CoreDot'
+import { CoreDot, CoreDotType } from '@/model/entity/CoreDot'
+import CoreMaterial from '@/model/entity/CoreMaterial'
+import { CoreWork } from '@/model/entity/CoreWork'
 import { AddLocation, Comment, Crop, Document, ElementPlus, Link, PictureFilled } from '@element-plus/icons-vue'
-import { InjectionKey } from '@vue/runtime-core'
 import { LafClient } from 'laf-db-query-wrapper'
-import { ObjectUtil } from 'typescript-util'
-import { reactive } from 'vue'
+import { ObjectUtil, StrUtil } from 'typescript-util'
+import { reactive, watch } from 'vue'
 
 export const DotTypeOption: Array<{ icon: any, type: CoreDotType, label: string }> = [
     {icon: Document, type: CoreDotType.题目, label: '题目'},
@@ -17,21 +18,21 @@ export const DotTypeOption: Array<{ icon: any, type: CoreDotType, label: string 
     {icon: Link, type: CoreDotType.链接, label: '链接'},
 ]
 
+export type PropsType = {
+    data: CoreWork & { material: CoreMaterial }
+}
+
 /**
  * 视频编辑器
  * @author LL
  * @date 2022年04月11日 15点04分
  */
 export class VideoEditorContext {
-    public static readonly INJECTION_KEY: InjectionKey<PlayerContext> = Symbol.for(VideoEditorContext.name)
     // noinspection JSUnusedLocalSymbols
-    private log = getLogger(VideoEditorContext.name)
+    private readonly log = getLogger(VideoEditorContext.name)
     // noinspection JSUnusedLocalSymbols
     private readonly client = new LafClient<CoreDot>(CoreDot.TABLE_NAME)
-    /**
-     * 当前打点类型
-     */
-    public currentType: CoreDotType = CoreDotType.题目
+    private readonly props: PropsType
 
     public pointList = reactive<Array<CoreDot>>([])
 
@@ -45,18 +46,57 @@ export class VideoEditorContext {
         },
     }
 
-    constructor() {
-        ObjectUtil.toArray(CoreDotType)
-            .filter((t, i) => i < 3)
-            .forEach((kv, index) => {
-                let dot = new CoreDot()
-                dot.type = kv.value
-                dot._id = String(index)
-                dot.label = kv.key
-                dot.display = index % 2 === 0 ? DotDisplayType.BUTTON : DotDisplayType.EXPANDED
-                dot.createTime = Date.now()
-                this.pointList.push(dot)
-            })
+    constructor(props: PropsType) {
+        this.props = props
+
+        this.initPointList()
+
+        watch(() => this.props.data, (nv, ov) => {
+            if (StrUtil.isEmpty(ov._id) && StrUtil.isNotEmpty(nv._id)) {
+                this.initPointList()
+            }
+        }, {deep: true})
+    }
+
+    public createDot(dot: CoreDot) {
+        dot.workId = this.props.data._id
+
+        this.pointList.push(dot)
+
+        this.saveDot(dot)
+            .then(dot => this.log.trace('保存基础信息', dot))
+    }
+
+    public update(index: number) {
+        const dot = this.pointList[index]
+        if (ObjectUtil.isEmpty(dot)) {
+            return
+        }
+        dot.updateTime = Date.now()
+        this.client.updateById(dot._id, dot, '_id')
+            .then(() => this.log.debug('更新保存完成', dot._id))
+            .catch(err => this.log.error('更新保存点信息失败: ', err))
+    }
+
+    private initPointList() {
+        const workId = this.props.data._id
+        if (StrUtil.isEmpty(workId)) {
+            return
+        }
+        this.client.queryWrapper()
+            .eq('workId', workId)
+            .list(9999)
+            .then(list => this.pointList = list)
+            .catch(err => this.log.warn('init point list => ', err))
+    }
+
+    private async saveDot(dot: CoreDot) {
+        dot.createTime = Date.now()
+        dot.updateTime = Date.now()
+        dot.createBy = (await getUserInfo())?._id as string
+
+        dot._id = await this.client.insert(dot) as string
+        return dot
     }
 
 }

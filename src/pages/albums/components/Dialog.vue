@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { addWork, addWorkToAlbums, workList } from '@/api/works'
+import { addWorkToAlbums, workList } from '@/api/works'
+import EditService from '@/pages/albums/editService'
 import { filterTime } from '@/utils/utils'
 import { ElMessage } from 'element-plus'
 import { reactive, ref } from 'vue'
-import EditService from '@/pages/albums/editService'
 
 const props = defineProps({
     subassembly: {
@@ -17,55 +17,38 @@ const props = defineProps({
         type: [EditService, Object],
         required: true,
     },
-    aleryWorkList: {
+    alreadyWorkList: {
         type: Array,
     },
 })
 
 const formIsLoading = ref(false)
 const emits = defineEmits(['getNewList'])
-const form = reactive({
-    workId: '',
+const form: { workId: Array<string> } = reactive({
+    workId: [],
 })
 const checkIndex = ref()
 const list = ref()
 const page = reactive({
     current: 1,
     pageSize: 5,
+    total: 100,
 })
 const getMaterialList = () => {
-    workList(page).then(response => {
-        let newList = response?.list.filter(item => {
-            return !props.aleryWorkList?.some(it => (it as any)._id === item._id)
-        })
-        console.log(newList)
-        list.value = newList
-    }).catch(err => {
+    let _idList = props.alreadyWorkList?.map((item: any) => item._id) ?? []
+    workList(page, _idList).then(response => {
+        page.total = response?.total as number
+        list.value = response?.list
+    }).catch((err: string) => {
             ElMessage.error(err)
         },
     )
 }
 
-const checkMaterial = (index: number, item: any) => {
-    checkIndex.value = index
-    form.workId = item._id
-}
-const lastPage = () => {
-    if (page.current > 1) {
-        page.current--
-        getMaterialList()
-    }
-}
-const nextPage = () => {
-    if (list.value.current * list.value.pageSize < list.value.total) {
-        page.current++
-        getMaterialList()
-    }
-}
 const initialization = () => {
     props.subassembly.visible = false
     page.current = 1
-    form.workId = ''
+    form.workId = []
     checkIndex.value = null
 }
 
@@ -75,7 +58,7 @@ const submit = async () => {
         return
     }
     formIsLoading.value = true
-    const _id = props.service?.getUrl_Id
+    const _id = props.service.getUrl_Id()
     await addWorkToAlbums(form, _id)
     setTimeout(() => {
         ElMessage.success('作品添加成功')
@@ -86,42 +69,47 @@ const submit = async () => {
     }, 1000)
 
 }
+const currentPageChange = (val: any) => {
+    page.current = val
+    getMaterialList()
+}
+const handleSelectionChange = (checkList: any) => {
+    form.workId = []
+    checkList.forEach((item: any) => {
+        form.workId.push(item._id)
+    })
+}
 getMaterialList()
 </script>
 
 <template>
-    <el-dialog v-model="subassembly.visible" title="添加作品" width="40%" @open="getMaterialList">
-        <el-row :gutter="10" style="margin-top: -10px">
-            <el-col :span="6">标题</el-col>
-            <el-col :offset="6" :span="6">创建时间</el-col>
+    <el-dialog v-model="subassembly.visible"
+               title="添加作品" width="40%"
+               @open="getMaterialList">
+        <el-table
+            ref="multipleTableRef"
+            :data="list"
+            style="width: 100%"
+            @selection-change="handleSelectionChange">
+            <el-table-column type="selection" width="55" />
+            <el-table-column label="作品名称" property="name" width="120" />
+            <el-table-column label="创建时间" prop="createTime">
+                <template #default="{row}">
+                    {{ filterTime(row.createTime) }}
+                </template>
+            </el-table-column>
+        </el-table>
+        <el-row justify="end" style="padding-top: 20px" type="flex">
             <el-col :span="6">
-                <el-row :gutter="10">
-                    <el-col :offset="12" :span="6">
-                        <el-icon :class="page.current === 1 || list.length===0? 'noLast':''" :size="20" @click="lastPage">
-                            <caret-left />
-                        </el-icon>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-icon :class="list.current*list.pageSize >= list.total || list.length===0 ||list.length<=5? 'noLast':''"
-                                 :size="20"
-                                 @click="nextPage">
-                            <caret-right />
-                        </el-icon>
-                    </el-col>
+                <el-row justify="end" type="flex">
+                    <el-pagination :current-page="page.current"
+                                   :page-size="page.pageSize"
+                                   :total="page.total"
+                                   background layout="prev, pager, next"
+                                   small
+                                   @current-change="currentPageChange" />
                 </el-row>
             </el-col>
-        </el-row>
-        <el-row v-if="list.length===0" :gutter="10">
-            <el-col :span="24" class="noWork">暂无数据</el-col>
-        </el-row>
-        <el-row v-for="(item,index) in list" v-else
-                :key="index" :class="[checkIndex===index?'bg':'','material']"
-                :gutter="10"
-                style="margin-top: 20px"
-                @click="checkMaterial(index,item)">
-            <el-col :span="6">{{ item.name }}</el-col>
-            <el-col :offset="6" :span="6">{{ filterTime(item.createTime) }}</el-col>
-            <el-col :class="[checkIndex===index?'yes':'no','check']" :offset="4" :span="2">已选</el-col>
         </el-row>
         <template #footer>
         <span class="dialog-footer">
@@ -135,40 +123,4 @@ getMaterialList()
 </template>
 
 <style lang="less" scoped>
-.material {
-    padding: 8px 0;
-    border-radius: 5px;
-
-    &:hover {
-        background-color: #f7f9ff;
-        cursor: pointer;
-    }
-}
-
-.bg {
-    border: 1px solid #d9e4ff;
-    background-color: #f7f9ff;
-}
-
-.check {
-    color: #3569fd;
-}
-
-.yes {
-    display: block;
-}
-
-.no {
-    display: none;
-}
-
-.noLast {
-    display: none;
-}
-
-.noWork {
-    text-align: center;
-    font-size: 18px;
-    margin-top: 20px;
-}
 </style>

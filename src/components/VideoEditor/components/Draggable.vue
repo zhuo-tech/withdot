@@ -10,7 +10,7 @@ type RightMenuAction = '+1' | '-1' | 'max' | 'min'
  */
 const prop = defineProps({
     item: {
-        type: CoreDot,
+        type: [CoreDot, Object],
         required: false,
         default: () => (new CoreDot()),
     },
@@ -21,10 +21,10 @@ const prop = defineProps({
 })
 
 const emits = defineEmits<{
-    (event: 'setZIndex', action: RightMenuAction ): void
+    (event: 'setZIndex', action: RightMenuAction): void
 }>()
 
-const context = reactive(new DraggableContext(prop))
+const context = reactive(new DraggableContext(prop as any))
 
 const rightMenuClick = (action: RightMenuAction) => {
     emits('setZIndex', action)
@@ -33,7 +33,7 @@ const rightMenuClick = (action: RightMenuAction) => {
 
 </script>
 <template>
-<div class="draggable"  @contextmenu.prevent.stop="context.rightMenuShow">
+<div class="draggable" @contextmenu.prevent.stop="context.rightMenuShow">
 
     <!-- 右键菜单 -->
     <el-collapse-transition>

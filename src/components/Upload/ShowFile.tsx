@@ -4,7 +4,6 @@ import { getLogger } from '@/main'
 import { FileInfo } from '@/model/FileInfo'
 import { FileType, FileTypeRegExp } from '@/model/FileType'
 import { FileService, INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
-import { Logger } from '@/tool/log/Logger'
 import { Picture as IconPicture } from '@element-plus/icons-vue'
 import { ObjectUtil, StrUtil } from 'typescript-util'
 import { defineComponent } from 'vue'
@@ -32,9 +31,10 @@ export default defineComponent({
     },
     data() {
         return {
-            fileService: this[INJECT_KEY_FILE_SERVICE] as any,
             log: getLogger('ShowFile'),
-        } as { fileService: FileService, log: Logger }
+            fileService: (this[INJECT_KEY_FILE_SERVICE] as any) as FileService,
+            previewIsShow: false,
+        }
     },
     inject: [
         INJECT_KEY_FILE_SERVICE,
@@ -48,17 +48,41 @@ export default defineComponent({
                     </div>
                 ),
             }
-            return <el-image src={ src } { ...this.$attrs } v-slots={ imageSlots }></el-image>
+            return (
+                <el-image src={ src } { ...this.$attrs } v-slots={ imageSlots } previewSrcList={ [src] } preview-teleported></el-image>
+            )
         },
 
         renderVideo(src: string) {
-            // return (<span>{ src }</span>)
-            return <video src={ src } controls muted  { ...this.$attrs } ></video>
+            return (
+                <span>
+                    <el-icon onClick={ () => this.previewIsShow = true } size={ 50 }>
+                        <video-play />
+                    </el-icon>
+                    <el-dialog v-model={ this.previewIsShow }
+                               append-to-body
+                               close-on-click-modal
+                               destroy-on-close
+                               draggable
+                               lock-scroll
+                               modal
+                               width="50%">
+                        <video style={ {minHeight: '500px'} } src={ src } controls autoplay { ...this.$attrs } ></video>
+                    </el-dialog>
+                </span>
+            )
         },
 
         renderAudio(src: string) {
-            // this.log.info('接收到的样式', this.$attrs)
-            return <audio src={ src } controls { ...this.$attrs } ></audio>
+            if (this.previewIsShow) {
+                return this.previewIsShow && <audio src={ src } controls { ...this.$attrs } ></audio>
+            } else {
+                return (
+                    <el-icon onClick={ () => this.previewIsShow = true } size={ 50 }>
+                        <headset />
+                    </el-icon>
+                )
+            }
         },
 
         renderByType(src: string, type: string) {
@@ -66,7 +90,7 @@ export default defineComponent({
                 this.log.debug('地址不存在 src = ', src)
                 return <span></span>
             }
-            this.log.debug('渲染类型', type)
+            this.log.trace('渲染类型', type)
 
             src = this.fileService.showUrl(src)
             // 图片

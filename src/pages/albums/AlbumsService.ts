@@ -98,9 +98,6 @@ export default class AlbumsService {
             let whereFlag: any = {
                 delFlag: LogicDelete.NORMAL,
             }
-            // if (query.name) {
-            //     whereFlag.title = query.name
-            // }
             const countRes = await this.DB
                 .where(whereFlag)
                 .count()
@@ -155,7 +152,7 @@ export default class AlbumsService {
     }
 
     public handleEdit = (row: any) => {
-        this.router.push(`/albums/edit?_id=${ row._id }`)
+        this.router.push(`/albums/edit?_id=${ row._id }`).then(r => {})
     }
 
     /**

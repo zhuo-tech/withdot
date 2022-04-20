@@ -1,0 +1,108 @@
+.timeline-container
+    // 容器前景
+    --container-prospect: #e2eded
+    --container-min-height: 100px
+    --container-border: 1px solid rgba(0, 0, 0, .7)
+    // 刻度线前景
+    --tick-color: #323131
+    // 刻度线高度
+    --item-height-hour: 60px
+    --item-height-minute: 40px
+    --item-height-second: 20px
+
+    // 悬停样式
+    --hover-pointer-color: rgba(255, 255, 255, .2)
+    --hover-pointer-width: 10px
+    // 进度样式
+    --current-item-color: #37a6d5
+
+// ==========================================================================================
+.timeline-container
+    display: flex
+    min-height: var(--container-min-height)
+    position: relative
+    border-left: var(--container-border)
+
+    color: var(--container-prospect)
+
+    // 悬停刻度
+    .hover-pointer
+        position: absolute
+        width: var(--hover-pointer-width)
+        height: 100%
+        left: 0
+        transform: translateX(-100%)
+        border-left: 3px solid var(--hover-pointer-color)
+
+        .scale-value
+            position: absolute
+            bottom: 0
+            transform: translateY(100%)
+
+            color: #ffacf0
+
+    // 画线
+    .timeline-item .current-item
+        border-left: 3px solid var(--current-item-color)
+
+    .timeline-item:before
+        content: ''
+        position: absolute
+        top: 0
+        left: 0
+        width: 100%
+        height: 100%
+
+    .hour:before
+        max-height: var(--item-height-hour)
+        border-left: 3px solid var(--tick-color)
+        border-right: 3px solid var(--tick-color)
+
+    .minute:before
+        max-height: var(--item-height-minute)
+        border-left: 2px solid var(--tick-color)
+        border-right: 2px solid var(--tick-color)
+
+    .second:before
+        max-height: var(--item-height-second)
+        border-left: 1px solid var(--tick-color)
+
+    .timeline-item:last-child
+        border: none
+
+    // 刻度标识
+    .start-tips,
+    .end-tips
+        content: ''
+        top: 0
+        display: block
+        position: absolute
+
+    .hour
+        .start-tips,
+        .end-tips
+            top: var(--item-height-hour)
+
+    .minute
+        .start-tips,
+        .end-tips
+            top: var(--item-height-second)
+
+    .second
+        .start-tips,
+        .end-tips
+            top: var(--item-height-second)
+
+    .start-tips
+        left: 0
+        transform: translate(-50%, 100%)
+
+    .end-tips
+        right: 0
+        transform: translate(50%, 100%)
+
+.timeline-container .timeline-item
+    display: flex
+    flex: 1 1 auto
+    position: relative
+    box-sizing: border-box

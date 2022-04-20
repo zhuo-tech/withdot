@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { CoreDot } from '@/model/entity/CoreDot'
-import { TimeUnit } from 'typescript-util'
+import { CoreDot, DotDisplayTypeShow } from '@/model/entity/CoreDot'
+import { ObjectUtil, TimeUnit } from 'typescript-util'
 import { reactive } from 'vue'
 import { AddPointContext } from '../context/AddPointContext'
 import { DotTypeOption } from '../context/VideoEditorContext'
@@ -18,12 +18,7 @@ const emits = defineEmits<{
     (event: 'submit', data: CoreDot): void
 }>()
 
-const context = reactive(new AddPointContext())
-
-function formSubmit() {
-    emits('submit', context.formData)
-    context.formData = AddPointContext.formDataDefault()
-}
+const context = reactive(new AddPointContext(props, emits))
 
 </script>
 
@@ -48,36 +43,36 @@ function formSubmit() {
     width="45%">
 
     <el-tabs v-model="context.currentType" stretch tab-position="left">
-        <el-form :model="context.formData" label-suffix=":" label-width="100px">
+        <el-form :ref="el => context.formRef = el" :model="context.formData" :rules="context.formRule" label-suffix=":" label-width="100px">
 
-            <el-form-item label="标签">
+            <el-form-item label="标签" prop="label">
                 <el-input v-model="context.formData.label" placeholder="标签"></el-input>
             </el-form-item>
 
-            <el-form-item label="开始时间">
-
-            </el-form-item>
-
-            <el-form-item label="结束时间">
-
+            <el-form-item label="默认展示" prop="display">
+                <el-radio-group v-model="context.formData.display">
+                    <el-radio-button v-for="kv in ObjectUtil.toArray(DotDisplayTypeShow)"
+                                     :key="kv.value"
+                                     :label="kv.value">{{ kv.key }}
+                    </el-radio-button>
+                </el-radio-group>
             </el-form-item>
 
             <el-form-item label="时间">
                 <div class="select-play-time">
-                    <slot class="schedule" name="header"></slot>
                     <div class="display">{{ TimeUnit.SECOND.display(currentPlayTime) }}</div>
                 </div>
             </el-form-item>
 
-            <el-form-item label-width="0px">
-                <DotConfigForm :type="context.currentType" :value="context.formData.config" />
+            <el-form-item label-width="0px" prop="config">
+                <DotConfigForm v-model:value="context.formData.config" :type="context.currentType" />
             </el-form-item>
         </el-form>
     </el-tabs>
 
     <div slot="footer" class="drawer-body-footer" style="display: flex; justify-content: right">
         <el-button @click="context.close()">取 消</el-button>
-        <el-button type="primary" @click="formSubmit()">
+        <el-button type="primary" @click="context.submit()">
             {{ context.formIsLoading ? '提交中 ...' : '确 定' }}
         </el-button>
     </div>
@@ -93,10 +88,4 @@ function formSubmit() {
     .display
         flex: 0 1 120px
 
-</style>
-
-<style lang="sass">
-.select-play-time
-    .progress-bar
-        margin-top: 15px
 </style>

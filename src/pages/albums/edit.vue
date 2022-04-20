@@ -19,41 +19,42 @@ service.getAlbumsList()
             <div>专辑编辑</div>
         </template>
         <el-row :gutter="10" justify="space-between" style="height: 181px;margin-bottom:40px " type="flex">
-            <el-col :span="12">
+            <el-col :span="18">
                 <el-row :gutter="10">
-                    <el-col :span="6">
-                        <ShowFile :file="albumsDetail.cover" style="height: 100%; width: 154px;" />
+                    <el-col :span="4">
+                        <ShowFile :file="albumsDetail.cover" style="height: 200px;" />
                     </el-col>
-                    <el-col :span="6" class="albumsDetail">
+                    <el-col :span="18" class="albumsDetail">
                         <div>{{ albumsDetail.title }}</div>
-                        <div>价格
-                            <span>{{ albumsDetail.sellingPrice }}</span>
-                            元
-                        </div>
-                        <div>创建时间
-                            <span>{{ filterTime(albumsDetail.createTime) }}</span>
-                        </div>
-                        <div>播放次数
-                            <span>12.5万</span>
-                        </div>
+                        <el-row>
+                            <el-col :span="12" style="display: flex">
+                                <div v-if="albumsDetail.sellingPrice" style="margin-right: 20px">价格
+                                    <span>{{ albumsDetail.sellingPrice }}</span>
+                                    元
+                                </div>
+                                <div>创建时间
+                                    <span>{{ filterTime(albumsDetail.createTime) }}</span>
+                                </div>
+                                <div style="margin-left: 20px">播放次数
+                                    <span>12.5万</span>
+                                </div>
+                            </el-col>
+                        </el-row>
+                        <el-col v-if="albumsDetail.desc" class="desc">
+                            {{ albumsDetail.desc }}
+                        </el-col>
                     </el-col>
                 </el-row>
             </el-col>
-            <el-col :offset="6" :span="6" class="buttonBox">
+            <el-col :span="6" class="buttonBox">
                 <el-button @click="Editform.show()">编辑专辑</el-button>
                 <el-button @click="subassembly.show()">添加作品</el-button>
             </el-col>
         </el-row>
-        <el-row v-if="albumsDetail.desc" class="desc">
-            <el-col :span="24">{{ albumsDetail.desc }}</el-col>
-        </el-row>
         <el-row>
             <el-col :span="24">
                 <div class="tableHeader">
-                    <div>作品列表(201)</div>
-                    <div>正序</div>
-                    <div>|</div>
-                    <div>倒序</div>
+                    <div>作品列表({{ albumsDetail.workList?.length }})</div>
                 </div>
             </el-col>
         </el-row>
@@ -63,11 +64,23 @@ service.getAlbumsList()
                     :data="albumsDetail.workList"
                     style="width: 100%">
                     <el-table-column type="index" width="100"></el-table-column>
-                    <el-table-column label="作品名" prop="name" width="180"></el-table-column>
-                    <el-table-column label="视频大小" prop="size" width="180"></el-table-column>
-                    <el-table-column label="时长" prop="address"></el-table-column>
-                    <el-table-column label="是否收费" prop="address"></el-table-column>
-                    <el-table-column label="发布时间" prop="address"></el-table-column>
+                    <el-table-column label="作品名" prop="name" width="300"></el-table-column>
+                    <el-table-column label="时长" prop="address" width="300"></el-table-column>
+                    <el-table-column label="是否收费" prop="isPay" width="300">
+                        <template #default="{row}">
+                            <el-switch v-model="row.isPay"
+                                       active-color="#13ce66"
+                                       inactive-color="#ff4949"
+                                       :active-value="0"
+                                       :inactive-value="1"
+                                       @change="service.changeSwitch(row)"></el-switch>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="发布时间" prop="createTime">
+                        <template #default="scope">
+                            <span>{{ filterTime(scope.row.createTime) }}</span>
+                        </template>
+                    </el-table-column>
                     <el-table-column fixed="right" label="操作">
                         <template #default="scope">
                             <el-popconfirm :icon="Warning"
@@ -86,7 +99,7 @@ service.getAlbumsList()
             </el-col>
         </el-row>
     </el-card>
-    <Dialog :aleryWorkList="albumsDetail.workList" :service="service" :subassembly="subassembly" @getNewList="service.getAlbumsList()"></Dialog>
+    <Dialog :alreadyWorkList="albumsDetail.workList" :service="service" :subassembly="subassembly" @getNewList="service.getAlbumsList()"></Dialog>
     <Form :service="service"></Form>
 </template>
 <style lang="less" scoped>
@@ -109,6 +122,7 @@ service.getAlbumsList()
 }
 
 .albumsDetail {
+    margin-left: 20px;
     > div:nth-of-type(1) {
         font-size: 18px;
         color: #000000;
@@ -134,8 +148,6 @@ service.getAlbumsList()
 .desc {
     margin: 0 0 40px 0;
     padding: 13px 0;
-    border-top: 2px solid #BBBBBB;
-    border-bottom: 2px solid #BBBBBB;
     font-size: 14px;
     line-height: 20px;
     color: #8A7F7F;

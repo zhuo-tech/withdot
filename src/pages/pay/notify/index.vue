@@ -83,8 +83,8 @@ export default {
                 <h1>支付通知</h1>
             </div>
         </template>
-        <el-row :gutter="20">
-            <el-col :span="6">
+        <el-row :gutter="24">
+            <el-col :span="4">
                 <el-form v-model="queryParam" ref="queryParamRef">
                     <el-form-item label="订单号">
                         <el-input v-model="queryParam.orderNo" clearable />

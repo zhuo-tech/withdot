@@ -15,6 +15,8 @@ const service = reactive<MaterialService>(new MaterialService())
 const {tableIsLoading} = toRefs(service)
 const {page, rowKey, readyEdit, readyDelete, listUpdate} = service
 
+service.showQuery = true
+
 listUpdate()
 </script>
 

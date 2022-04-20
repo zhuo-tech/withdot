@@ -57,8 +57,8 @@ const handleDelete = (row: any) => {
 const getListData = () => {
     loading.value = true
     dataList(page, query).then(response => {
-        data.value = response.data
-        page.total = response.total
+        data.value = response?.data
+        page.total = response?.total as number
         loading.value = false
     }).catch(err => {
         ElMessage.error(err)
@@ -74,23 +74,23 @@ getListData()
             <h1>作品中心</h1>
         </div>
     </template>
-    <div class="tag">
-        <el-tag v-for="(item,index) in 4" :key="index" class="ml-2" type="success">Tag 2</el-tag>
-    </div>
     <div>
         <el-button class="create" type="primary" :icon="Plus" @click="createWorks">新增</el-button>
     </div>
     <el-table :data="data" stripe style="width: 100%" v-loading="loading">
         <el-table-column label="序号" type="index" width="80"></el-table-column>
-        <el-table-column label="标题" prop="name" width="250"></el-table-column>
-        <el-table-column label="素材" prop="name" width="300"></el-table-column>
-        <el-table-column label="标签" prop="address" width="300"></el-table-column>
+        <el-table-column label="标题" prop="name" width="350"></el-table-column>
+        <el-table-column label="素材" width="600">
+            <template v-slot="{row}">
+                <span>{{ row.materialNews?.title }}</span>
+            </template>
+        </el-table-column>
         <el-table-column label="创建时间" min-width="200" prop="createTime">
             <template #default="scope">
                 <span>{{ filterTime(scope.row.createTime) }}</span>
             </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="180">
+        <el-table-column fixed="right" label="操作">
             <template #default="scope">
                 <el-button :icon="Edit" type="text" @click="$router.push(`/works/editor/${ scope.row._id }`)">编辑</el-button>
                 <el-divider direction="vertical" />

@@ -1,8 +1,22 @@
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { ElMessage } from "element-plus";
+import { ref } from "vue";
 import { onMounted, onUpdated, onUnmounted } from "vue";
+import preview from "../Exam/preview.vue";
 // ======================================数据===================================================
-const inputValue = ref("");
+
+const current = ref(0); // 标识当前题目
+const inputValue = ref(""); // 输入的分数
+const show = ref(true);
+
+const props = defineProps({
+    list: {
+        type: Array,
+        required: true,
+    },
+});
+
+// 字母表
 const alphabet = [
     "A",
     "B",
@@ -31,6 +45,8 @@ const alphabet = [
     "Y",
     "Z",
 ];
+
+// 答案列表
 const answerList = ref([
     {
         index: "A",
@@ -44,6 +60,82 @@ onMounted(() => {
     console.log("onMounted");
 });
 
+function ok() {
+    console.log(props.list[0]);
+}
+
+// 下一页
+function nextOne() {
+    if (!check()) return;
+    // 保存此题设置的答案
+    props.list[current.value].options = answerList.value;
+    // 保存设置的分数
+    props.list[current.value].score = inputValue.value;
+    // 答案列表还原
+    answerList.value = [
+        {
+            index: "A",
+            value: "",
+            isAnswer: false,
+        },
+    ];
+    inputValue.value = "";
+
+    console.log(props.list[0]);
+    // 下一个题目
+    current.value++;
+}
+
+// 检查是否填写完整信息
+function check() {
+    if (!inputValue.value) {
+        ElMessage.error("请输入分数");
+        return false;
+    }
+
+    let answerEmpty = false; // 是否设置答案
+    let valueEmpty = false; // 是否设置正确答案
+    let rightAnswer = 0; //正确答案个数
+
+    answerList.value.forEach((item) => {
+        if (item.isAnswer) {
+            answerEmpty = true;
+            rightAnswer++;
+        }
+        if (item.value === "") valueEmpty = true;
+    });
+
+    if (valueEmpty) {
+        ElMessage.error("答案不可为空");
+        return false;
+    }
+    if (!answerEmpty) {
+        ElMessage.error("请设置正确答案");
+        return false;
+    }
+    if (props.list[current.value].type === "radio" && rightAnswer > 1) {
+        ElMessage.error("单选题不可设置多个答案");
+        return false;
+    }
+
+    return true;
+}
+
+// 设置正确答案时触发
+function checkboxChange(type: string, isAnswer: boolean) {
+    let answerEmpty = false;
+    if ("radio" === type) {
+        answerList.value.forEach((item) => {
+            if (item.isAnswer) answerEmpty = true;
+        });
+        if (!answerEmpty) {
+            isAnswer = false;
+            ElMessage.error("单选题不可设置多个答案");
+        }
+    }
+}
+
+// 新增答案
 function addAnswer() {
     const obj = {
         index: alphabet[answerList.value.length],
@@ -53,67 +145,71 @@ function addAnswer() {
     answerList.value.push(obj);
 }
 
+// 删除答案
 function delAnswer() {
     answerList.value.pop();
 }
 </script>
 
 <template>
-    <div class="choice">
-        <div class="title">题目录入</div>
-        <div class="tips">请进行题目编辑和分数设置</div>
-        <div class="top">
-            <div class="topText">共六题(20/100)</div>
-            <el-input
-                class="input"
-                v-model="inputValue"
-                size="default"
-                placeholder="分数"
-            />
-        </div>
-        <div class="middle">
-            <div class="type">多选题</div>
-            <div class="name">为什么大象不会飞</div>
-        </div>
-        <div class="bottom">
-            <div v-for="item in answerList" class="answer">
-                <div class="a">{{ item.index }}</div>
+    <div>
+        <div v-show="show" class="choice">
+            <div class="title">题目录入</div>
+            <div class="tips">请进行题目编辑和分数设置</div>
+            <div class="top">
+                <div class="topText">共{{ list?.length }}题(20/100)</div>
                 <el-input
                     class="input"
-                    v-model="item.value"
+                    v-model="inputValue"
                     size="default"
-                    placeholder="单行输入"
-                />
-                <el-checkbox
-                    class="checkbox"
-                    v-model="item.isAnswer"
-                    label="正确答案"
-                    size="large"
+                    placeholder="分数"
                 />
             </div>
-            <div class="operation">
-                <img
-                    @click="addAnswer"
-                    src="../../assets/icon/add.png"
-                    alt=""
-                />
-                <img
-                    @click="delAnswer"
-                    src="../../assets/icon/del.png"
-                    alt=""
-                />
+            <div class="middle">
+                <div class="type">{{ list[current]?.typeText }}</div>
+                <div class="name">{{ list[current]?.label }}</div>
             </div>
-        </div>
+            <div class="bottom">
+                <div v-for="item in answerList" class="answer">
+                    <div class="a">{{ item.index }}</div>
+                    <el-input
+                        class="input"
+                        v-model="item.value"
+                        size="default"
+                        placeholder="单行输入"
+                    />
+                    <el-checkbox
+                        class="checkbox"
+                        v-model="item.isAnswer"
+                        label="正确答案"
+                        size="large"
+                    />
+                </div>
+                <div class="operation">
+                    <img
+                        @click="addAnswer"
+                        src="../../assets/icon/add.png"
+                        alt=""
+                    />
+                    <img
+                        @click="delAnswer"
+                        src="../../assets/icon/del.png"
+                        alt=""
+                    />
+                </div>
+            </div>
 
-        <div class="over">
-            <el-button size="default">上一页</el-button>
-            <span>2/5</span>
-            <el-button size="default">下一页</el-button>
+            <div class="over">
+                <el-button size="default">上一页</el-button>
+                <span>{{ current + 1 }}/{{ list?.length }}</span>
+                <el-button @click="nextOne" size="default">下一页</el-button>
+            </div>
+            <div class="button">
+                <div class="preview">预览</div>
+                <div @click="ok" class="ok">确定</div>
+            </div>
         </div>
-        <div class="button">
-            <div class="preview">预览</div>
-            <div class="ok">确定</div>
-        </div>
+        <preview :list="list" />
     </div>
 </template>
 

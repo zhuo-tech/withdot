@@ -1,9 +1,10 @@
 // noinspection JSXNamespaceValidation
 
 import ImgForm from '@/components/workConfigForm/ImgForm.vue'
+import QuestionForm from '@/components/workConfigForm/QuestionsForm.vue'
 import TextForm from '@/components/workConfigForm/TextForm.vue'
 import UrlForm from '@/components/workConfigForm/UrlForm.vue'
-import { CoreDotType } from '@/model/entity/CoreDot'
+import { CoreDot, CoreDotType } from '@/model/entity/CoreDot'
 import { ObjectUtil } from 'typescript-util'
 import { defineComponent } from 'vue'
 
@@ -12,26 +13,35 @@ const formDataDefault: Partial<Record<CoreDotType, any>> = {
         switch: false,
         time: 3,
         pause: true,
+        text: '',
     },
-    [CoreDotType.书签]: {},
     [CoreDotType.图片]: {
         switch: false,
         time: 3,
         pause: true,
     },
-    [CoreDotType.表单]: {},
     [CoreDotType.链接]: {
         switch: false,
         time: 3,
         pause: true,
     },
-    [CoreDotType.题目]: {},
+    [CoreDotType.表单]: {},
+    [CoreDotType.书签]: {},
+    [CoreDotType.题目]: {
+        switch: false,
+        time: 3,
+        pause: true,
+    },
+    [CoreDotType.热区]: {},
+    [CoreDotType.链接]: {},
 }
 
+type ConfigType = CoreDot['config']
+
+// noinspection JSUnusedLocalSymbols
 export default defineComponent({
     name: 'DotConfigForm',
     props: {
-        // @ts-ignore
         type: {
             type: String,
             required: true,
@@ -46,21 +56,19 @@ export default defineComponent({
         },
         value: {
             type: Object,
-            required: true,
+            required: false,
         },
     },
     emits: {
-        input: (configData: any) => {
-
-        },
-        update: (configData: any) => {
-
+        'update:value': (configData: ConfigType) => {
+            return ObjectUtil.isNotEmpty(configData)
         },
     },
     components: {
         ImgForm,
         TextForm,
         UrlForm,
+        QuestionForm,
     },
     data() {
         const getValueByType = (propsValue: any, type: CoreDotType) => {
@@ -81,8 +89,7 @@ export default defineComponent({
         formData: {
             deep: true,
             handler: function (nv) {
-                this.$emit('input', nv)
-                this.$emit('update', nv)
+                this.$emit('update:value', nv)
             },
         },
     },
@@ -111,7 +118,7 @@ export default defineComponent({
 
                 break
             case CoreDotType.题目:
-
+                ConfigForm = <QuestionForm></QuestionForm>
                 break
             default:
         }

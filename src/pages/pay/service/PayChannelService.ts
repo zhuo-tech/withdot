@@ -1,13 +1,12 @@
-import { id } from 'element-plus/lib/locale';
-import { id } from 'element-plus/lib/locale';
-import { cloud } from "@/cloud";
+
+import { cloud } from '@/cloud';
+import { CommonEnum } from '@/model/CommonEnum';
+import { PayChannel } from "@/model/entity/PayChannel"
+import { PayNotifyRecord } from '@/model/entity/PayNotifyRecord'
+import { LogicDelete } from '@/model/LogicDelete';
+import { ObjectUtil } from 'typescript-util';
+import { PayChannelQo } from './PayChannelQo'
 import { getLogger } from "@/main";
-import { CommonEnum } from "@/model/CommonEnum";
-import { PayChannel } from "@/model/entity/PayChannel";
-import { PayNotifyRecord } from "@/model/entity/PayNotifyRecord";
-import { LogicDelete } from "@/model/LogicDelete";
-import { ObjectUtil } from "typescript-util";
-import { PayChannelQo } from "./PayChannelQo";
 
 /**
  * 支付渠道
@@ -15,7 +14,7 @@ import { PayChannelQo } from "./PayChannelQo";
  * @date 2022年04月01日 17点13分
  */
 export class PayChannelService {
-    private readonly log = getLogger("PayChannelService");
+    private readonly log = getLogger('PayChannelService')
 
     /**
      * 列表查询支付渠道信息

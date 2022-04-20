@@ -3,7 +3,6 @@ import { CoreAlbum } from '@/model/entity/CoreAlbum'
 import CoreMaterial from '@/model/entity/CoreMaterial'
 import { CoreWork } from '@/model/entity/CoreWork'
 import { LogicDelete } from '@/model/LogicDelete'
-import exp from 'constants'
 import { ElMessage } from 'element-plus'
 
 const DB = cloud.database()
@@ -56,6 +55,7 @@ export async function addWork(params: any) {
             name: params.name,
             profile: '',
             content: '',
+            isPay:1,
             material_id: params.materialId,
             createBy: '',
             createTime: Date.now(),
@@ -83,10 +83,21 @@ export async function dataList(page: any, query: any) {
         .where(whereFlag)
         .count()
     if (!r.ok) {
-        return ElMessage.error(r.error)
+        ElMessage.error(r.error)
+        return
     }
     const res = await DB.collection(CoreWork.TABLE_NAME)
         .where(whereFlag)
+        .withOne({
+            query: DB.collection(CoreMaterial.TABLE_NAME)
+                .field({
+                    _id: 1,
+                    title: 1,
+                }),
+            localField: 'material_id',
+            foreignField: '_id',
+            as: 'materialNews',
+        })
         .page({
             current: page.current,
             size: page.size,
@@ -119,20 +130,22 @@ export async function del(id: string) {
     }
 }
 
-export async function workList(page: any) {
+export async function workList(page: any,_idList:any) {
+    const _=DB.command
     const r = await DB.collection(CoreWork.TABLE_NAME)
         .where({
             delFlag: LogicDelete.NORMAL,
+            _id:_.nin(_idList)
         })
         .count()
     if (!r.ok) {
-        ElMessage.error(r.error)
-        return
+        throw new Error(r.error)
     }
 
     const res = await DB.collection(CoreWork.TABLE_NAME)
         .where({
             delFlag: LogicDelete.NORMAL,
+            _id:_.nin(_idList)
         })
         .page({
             current: page.current,
@@ -142,8 +155,7 @@ export async function workList(page: any) {
         .orderBy('_id', 'asc')
         .get()
     if (!res.ok) {
-        ElMessage.error(res.error)
-        return
+        throw new Error(r.error)
     }
     return {
         list: res.data,
@@ -153,41 +165,44 @@ export async function workList(page: any) {
     }
 }
 
-export async function addWorkToAlbums(data: any, _id: string) {
+export function addWorkToAlbums(data: any, _id: string) {
     const {workId} = data
-    const r = await DB.collection(CoreWork.TABLE_NAME)
-        .where({
-            _id: workId,
-            delFlag: LogicDelete.NORMAL,
-        })
-        .getOne()
-    if (!r.ok) {
-        ElMessage.error(r.error)
-        return
-    }
-    const list = r.data
-    const res = await DB.collection(CoreAlbum.TABLE_NAME)
-        .where({
-            _id: _id,
-            delFlag: LogicDelete.NORMAL,
-        })
-        .getOne()
-    if (!res.ok) {
-        ElMessage.error(res.error)
-        return
-    }
-    const albumsData = res.data
-    const _ = DB.command
-    const addRes = await DB.collection(CoreAlbum.TABLE_NAME)
-        .where({
-            _id: _id,
-            delFlag: LogicDelete.NORMAL,
-        })
-        .update({
-            workList: albumsData.workList ? _.push(list) : [list],
-        })
-    if (!addRes.ok) {
-        ElMessage.error(res.error)
-        return
-    }
+    workId.forEach(async (item: any) => {
+        const r = await DB.collection(CoreWork.TABLE_NAME)
+            .where({
+                _id: item,
+                delFlag: LogicDelete.NORMAL,
+            })
+            .getOne()
+        if (!r.ok) {
+            ElMessage.error(r.error)
+            return
+        }
+        const list = r.data
+        const res = await DB.collection(CoreAlbum.TABLE_NAME)
+            .where({
+                _id: _id,
+                delFlag: LogicDelete.NORMAL,
+            })
+            .getOne()
+        if (!res.ok) {
+            ElMessage.error(res.error)
+            return
+        }
+        const albumsData = res.data
+        const _ = DB.command
+        const addRes = await DB.collection(CoreAlbum.TABLE_NAME)
+            .where({
+                _id: _id,
+                delFlag: LogicDelete.NORMAL,
+            })
+            .update({
+                workList: albumsData.workList ? _.push(list) : [list],
+            })
+        if (!addRes.ok) {
+            ElMessage.error(res.error)
+            return
+        }
+    })
+
 }

@@ -37,6 +37,9 @@ export class DraggableContext {
     }
 
     public rightMenuShow(event: MouseEvent) {
+        if (this.rightClickMenuIsShow) {
+            return
+        }
         const {offsetX, offsetY} = event
         this.rightMenuRef.style.top = offsetY - 20 + 'px'
         this.rightMenuRef.style.left = offsetX - 20 + 'px'

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { CoreDot } from '@/model/entity/CoreDot'
-import Draggable from './Draggable.vue'
+import Draggable from './components/Draggable.vue'
 
 /**
  * "舞台" 可互动元素的父容器

@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-import { QuestionTypeEnum } from '@/model/QuestionTypeEnum'
-import QuestionService,{questionType} from '@/pages/question/QuestionService'
+import SAQForm from '@/pages/question/components/SAQForm.vue'
+import QuestionService,{QuestionType} from '@/pages/question/QuestionService'
 import { reactive } from 'vue'
 import QueryForm from './components/QueryForm.vue'
-import Form from './components/Form.vue'
+import SelectForm from './components/SelectForm.vue'
+import TKForm from './components/TKForm.vue'
+import SQAForm from './components/SAQForm.vue'
 import { Delete, Edit, Warning } from '@element-plus/icons-vue'
 import { filterTime } from '@/utils/utils'
 
@@ -26,7 +28,7 @@ service.getList()
             <el-table-column label="题目标题" prop="label"></el-table-column>
             <el-table-column label="题目类型" prop="type" width="180">
                 <template #default="scope">
-                    <span>{{ questionType[scope.row.type] }}</span>
+                    <span>{{ QuestionType[scope.row.type] }}</span>
                 </template>
             </el-table-column>
             <el-table-column label="创建时间" prop="createTime" width="280">
@@ -72,7 +74,9 @@ service.getList()
             </el-col>
         </el-row>
     </el-card>
-    <Form :service="service" />
+    <SelectForm :service="service" />
+    <SAQForm :service="service" />
+    <TKForm :service="service" />
 </template>
 
 <style lang="less" scoped>
