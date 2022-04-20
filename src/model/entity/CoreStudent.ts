@@ -49,7 +49,7 @@ export  class Schedule {
     /**
      * 作品名称
      */
-    name: string
+     workName: string
 
     /**
      * 专辑学习状态 0完成1未完成
