@@ -1,10 +1,11 @@
 import { cloud } from '@/cloud'
+import { CoreQuestionRepo } from '@/model/entity/CoreQuestionRepo'
 import { LogicDelete } from '@/model/LogicDelete'
 
 const DB = cloud.database()
 
 export async function initQuestionList(page:any){
-    const totalRes = await DB.collection('core_question_repo')
+    const totalRes = await DB.collection(CoreQuestionRepo.TABLE_NAME)
         .where({
             delFlag:LogicDelete.NORMAL
         })
@@ -12,7 +13,7 @@ export async function initQuestionList(page:any){
     if(!totalRes.ok){
         throw new Error(totalRes.error)
     }
-    const listRes = await DB.collection('core_question_repo')
+    const listRes = await DB.collection(CoreQuestionRepo.TABLE_NAME)
         .where({
             delFlag:LogicDelete.NORMAL
         })

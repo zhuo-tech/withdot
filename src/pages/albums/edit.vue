@@ -54,7 +54,7 @@ service.getAlbumsList()
         <el-row>
             <el-col :span="24">
                 <div class="tableHeader">
-                    <div>作品列表({{ albumsDetail.workList?.length }})</div>
+                    <div>作品列表<span v-if="albumsDetail.workList?.length">({{ albumsDetail.workList?.length }})</span></div>
                 </div>
             </el-col>
         </el-row>
