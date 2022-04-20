@@ -87,4 +87,9 @@ export class PayChannel {
    * 删除状态 是否删除 0否1是
    */
   delFlag: number
+
+  /**
+   * 保存param字符串形式，用来展示
+   */
+  paramText:string
 }

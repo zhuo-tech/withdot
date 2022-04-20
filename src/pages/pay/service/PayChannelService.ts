@@ -1,3 +1,4 @@
+
 import { cloud } from '@/cloud';
 import { CommonEnum } from '@/model/CommonEnum';
 import { PayChannel } from "@/model/entity/PayChannel"
@@ -13,7 +14,6 @@ import { getLogger } from "@/main";
  * @date 2022年04月01日 17点13分
  */
 export class PayChannelService {
-
     private readonly log = getLogger('PayChannelService')
 
     /**
@@ -22,13 +22,13 @@ export class PayChannelService {
      */
     async list(): Promise<Array<PayChannel>> {
         const dbTemplate = cloud.database();
-        const res = await dbTemplate.collection(PayChannel.TABLE_NAME)
-            .get<PayChannel>()
 
-        return res.data
+        const res = await dbTemplate
+            .collection(PayChannel.TABLE_NAME)
+            .get<PayChannel>();
+
+        return res.data;
     }
-    
-
 
     /**
      * 分页查询支付渠道信息
@@ -38,33 +38,37 @@ export class PayChannelService {
      */
     async page(size: number, current: number): Promise<Array<PayChannel>> {
         const dbTemplate = cloud.database();
-        const res = await dbTemplate.collection(PayChannel.TABLE_NAME)
+        const res = await dbTemplate
+            .collection(PayChannel.TABLE_NAME)
             .skip(size * (current - 1))
             .limit(size)
-            .get<PayChannel>()
-        return res.data
+            .get<PayChannel>();
+        return res.data;
     }
 
-
-     /**
+    /**
      * 分页查询支付通知信息
      * @param current 当前页
      * @param size  分页大小
      * @returns 支付通知分页列表
      */
-      async pageByParams(current: number,size: number,params: PayChannelQo): Promise<Array<PayNotifyRecord>> {
+    async pageByParams(
+        current: number,
+        size: number,
+        params: PayChannelQo
+    ): Promise<Array<PayNotifyRecord>> {
         const dbTemplate = cloud.database();
-        const res = await dbTemplate.collection(PayNotifyRecord.TABLE_NAME)
+        const res = await dbTemplate
+            .collection(PayNotifyRecord.TABLE_NAME)
             .where({
                 delFlag: LogicDelete.NORMAL,
-                orderNo: params.orderNo
+                orderNo: params.orderNo,
             })
             .limit(size)
             .skip(size * (current - 1))
-            .get<PayNotifyRecord>()
-        return res.data
+            .get<PayNotifyRecord>();
+        return res.data;
     }
-
 
     /**
      * 统计
@@ -72,24 +76,38 @@ export class PayChannelService {
      */
     async count(): Promise<number> {
         const dbTemplate = cloud.database();
-        const { total } = await dbTemplate.collection(PayChannel.TABLE_NAME).count()
-        return total
+        const { total } = await dbTemplate
+            .collection(PayChannel.TABLE_NAME)
+            .count();
+        return total;
     }
 
     /**
-     * 保存支付渠道
+     * 新增支付渠道
+     * @param obj 支付渠道对象
+     * @returns true | false
+     */
+    async addPayChannel(obj: PayChannel) {
+        const dbTemplate = cloud.database();
+        return await dbTemplate.collection(PayChannel.TABLE_NAME).add(obj);
+    }
+
+    /**
+     * 修改支付渠道
      * @param obj 支付渠道对象
      * @returns true | false
      */
     async saveObj(obj: PayChannel): Promise<string> {
         const dbTemplate = cloud.database();
-        this.init(obj, CommonEnum.ACTION_ADD)
-        const { id, error } = await dbTemplate.collection(PayChannel.TABLE_NAME).add({ obj })
+        this.init(obj, CommonEnum.ACTION_ADD);
+        const { id, error } = await dbTemplate
+            .collection(PayChannel.TABLE_NAME)
+            .add({ obj });
         if (ObjectUtil.isNull(id)) {
-            this.log.error("save exam error `{}` ", error)
-            throw new Error(error)
+            this.log.error("save exam error `{}` ", error);
+            throw new Error(error);
         }
-        return id as string
+        return id as string;
     }
 
     /**
@@ -99,13 +117,13 @@ export class PayChannelService {
      */
     async updateById(obj: PayChannel): Promise<boolean> {
         const dbTemplate = cloud.database();
-        this.init(obj, CommonEnum.ACTION_UPDATE)
+        this.init(obj, CommonEnum.ACTION_UPDATE);
         const result = await dbTemplate
             .collection(PayChannel.TABLE_NAME)
             .doc(obj._id)
-            .update({ obj })
-        this.log.debug("更新支付渠道记录 `{}` ", result)
-        return true
+            .update({ obj });
+        this.log.debug("更新支付渠道记录 `{}` ", result);
+        return true;
     }
 
     /**
@@ -114,23 +132,48 @@ export class PayChannelService {
      * @returns true
      */
     async removeById(id: string): Promise<boolean> {
-        const dbTemplate = cloud.database()
-        const res = dbTemplate.collection(PayChannel.TABLE_NAME)
+        const dbTemplate = cloud.database();
+        const res = dbTemplate
+            .collection(PayChannel.TABLE_NAME)
             .where({ _id: id })
-            .remove()
-        this.log.debug("删除支付渠道 `{}`", res)
-        return true
+            .remove();
+        this.log.debug("删除支付渠道 `{}`", res);
+        return true;
     }
 
     private init(obj: PayChannel, flag: string): void {
-        const curTime = Date.now()
+        const curTime = Date.now();
         if (CommonEnum.ACTION_ADD === flag) {
-            obj.createTime = curTime
-            obj.updateTime = curTime
-            obj.delFlag = LogicDelete.NORMAL
+            obj.createTime = curTime;
+            obj.updateTime = curTime;
+            obj.delFlag = LogicDelete.NORMAL;
         } else {
-            obj.updateTime = curTime
+            obj.updateTime = curTime;
         }
     }
 
+    /**
+     * 编辑
+     * @param obj 支付渠道对象
+
+     */
+    async editPayChannel(obj:any,id:string) {
+        const dbTemplate = cloud.database()
+        return await dbTemplate
+        .collection(PayChannel.TABLE_NAME)
+        .where({_id:id})
+        .update(obj)
+    }
+
+
+        /**
+     * 搜索
+     */
+         async searchTool(state:string){
+            const dbTemplate = cloud.database();
+             return await dbTemplate
+                .collection(PayChannel.TABLE_NAME)
+                .where({state:state})
+                .get<PayChannel>();
+        }
 }
