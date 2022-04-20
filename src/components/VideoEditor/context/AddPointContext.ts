@@ -1,6 +1,19 @@
 import { CoreDot, CoreDotPosition, CoreDotType, DotDisplayType } from '@/model/entity/CoreDot'
 import { RuleItem } from 'async-validator'
 import { FormInstance } from 'element-plus'
+import { CollUtil, ObjectUtil } from 'typescript-util'
+import { ExtractPropTypes } from 'vue'
+
+export type EmitsType = {
+    (event: 'submit', data: CoreDot): void
+}
+
+export type PropsType = Readonly<ExtractPropTypes<{
+    currentPlayTime: {
+        type: NumberConstructor
+        default: number
+    }
+}>>
 
 /**
  * AddPoint
@@ -8,6 +21,9 @@ import { FormInstance } from 'element-plus'
  * @date 2022-04-11 下午 10:46
  **/
 export class AddPointContext {
+
+    private readonly props: PropsType
+    private readonly emits: EmitsType
 
     public formIsShow = false
     public formRef: FormInstance
@@ -28,6 +44,33 @@ export class AddPointContext {
      * 当前打点类型
      */
     public currentType: CoreDotType = CoreDotType.题目
+
+    constructor(props: PropsType, emits: EmitsType) {
+        this.props = props
+        this.emits = emits
+    }
+
+    public submit() {
+        this.formRef.validate()
+            .then((validate) => {
+                if (!validate) {
+                    return
+                }
+                // TODO: 临时措施, 从 config 数据中获取可能存在的结束时间偏移量; 默认值 0 未定义
+                const end = this.formData.config['time'] ?? 0
+
+                this.formData.type = this.currentType
+                this.formData.start = this.props.currentPlayTime
+                this.formData.end = this.props.currentPlayTime + end
+
+                this.emits('submit', this.formData)
+                this.close()
+            })
+            .catch(err => {
+                CollUtil.flatMap(ObjectUtil.toArray(err), i => i.value)
+                    .forEach(i => console.warn('验证失败', i))
+            })
+    }
 
     public static formDataDefault() {
         let dot = new CoreDot()

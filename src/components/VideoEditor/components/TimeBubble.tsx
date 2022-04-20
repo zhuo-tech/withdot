@@ -39,6 +39,9 @@ export default defineComponent({
         } as any
     },
     computed: {
+        /**
+         * 打点信息列表 按照 position.z 分组, 按照 z 值排序
+         */
         zIndexMap() {
             const map: Record<string, Array<CoreDot>> = CollUtil.groupBy(this.list as Array<CoreDot>, dot => String(dot?.position?.z))
             return ObjectUtil.toArray(map).sort(({key: ak}, {key: bk}) => parseInt(ak) - parseInt(bk))
@@ -58,13 +61,13 @@ export default defineComponent({
         },
 
         /**
-         * 渲染一项
+         * 渲染一项, 处理气泡定位
          */
         renderItem(dot: CoreDot, index: number) {
             const allTime = this.timePeriod.end - this.timePeriod.start
             const {start = 0, end = 0} = dot
             const itemLeft = start / allTime * this.containerWidth
-            const itemWidth = end - start / allTime * this.containerWidth
+            const itemWidth = (end - start) / allTime * this.containerWidth
 
             const left = itemLeft + 'px'
             const width = Math.max(itemWidth, 50) + 'px'
@@ -88,10 +91,12 @@ export default defineComponent({
         const DefaultSlot = this.$slots.default
         return (
             <div class="timeline-wrapper" style={ {height} }>
-                {/* @ts-ignore */ }
-                <DefaultSlot ref={ el => (this.wrapperRef as any) = el }></DefaultSlot>
-                <div class="dot-time-list">
-                    { this.zIndexMap.map((kv, index) => this.renderRow(kv, index)) }
+                <div class="content">
+                    {/* @ts-ignore */ }
+                    <DefaultSlot ref={ el => (this.wrapperRef as any) = el }></DefaultSlot>
+                    <div class="dot-time-list">
+                        { this.zIndexMap.map((kv, index) => this.renderRow(kv, index)) }
+                    </div>
                 </div>
             </div>
         )

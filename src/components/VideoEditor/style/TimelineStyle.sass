@@ -32,16 +32,18 @@
         height: 100%
         left: 0
         transform: translateX(-100%)
-        border-right: 3px solid var(--hover-pointer-color)
+        border-left: 3px solid var(--hover-pointer-color)
 
         .scale-value
             position: absolute
             bottom: 0
             transform: translateY(100%)
 
+            color: #ffacf0
+
     // 画线
     .timeline-item .current-item
-        border-right: 3px solid var(--current-item-color)
+        border-left: 3px solid var(--current-item-color)
 
     .timeline-item:before
         content: ''
@@ -53,15 +55,17 @@
 
     .hour:before
         max-height: var(--item-height-hour)
+        border-left: 3px solid var(--tick-color)
         border-right: 3px solid var(--tick-color)
 
     .minute:before
         max-height: var(--item-height-minute)
+        border-left: 2px solid var(--tick-color)
         border-right: 2px solid var(--tick-color)
 
     .second:before
         max-height: var(--item-height-second)
-        border-right: 1px solid var(--tick-color)
+        border-left: 1px solid var(--tick-color)
 
     .timeline-item:last-child
         border: none

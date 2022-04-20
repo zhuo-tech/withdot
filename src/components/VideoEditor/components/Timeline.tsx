@@ -19,6 +19,8 @@ type DataType = {
     containerWidth: number
     hoverLeft: number
     hoverValue: number
+    hoverShow: boolean
+    hoverTimer: any
     ro: ResizeObserver
 }
 
@@ -54,6 +56,8 @@ export default defineComponent({
             containerWidth: 0,
             hoverLeft: 0,
             hoverValue: 0,
+            hoverShow: false,
+            hoverTimer: null,
             ro: new ResizeObserver(() => this.refreshContainerWidth()),
         } as any
     },
@@ -160,6 +164,11 @@ export default defineComponent({
             }
             this.hoverValue = parseInt(ele.dataset['timeValue'] ?? '')
             this.hoverLeft = ele.getBoundingClientRect().right - this.containerRect.left
+            this.hoverShow = true
+            if (this.hoverTimer) {
+                window.clearTimeout(this.hoverTimer)
+            }
+            this.hoverTimer = TimeUnit.SECOND.setTimeout(() => this.hoverShow = false, 2)
         },
 
         /**
@@ -183,9 +192,13 @@ export default defineComponent({
                  onMouseover={ event => this.onMouseover(event) }
                  onClick={ event => this.onMouseclick(event) }>
                 <div class="current-pointer"></div>
-                <div class="hover-pointer" style={ {left: this.hoverLeft + 'px'} }>
-                    <div class="scale-value">{ TimeUnit.SECOND.display(this.hoverValue) }</div>
-                </div>
+                {
+                    this.hoverShow && (
+                        <div class="hover-pointer" style={ {left: this.hoverLeft + 'px'} }>
+                            <div class="scale-value">{ TimeUnit.SECOND.display(this.hoverValue) }</div>
+                        </div>
+                    )
+                }
                 { hourPeriod.map(period => this.renderHour(period)) }
             </div>
         )

@@ -5,7 +5,8 @@ import CoreMaterial from '@/model/entity/CoreMaterial'
 import { CoreWork } from '@/model/entity/CoreWork'
 import { AddLocation, Comment, Crop, Document, ElementPlus, Link, PictureFilled } from '@element-plus/icons-vue'
 import { LafClient } from 'laf-db-query-wrapper'
-import { reactive } from 'vue'
+import { ObjectUtil, StrUtil } from 'typescript-util'
+import { reactive, watch } from 'vue'
 
 export const DotTypeOption: Array<{ icon: any, type: CoreDotType, label: string }> = [
     {icon: Document, type: CoreDotType.题目, label: '题目'},
@@ -32,10 +33,6 @@ export class VideoEditorContext {
     // noinspection JSUnusedLocalSymbols
     private readonly client = new LafClient<CoreDot>(CoreDot.TABLE_NAME)
     private readonly props: PropsType
-    /**
-     * 当前打点类型
-     */
-    public currentType: CoreDotType = CoreDotType.题目
 
     public pointList = reactive<Array<CoreDot>>([])
 
@@ -51,25 +48,55 @@ export class VideoEditorContext {
 
     constructor(props: PropsType) {
         this.props = props
+
+        this.initPointList()
+
+        watch(() => this.props.data, (nv, ov) => {
+            if (StrUtil.isEmpty(ov._id) && StrUtil.isNotEmpty(nv._id)) {
+                this.initPointList()
+            }
+        }, {deep: true})
     }
 
-    public createDot(dto: CoreDot, startTime: number) {
-        const {_id: workId} = this.props.data
+    public createDot(dot: CoreDot) {
+        dot.workId = this.props.data._id
 
-        // 基础信息初始化
-        dto.workId = workId
-        dto.type = this.currentType
-        dto.start = startTime
+        this.pointList.push(dot)
 
-        this.pointList.push(dto)
+        this.saveDot(dot)
+            .then(dot => this.log.trace('保存基础信息', dot))
     }
 
-    public async saveDot(dto: CoreDot) {
-        dto.createTime = Date.now()
-        dto.updateTime = Date.now()
-        dto.createBy = (await getUserInfo())?._id as string
+    public update(index: number) {
+        const dot = this.pointList[index]
+        if (ObjectUtil.isEmpty(dot)) {
+            return
+        }
+        dot.updateTime = Date.now()
+        this.client.updateById(dot._id, dot, '_id')
+            .then(() => this.log.debug('更新保存完成', dot._id))
+            .catch(err => this.log.error('更新保存点信息失败: ', err))
+    }
 
-        await this.client.insert(dto)
+    private initPointList() {
+        const workId = this.props.data._id
+        if (StrUtil.isEmpty(workId)) {
+            return
+        }
+        this.client.queryWrapper()
+            .eq('workId', workId)
+            .list(9999)
+            .then(list => this.pointList = list)
+            .catch(err => this.log.warn('init point list => ', err))
+    }
+
+    private async saveDot(dot: CoreDot) {
+        dot.createTime = Date.now()
+        dot.updateTime = Date.now()
+        dot.createBy = (await getUserInfo())?._id as string
+
+        dot._id = await this.client.insert(dot) as string
+        return dot
     }
 
 }

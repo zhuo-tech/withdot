@@ -10,7 +10,7 @@ type RightMenuAction = '+1' | '-1' | 'max' | 'min'
  */
 const prop = defineProps({
     item: {
-        type: CoreDot,
+        type: [CoreDot, Object],
         required: false,
         default: () => (new CoreDot()),
     },
@@ -24,7 +24,7 @@ const emits = defineEmits<{
     (event: 'setZIndex', action: RightMenuAction): void
 }>()
 
-const context = reactive(new DraggableContext(prop))
+const context = reactive(new DraggableContext(prop as any))
 
 const rightMenuClick = (action: RightMenuAction) => {
     emits('setZIndex', action)

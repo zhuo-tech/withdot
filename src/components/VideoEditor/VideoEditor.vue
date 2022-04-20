@@ -1,18 +1,19 @@
 <script lang="ts" setup>
-import EditorStageLayer from '@/components/VideoEditor/components/EditorStageLayer.vue'
-import TimeBubble from '@/components/VideoEditor/components/TimeBubble'
-import Timeline from '@/components/VideoEditor/components/Timeline'
 import DoubleSpeed from '@/components/VideoPlayer/components/DoubleSpeed.vue'
 import VideoPlayer from '@/components/VideoPlayer/index.vue'
 import { ControlModel } from '@/components/VideoPlayer/service/ControlModel'
 import CoreMaterial from '@/model/entity/CoreMaterial'
 import { CoreWork } from '@/model/entity/CoreWork'
 import { FileService, INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
+import { Edit } from '@element-plus/icons-vue'
+import { TimeUnit } from 'typescript-util'
 import { inject, reactive, Ref, ref } from 'vue'
 import AddPoint from './components/AddPoint.vue'
+import EditorStageLayer from './components/EditorStageLayer.vue'
 import List from './components/List.vue'
+import TimeBubble from './components/TimeBubble'
+import Timeline from './components/Timeline'
 import { VideoEditorContext } from './context/VideoEditorContext'
-import { TimeUnit } from 'typescript-util'
 
 /**
  * 编辑器
@@ -34,12 +35,12 @@ const timelineRef = ref({})
 <template>
 <div class="video-editor-box">
 
-    <AddPoint :current-play-time="playerRef.time" @submit="formData => context.createDot(formData, playerRef.time)" />
+    <AddPoint :current-play-time="playerRef.time" @submit="formData => context.createDot(formData)" />
 
     <!-- 播放器 -->
     <VideoPlayer :ref="setPlayerRef" :point-list="context.pointList" :show-control="false" :src="fileService.showUrl(data.material?.href)">
         <template v-slot:stage="{list, box}">
-            <EditorStageLayer :box="box" :list="list" />
+            <EditorStageLayer :box="box" :list="list" @drag="index => context.update(index)" />
         </template>
     </VideoPlayer>
 
@@ -87,23 +88,22 @@ const timelineRef = ref({})
     </TimeBubble>
 
     <!-- 底部列表 -->
-    <div v-if="false">
-        <List :list="context.pointList">
-            <template v-slot:prefix>
-                <el-icon>
-                    <postcard />
-                </el-icon>
-            </template>
-            <template v-slot:content="{item, index}">
-                {{ item }}
-            </template>
-            <template v-slot:operating="{item, index}">
-                <el-button type="primary" @click="context.controlDrawer.show()">
-                    显示列表 -- {{ playerRef.time }}
-                </el-button>
-            </template>
-        </List>
-    </div>
+    <List :list="context.pointList">
+        <template v-slot:prefix>
+            <el-icon>
+                <postcard />
+            </el-icon>
+        </template>
+        <template v-slot:content="{item, index}">
+            {{ item.label }}
+        </template>
+        <template v-slot:operating="{item, index}">
+            <el-button :icon="Edit" type="text" @click="context.controlDrawer.show()">
+                编辑
+            </el-button>
+        </template>
+    </List>
+
     <!-- 侧边抽屉 -->
     <el-drawer v-model="context.controlDrawer.isShow">
         <template #title>

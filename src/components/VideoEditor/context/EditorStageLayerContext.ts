@@ -1,5 +1,5 @@
-import { CoreDot } from '@/model/entity/CoreDot'
-import { Throttling } from '@/tool/annotation/Decorator'
+import { CoreDot, CoreDotPosition } from '@/model/entity/CoreDot'
+import { Debounce, Throttling } from '@/tool/annotation/Decorator'
 import { ObjectUtil } from 'typescript-util'
 import { reactive, watch } from 'vue'
 
@@ -9,6 +9,10 @@ type PropsType = {
         width: number,
         height: number,
     }
+}
+
+type EmitsType = {
+    (event: 'drag', index: number): void
 }
 
 type RightMenuAction = '+1' | '-1' | 'max' | 'min'
@@ -24,12 +28,9 @@ export class EditorStageLayerContext {
     private static readonly Z_INDEX_MIN = 0
     private static readonly Z_INDEX_DEFAULT = 1
 
-    private static readonly POSITION_DEFAULT: CoreDot['position'] = {
-        x: 0.5,
-        y: 0.5,
-        z: 1,
-    }
     private readonly props: Readonly<PropsType>
+    private readonly emits: EmitsType
+
     public stageLayerRef: HTMLDivElement
     private selectIndex: number | null
     private selectOffsetX = 0
@@ -37,8 +38,9 @@ export class EditorStageLayerContext {
 
     public styleMap: Record<number, Partial<CSSStyleDeclaration>> = reactive({})
 
-    constructor(props: Readonly<PropsType>) {
+    constructor(props: Readonly<PropsType>, emits: EmitsType) {
         this.props = props
+        this.emits = emits
 
         watch(() => props.list, () => this.bulkUpdateStyles(), {deep: true, immediate: true})
         watch(() => props.box, () => this.bulkUpdateStyles(), {deep: true})
@@ -47,7 +49,7 @@ export class EditorStageLayerContext {
     private bulkUpdateStyles() {
         this.props.list.forEach((item, index) => {
             if (ObjectUtil.isEmpty(item.position)) {
-                this.setPosition(index, EditorStageLayerContext.POSITION_DEFAULT)
+                this.setPosition(index, CoreDotPosition.DEFAULT)
             }
             this.styleMap[index] = this.updateStyle(index)
         })
@@ -106,6 +108,11 @@ export class EditorStageLayerContext {
         this.setPosition(index, {x: x / width, y: y / height})
     }
 
+    @Debounce(500)
+    private emitsDrag(index: number) {
+        this.emits('drag', index)
+    }
+
     public setZIndex(action: RightMenuAction, index: number) {
         const position = this.props.list[index].position
         let old = position?.z ?? EditorStageLayerContext.Z_INDEX_DEFAULT
@@ -135,6 +142,8 @@ export class EditorStageLayerContext {
             dot.position = {} as any
         }
         dot.position = {...dot.position, ...style}
+
+        this.emitsDrag(index)
     }
 
 }

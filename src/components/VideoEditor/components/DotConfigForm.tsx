@@ -36,7 +36,7 @@ const formDataDefault: Partial<Record<CoreDotType, any>> = {
     [CoreDotType.链接]: {},
 }
 
-type ConfigType = CoreDot['position']
+type ConfigType = CoreDot['config']
 
 // noinspection JSUnusedLocalSymbols
 export default defineComponent({

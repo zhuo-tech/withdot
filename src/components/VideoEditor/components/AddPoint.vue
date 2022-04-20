@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { CoreDot, DotDisplayTypeShow } from '@/model/entity/CoreDot'
-import { CollUtil, ObjectUtil, TimeUnit } from 'typescript-util'
+import { ObjectUtil, TimeUnit } from 'typescript-util'
 import { reactive } from 'vue'
 import { AddPointContext } from '../context/AddPointContext'
 import { DotTypeOption } from '../context/VideoEditorContext'
@@ -18,19 +18,7 @@ const emits = defineEmits<{
     (event: 'submit', data: CoreDot): void
 }>()
 
-const context = reactive(new AddPointContext())
-
-function formSubmit() {
-    context.formRef.validate((validate, err) => {
-        if (!validate) {
-            CollUtil.flatMap(ObjectUtil.toArray(err), i => i.value)
-                .forEach(i => console.warn('验证失败', i))
-            return
-        }
-        emits('submit', context.formData)
-        context.close()
-    })
-}
+const context = reactive(new AddPointContext(props, emits))
 
 </script>
 
@@ -84,7 +72,7 @@ function formSubmit() {
 
     <div slot="footer" class="drawer-body-footer" style="display: flex; justify-content: right">
         <el-button @click="context.close()">取 消</el-button>
-        <el-button type="primary" @click="formSubmit()">
+        <el-button type="primary" @click="context.submit()">
             {{ context.formIsLoading ? '提交中 ...' : '确 定' }}
         </el-button>
     </div>
@@ -100,10 +88,4 @@ function formSubmit() {
     .display
         flex: 0 1 120px
 
-</style>
-
-<style lang="sass">
-.select-play-time
-    .progress-bar
-        margin-top: 15px
 </style>
