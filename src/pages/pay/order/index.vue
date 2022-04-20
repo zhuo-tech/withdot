@@ -1,24 +1,23 @@
 
 <script lang="ts">
 import { ElMessage } from 'element-plus'
-import { defineComponent, onMounted, reactive, ref, toRefs } from "vue";
+import { onMounted, reactive, ref, toRefs } from "vue";
 import { PayTradeOrderService } from "@/pages/pay/service/PayTradeOrderService";
 import { getLogger } from "@/main";
 import { PayTradeOrderQo } from "@/pages/pay/service/qo/PayTradeOrderQo";
 import { PayTradeOrder } from '@/model/entity/PayTradeOrder';
 import { getPayStatLabel, StatusOptions } from '@/model/PayStatusEnum';
-
-export default defineComponent({
+const NAME = PayTradeOrder.name
+export default {
+    name:NAME,
     setup() {
         const L = getLogger("交易记录");
         const S = new PayTradeOrderService();
         const Q = new PayTradeOrderQo(1, 10)
-        const total = ref(0)
-        const listLoading = ref(true)
         const state = reactive({
             data: Array<PayTradeOrder>(),
-            total,
-            listLoading,
+            total: 0,
+            listLoading: true,
             queryParam: Q,
             statusOptions: StatusOptions,
         })
@@ -73,7 +72,7 @@ export default defineComponent({
             handlePayStatus
         }
     }
-})
+}
 </script>
 
 <template>
@@ -106,7 +105,7 @@ export default defineComponent({
         <el-table v-loading="listLoading" :data="data" border fit highlight-current-row style="width: 100%">
             <el-table-column label="序号" type="index" :sn="handleSn" width="60" />
             <el-table-column prop="orderId" label="订单号" />
-            <el-table-column prop="channelId" label="渠道ID" />
+            <el-table-column prop="channelId" label="支付渠道" />
             <el-table-column prop="channelMchId" label="渠道商户" />
             <el-table-column prop="channelOrderNo" label="渠道订单" />
             <el-table-column prop="body" label="商品描述" />
