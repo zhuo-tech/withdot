@@ -28,11 +28,11 @@ service.getAlbumsList()
                         <div>{{ albumsDetail.title }}</div>
                         <el-row>
                             <el-col :span="12" style="display: flex">
-                                <div>价格
+                                <div v-if="albumsDetail.sellingPrice" style="margin-right: 20px">价格
                                     <span>{{ albumsDetail.sellingPrice }}</span>
                                     元
                                 </div>
-                                <div style="margin-left: 20px">创建时间
+                                <div>创建时间
                                     <span>{{ filterTime(albumsDetail.createTime) }}</span>
                                 </div>
                                 <div style="margin-left: 20px">播放次数

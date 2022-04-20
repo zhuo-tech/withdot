@@ -74,6 +74,7 @@ export default class StudentService {
        this.getDetailApi(id).then(response=>{
            console.log(response)
            this.detail.data=response.data
+
        }).catch(err=>{
            ElMessage.error(err)
        })

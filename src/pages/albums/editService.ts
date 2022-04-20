@@ -61,7 +61,6 @@ export default class EditService {
 
     public getUrl_Id = (): string => {
         const query = this.route.query
-        console.log(query._id)
         return query._id as string
     }
 
@@ -165,13 +164,12 @@ export default class EditService {
         let list = this.albumsDetail.workList
         list.forEach((item: any) => {
             if (item._id === row._id) {
-                console.log(row)
                 item.isPay = row.isPay
             }
         })
         const res = await DB.collection(CoreAlbum.TABLE_NAME)
             .where({
-                _id: this.getAlbumsList,
+                _id: this.getUrl_Id(),
                 delFlag: LogicDelete.NORMAL,
             })
             .update({
