@@ -18,7 +18,7 @@ const props = defineProps({
             <el-table-column label="名称" prop="name" />
             <el-table-column label="头像" width="200">
                 <template #default="{row}">
-                    <ShowFile :href="row.avatar" style="height: 50px;" />
+                    <ShowFile :href="row.avatar" style="height: 50px;border-radius: 5px" />
                 </template>
             </el-table-column>
             <el-table-column label="是否付费">
@@ -40,22 +40,19 @@ const props = defineProps({
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="120">
                 <template #default="{row}">
-                    <el-button size="small" type="text" @click="service.handleClick(row._id)"
-                    >查看
-                    </el-button
-                    >
+                    <el-button size="small" type="text" @click="service.handleClick(row._id)">查看</el-button>
                 </template>
             </el-table-column>
         </el-table>
-        <el-row justify="end" type="flex" style="margin-top: 20px">
+        <el-row justify="end" style="margin-top: 20px" type="flex">
             <el-col :span="6">
                 <el-row justify="end" type="flex">
                     <el-pagination
                         :current-page="service.tableData.page.current"
                         :page-size="service.tableData.page.size"
+                        :page-sizes="[10, 20, 50, 100]"
                         :total="service.tableData.page.total"
                         layout="total, sizes, prev, pager, next"
-                        :page-sizes="[10, 20, 50, 100]"
                         @currentChange="service.currentPageChange"
                         @sizeChange="service.pageSizeChange">
                     </el-pagination>
