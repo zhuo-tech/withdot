@@ -92,6 +92,7 @@ const displayDot = computed(() => {
                   :current="playerRef.time"
                   :end="playerRef.maxTime"
                   :start="playerRef.minTime"
+                  @drag="time => playerRef.setPlayTime(time)"
                   @select="time => playerRef.setPlayTime(time)" />
     </TimeBubble>
 

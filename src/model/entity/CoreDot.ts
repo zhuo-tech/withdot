@@ -37,10 +37,19 @@ export class CoreDot<T extends CoreDotType = any> implements BaseEntity {
      */
     label?: string
 
+    /**
+     * 展示类型
+     */
     display: DotDisplayType
 
+    /**
+     * 定位
+     */
     position: CoreDotPosition
 
+    /**
+     * 配置信息
+     */
     config: DotTypeConfigMapping[T]
 
     createTime: number

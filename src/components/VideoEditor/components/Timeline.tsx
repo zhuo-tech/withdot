@@ -15,12 +15,37 @@ const DOMRectEmpty: DOMRect = {
 } as any
 
 type DataType = {
+    /**
+     * 容器 Ref 引用
+     */
     containerRef: HTMLDivElement
+    /**
+     * 容器DOM宽度
+     */
     containerWidth: number
+    /**
+     * 悬浮指针 left 定位值
+     */
     hoverLeft: number
+    /**
+     * 悬浮位置刻度值
+     */
     hoverValue: number
+    /**
+     * 是否显示悬浮指针
+     */
     hoverShow: boolean
+    /**
+     * 内部属性, 悬停隐藏定时器
+     */
     hoverTimer: any
+    /**
+     * 拖动状态?
+     */
+    drag: boolean
+    /**
+     * resize 监视器
+     */
     ro: ResizeObserver
 }
 
@@ -39,7 +64,7 @@ export default defineComponent({
             default: -1,
         },
     },
-    emits: ['select'],
+    emits: ['select', 'drag'],
     expose: ['containerWidth'],
     computed: {
         integerRange() {
@@ -52,14 +77,15 @@ export default defineComponent({
     },
     data(): DataType {
         return {
-            containerRef: null,
+            containerRef: {} as any,
             containerWidth: 0,
             hoverLeft: 0,
             hoverValue: 0,
             hoverShow: false,
             hoverTimer: null,
+            drag: false,
             ro: new ResizeObserver(() => this.refreshContainerWidth()),
-        } as any
+        }
     },
     mounted() {
         // 初始化, 并监听容器大小变化
@@ -158,11 +184,15 @@ export default defineComponent({
          * 在鼠标悬停时, 移动悬浮刻度指针
          */
         onMouseover(event: MouseEvent) {
+            // 拖动期间 悬停禁用
+            if (this.drag) {
+                return
+            }
             const ele: HTMLDivElement = event.target as any
             if (!ele.className.includes('second')) {
                 return
             }
-            this.hoverValue = parseInt(ele.dataset['timeValue'] ?? '')
+            this.hoverValue = this.getTimeValue(ele)
             this.hoverLeft = ele.getBoundingClientRect().right - this.containerRect.left
             this.hoverShow = true
             if (this.hoverTimer) {
@@ -179,7 +209,31 @@ export default defineComponent({
             if (!ele.className.includes('second')) {
                 return
             }
-            this.$emit('select', ele.dataset['timeValue'])
+            this.$emit('select', this.getTimeValue(ele))
+        },
+
+        /**
+         * 在时间轴上移动
+         */
+        onMousemove(event: MouseEvent) {
+            if (!this.drag) {
+                return
+            }
+            const ele: HTMLDivElement = event.target as any
+            if (!ele.className.includes('second')) {
+                return
+            }
+
+            this.$emit('drag', this.getTimeValue(ele))
+        },
+
+        /**
+         * 工具方法: 从 秒 div 盒子上 取出 time value 值
+         * 注意 ele 是否是 秒 元素
+         * @private
+         */
+        getTimeValue(ele: HTMLDivElement) {
+            return parseInt(ele.dataset['timeValue'] ?? '')
         },
     },
     render() {
@@ -189,9 +243,11 @@ export default defineComponent({
         return (
             <div ref={ el => (this.containerRef as any) = el }
                  class="timeline-container"
+                 onMousemove={ event => this.onMousemove(event) }
                  onMouseover={ event => this.onMouseover(event) }
+                 onMousedown={ () => this.drag = true }
+                 onMouseup={ () => this.drag = false }
                  onClick={ event => this.onMouseclick(event) }>
-                <div class="current-pointer"></div>
                 {
                     this.hoverShow && (
                         <div class="hover-pointer" style={ {left: this.hoverLeft + 'px'} }>
