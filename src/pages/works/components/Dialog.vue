@@ -113,7 +113,7 @@ getMaterialList()
                     @current-change="handleCurrentChange">
                     <el-table-column type="index" width="55" />
                     <el-table-column label="标题" prop="title" width="400" />
-                    <el-table-column label="创建时间">
+                    <el-table-column label="创建时间" min-width="200">
                         <template #default="scope">{{ filterTime(scope.row.createTime) }}</template>
                     </el-table-column>
                 </el-table>
