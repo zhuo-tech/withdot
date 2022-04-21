@@ -93,7 +93,7 @@ getMaterialList()
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55" />
             <el-table-column label="作品名称" property="name" width="120" />
-            <el-table-column label="创建时间" prop="createTime">
+            <el-table-column label="创建时间" min-width="200" prop="createTime">
                 <template #default="{row}">
                     {{ filterTime(row.createTime) }}
                 </template>

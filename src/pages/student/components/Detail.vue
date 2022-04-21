@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import ShowFile from '@/components/Upload/ShowFile'
-import StudentService from '@/pages/student/StudentService'
+import StudentService, { StatusType ,StudyType } from '@/pages/student/StudentService'
 import { filterTime } from '@/utils/utils'
 
 const props = defineProps({
@@ -14,51 +14,75 @@ const props = defineProps({
         v-model="service.detail.visible"
         title="学员详情"
         width="70%">
-        <el-row :gutter="10">
-            <el-col :span="5">
-                <ShowFile :href="service.detail.data.avatar" style="height: 150px"/>
+        <el-row :gutter="10" style="margin-bottom: 20px">
+            <el-col :span="5" >
+                <ShowFile :href="service.detail.data.avatar" style="height: 150px;border-radius: 5px" />
             </el-col>
             <el-col :span="18" class="introduction">
-                <div>名称:<span>{{ service.detail.data.name }}</span></div>
-                <div>电话:<span>{{ service.detail.data.phone }}</span></div>
-                <div>注册时间:<span>{{ filterTime(service.detail.data.createTime )}}</span></div>
+                <div>名称:
+                    <span>{{ service.detail.data.name }}</span>
+                </div>
+                <div>电话:
+                    <span>{{ service.detail.data.phone }}</span>
+                </div>
+                <div>注册时间:
+                    <span>{{ filterTime(service.detail.data.createTime) }}</span>
+                </div>
             </el-col>
         </el-row>
         <el-collapse v-model="service.detail.collapseActiveName" accordion>
-            <el-collapse-item title="购买记录" name="1">
+            <el-collapse-item name="1" title="购买记录">
                 <div>
                     <el-table
                         :data="service.detail.data.payData"
                         style="width: 100%">
-                        <el-table-column label="日期" prop="date" width="180"></el-table-column>
-                        <el-table-column label="姓名" prop="name" width="180"></el-table-column>
-                        <el-table-column label="地址" prop="address"></el-table-column>
+                        <el-table-column label="商品名称" prop="goodsName" width="280"></el-table-column>
+                        <el-table-column label="金额" prop="amount" width="180"></el-table-column>
+                        <el-table-column label="支付订单号" min-width="250" prop="payOrderId"></el-table-column>
+                        <el-table-column label="订单状态" prop="columnProp" width="200">
+                            <template #default="{ row}">{{ StatusType[row.status] }}</template>
+                        </el-table-column>
+                        <el-table-column label="创建时间" min-width="300" prop="createTime">
+                            <template #default="{row}">{{ filterTime(row.createTime) }}</template>
+                        </el-table-column>
                     </el-table>
                 </div>
             </el-collapse-item>
-            <el-collapse-item title="浏览记录" name="2">
-                <div>
-                    Operation feedback: enable the users to clearly perceive their
-                    operations by style updates and interactive effects;
-                </div>
-                <div>
-                    Visual feedback: reflect current state by updating or rearranging
-                    elements of the page.
-                </div>
+            <el-collapse-item name="2" title="浏览记录">
+                <el-table
+                    :data="service.detail.data.schedules"
+                    style="width: 100%">
+                    <el-table-column label="专辑名称" prop="albumName" width="280"></el-table-column>
+                    <el-table-column label="作品名称" prop="workName" width="180"></el-table-column>
+                    <el-table-column label="专辑学习状态" prop="status" width="200">
+                        <template #default="{ row}">{{ StudyType[row.status] }}</template>
+                    </el-table-column>
+                    <el-table-column label="作品学习状态" prop="workStatus" width="200">
+                        <template #default="{ row}">{{ StudyType[row.workStatus] }}</template>
+                    </el-table-column>
+                    <el-table-column label="学习进度" prop="ratio" width="200"></el-table-column>
+                    <el-table-column label="完成时间" min-width="300" prop="lastTime">
+                        <template #default="{row}">{{ filterTime(row.createTime) }}</template>
+                    </el-table-column>
+                </el-table>
             </el-collapse-item>
         </el-collapse>
     </el-dialog>
 </template>
 
+
 <style lang="less" scoped>
-.introduction{
+.introduction {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    >div{
+
+    > div {
         font-size: 20px;
-        >span{
-            font-weight: bolder;
+        font-weight: bolder;
+        > span {
+            font-size: 18px;
+            font-weight:normal;
             margin-left: 10px;
         }
     }
