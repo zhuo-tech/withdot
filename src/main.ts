@@ -1,16 +1,18 @@
-import App from '@/App'
-import { createVueRouterInstantiate } from '@/router'
 import { LoggerFactory } from '@/tool/log/LoggerFactory'
 import { LoggerLevel } from '@/tool/log/LoggerLevel'
+import { ObjectUtil } from 'typescript-util'
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import ElementPlus from 'element-plus'
+// 在 element-plus css 之前导入 tailwind css 以避免冲突
+import './index.css'
+import 'element-plus/dist/index.css'
+import App from '@/App'
+import { createVueRouterInstantiate } from '@/router'
 import * as ElIconModules from '@element-plus/icons-vue'
 // @ts-ignore
 import * as echarts from 'echarts'
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
-import { createPinia } from 'pinia'
-import { ObjectUtil } from 'typescript-util'
-import { createApp } from 'vue'
-import './index.css' // 在 element-plus css 之前导入 tailwind css 以避免冲突
+
 // 初始化日志
 const factory = new LoggerFactory()
 factory.enableLevel = LoggerLevel.DEBUG
