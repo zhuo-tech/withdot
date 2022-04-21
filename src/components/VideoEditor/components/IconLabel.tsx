@@ -1,5 +1,6 @@
 // noinspection JSXNamespaceValidation
 
+import { StrUtil } from 'typescript-util'
 import { defineComponent } from 'vue'
 
 export default defineComponent({
@@ -10,7 +11,7 @@ export default defineComponent({
         },
         label: {
             type: String,
-            required: true,
+            required: false,
         },
     },
     render() {
@@ -23,9 +24,13 @@ export default defineComponent({
                     // @ts-ignore
                     Icon && <el-icon><Icon></Icon></el-icon>
                 }
-                <span style={ {paddingLeft: '5px'} }>
-                    { label }
-                </span>
+                {
+                    StrUtil.isNotEmpty(label) && (
+                        <span style={ {paddingLeft: '5px'} }>
+                            { label }
+                        </span>
+                    )
+                }
             </span>
         )
     },

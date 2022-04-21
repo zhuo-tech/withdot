@@ -1,3 +1,4 @@
+import { Throttling } from '@/tool/annotation/Decorator'
 import { useResizeMonitor } from '@/tool/hooks/useResizeMonitor'
 import { reactive } from 'vue'
 import { VideoWrapperContext } from '../context/VideoWrapperContext'
@@ -39,16 +40,18 @@ export class ControlModelAdapter implements ControlModel {
 
     private readonly videoContext: VideoWrapperContext
     private readonly videoBoxElement: DivWrapper
-    public setPlayTime: (time: number) => void = (time) => {
+
+    @Throttling(50)
+    public setPlayTime(time: number) {
         this.videoContext.setPlayTime(time)
     }
-    public play: () => void = () => {
+    public play() {
         this.videoContext.play()
     }
-    public pause: () => void = () => {
+    public pause() {
         this.videoContext.pause()
     }
-    public toggleFullScreen: () => void = () => {
+    public toggleFullScreen() {
         this.videoBoxElement.toggleFullScreen()
     }
 

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import IconLabel from '@/components/VideoEditor/components/IconLabel'
 import { CoreDotController } from '@/components/VideoEditor/service/CoreDotFilter'
 import DoubleSpeed from '@/components/VideoPlayer/components/DoubleSpeed.vue'
 import VideoPlayer from '@/components/VideoPlayer/index.vue'
@@ -14,7 +15,7 @@ import EditorStageLayer from './components/EditorStageLayer.vue'
 import List from './components/List.vue'
 import TimeBubble from './components/TimeBubble'
 import Timeline from './components/Timeline'
-import { VideoEditorContext } from './context/VideoEditorContext'
+import { DotTypeIconShow, VideoEditorContext } from './context/VideoEditorContext'
 
 /**
  * 编辑器
@@ -87,7 +88,8 @@ const displayDot = computed(() => {
     <!-- timeline -->
     <TimeBubble :container-width="timelineRef['containerWidth']"
                 :list="context.pointList"
-                :time-period="{start: playerRef.minTime, end: playerRef.maxTime}">
+                :time-period="{start: playerRef.minTime, end: playerRef.maxTime}"
+                @select="time => playerRef.setPlayTime(time)">
         <Timeline ref="timelineRef"
                   :current="playerRef.time"
                   :end="playerRef.maxTime"
@@ -98,10 +100,8 @@ const displayDot = computed(() => {
 
     <!-- 底部列表 -->
     <List :list="context.pointList">
-        <template v-slot:prefix>
-            <el-icon>
-                <postcard />
-            </el-icon>
+        <template v-slot:prefix="{item}">
+            <IconLabel :icon="DotTypeIconShow[item.type]" />
         </template>
         <template v-slot:content="{item, index}">
             {{ item.label }}
@@ -126,10 +126,6 @@ const displayDot = computed(() => {
             </template>
             <template v-slot:content="{item, index}">
                 {{ item }}
-            </template>
-            <template v-slot:operating="{item, index}">
-                <el-button type="primary">
-                </el-button>
             </template>
         </List>
     </el-drawer>

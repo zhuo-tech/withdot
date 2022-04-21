@@ -4,15 +4,16 @@ import WorkBaseForm from '@/pages/works/components/WorkBaseForm.vue'
 import { WorkEditorContext } from '@/pages/works/WorkEditorContext'
 import { ArrowLeft } from '@element-plus/icons-vue'
 import { reactive } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const context = reactive(new WorkEditorContext(useRoute().params.id as string))
 
+const router = useRouter()
 </script>
 
 <template>
 <el-card v-loading="context.workDataIsLoading" class="page-wrapper">
-    <el-page-header :icon="ArrowLeft">
+    <el-page-header :icon="ArrowLeft" @back="() => router.back()">
         <template #content>
             <h1>{{ context.workData.name }}
                 <WorkBaseForm :data="context.workData" />

@@ -33,6 +33,7 @@ export default defineComponent({
             required: true,
         },
     },
+    emits: ['select'],
     data(): DataType {
         return {
             wrapperRef: null,
@@ -73,14 +74,14 @@ export default defineComponent({
             const width = Math.max(itemWidth, 50) + 'px'
 
             return (
-                <div class="item" key={ index } onClick={ event => this.itemOnClick(event) } style={ {left, width} }>
+                <div class="item" key={ index } onClick={ () => this.itemOnClick(dot) } style={ {left, width} }>
                     { dot.label }
                 </div>
             )
         },
 
-        itemOnClick(event: MouseEvent) {
-
+        itemOnClick(dot: CoreDot) {
+            this.$emit('select', dot.start)
         },
 
     },

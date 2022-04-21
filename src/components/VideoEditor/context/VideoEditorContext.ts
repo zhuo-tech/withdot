@@ -5,7 +5,7 @@ import CoreMaterial from '@/model/entity/CoreMaterial'
 import { CoreWork } from '@/model/entity/CoreWork'
 import { AddLocation, Comment, Crop, Document, ElementPlus, Link, PictureFilled } from '@element-plus/icons-vue'
 import { LafClient } from 'laf-db-query-wrapper'
-import { ObjectUtil, StrUtil } from 'typescript-util'
+import { CollUtil, ObjectUtil, StrUtil } from 'typescript-util'
 import { isRef, Ref, ref, unref, watch } from 'vue'
 
 export const DotTypeOption: Array<{ icon: any, type: CoreDotType, label: string }> = [
@@ -17,6 +17,8 @@ export const DotTypeOption: Array<{ icon: any, type: CoreDotType, label: string 
     {icon: ElementPlus, type: CoreDotType.表单, label: '表单'},
     {icon: Link, type: CoreDotType.链接, label: '链接'},
 ]
+
+export const DotTypeIconShow = CollUtil.toMap(DotTypeOption, i => i.type, i => i.icon)
 
 export type PropsType = {
     data: CoreWork & { material: CoreMaterial }
