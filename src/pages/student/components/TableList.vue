@@ -13,6 +13,7 @@ const props = defineProps({
         <el-table
             v-loading="service.tableData.tableIsLoading"
             :data="service.tableData.list"
+            stripe
             style="width: 100%">
             <el-table-column label="序号" type="index" width="80" />
             <el-table-column label="名称" prop="name" />
@@ -28,12 +29,12 @@ const props = defineProps({
                 </template>
             </el-table-column>
             <el-table-column label="手机号" prop="phone" width="250" />
-            <el-table-column label="创建时间">
+            <el-table-column label="创建时间" min-width="200">
                 <template #default="{row}">
                     <span>{{ filterTime(row.createTime) }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="最后登录时间">
+            <el-table-column label="最后登录时间" min-width="200">
                 <template #default="{row}">
                     <span>{{ filterTime(row.updateTime) }}</span>
                 </template>

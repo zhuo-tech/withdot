@@ -11,14 +11,12 @@ service.getAlbumList()
         <template #header>
             <div>专辑管理</div>
         </template>
-        <el-row :gutter="10">
-            <el-col :span="6" :offset="22">
-                <el-button type="primary" icon="Plus" @click="service.clickAddForm()">新增</el-button>
-            </el-col>
+        <el-row :gutter="10" justify="end" type="flex">
+            <el-button icon="Plus" type="primary" @click="service.clickAddForm()">新增</el-button>
         </el-row>
         <el-row :gutter="10" style="margin-top: 20px">
             <el-col :span="24">
-                <el-table v-loading="service.addFormData.addFormIsLoading" :data="service.list" style="width: 100%">
+                <el-table v-loading="service.addFormData.addFormIsLoading" :data="service.list" stripe style="width: 100%" >
                     <el-table-column label="序号" type="index" width="100"></el-table-column>
                     <el-table-column label="标题" prop="title" width="280"></el-table-column>
                     <el-table-column label="价格(元)" prop="sellingPrice" width="280">

@@ -18,43 +18,45 @@ service.getAlbumsList()
         <template #header>
             <div>专辑编辑</div>
         </template>
-        <el-row :gutter="10" justify="space-between" style="height: 181px;margin-bottom:40px " type="flex">
-            <el-col :span="18">
-                <el-row :gutter="10">
-                    <el-col :span="4">
-                        <ShowFile :file="albumsDetail.cover" style="height: 200px;" />
-                    </el-col>
-                    <el-col :span="18" class="albumsDetail">
-                        <div>{{ albumsDetail.title }}</div>
-                        <el-row>
-                            <el-col :span="12" style="display: flex">
-                                <div v-if="albumsDetail.sellingPrice" style="margin-right: 20px">价格
-                                    <span>{{ albumsDetail.sellingPrice }}</span>
-                                    元
-                                </div>
-                                <div>创建时间
-                                    <span>{{ filterTime(albumsDetail.createTime) }}</span>
-                                </div>
-                                <div style="margin-left: 20px">播放次数
-                                    <span>12.5万</span>
-                                </div>
-                            </el-col>
-                        </el-row>
-                        <el-col v-if="albumsDetail.desc" class="desc">
-                            {{ albumsDetail.desc }}
-                        </el-col>
+        <div style="display: flex;height: 181px;margin-bottom: 40px">
+            <!--<el-col>-->
+            <!--    <el-row type="flex" justify="flex-start">-->
+            <div>
+                <ShowFile :file="albumsDetail.cover" style="height: 200px;border-radius: 5px" />
+            </div>
+            <div class="albumsDetail">
+                <div>{{ albumsDetail.title }}</div>
+                <el-row>
+                    <el-col style="display: flex">
+                        <div v-if="albumsDetail.sellingPrice" style="margin-right: 20px">价格
+                            <span>{{ albumsDetail.sellingPrice }}</span>
+                            元
+                        </div>
+                        <div>创建时间
+                            <span>{{ filterTime(albumsDetail.createTime) }}</span>
+                        </div>
+                        <div style="margin-left: 20px">播放次数
+                            <span>12.5万</span>
+                        </div>
                     </el-col>
                 </el-row>
-            </el-col>
-            <el-col :span="6" class="buttonBox">
-                <el-button @click="Editform.show()">编辑专辑</el-button>
-                <el-button @click="subassembly.show()">添加作品</el-button>
-            </el-col>
-        </el-row>
+                <el-col v-if="albumsDetail.desc" class="desc">
+                    {{ albumsDetail.desc }}
+                </el-col>
+            </div>
+            <!--</el-row>-->
+            <!--</el-col>-->
+            <div class="buttonBox">
+                <el-button type="primary" @click="Editform.show()">编辑专辑</el-button>
+                <el-button type="primary" @click="subassembly.show()">添加作品</el-button>
+            </div>
+        </div>
         <el-row>
             <el-col :span="24">
                 <div class="tableHeader">
-                    <div>作品列表<span v-if="albumsDetail.workList?.length">({{ albumsDetail.workList?.length }})</span></div>
+                    <div>作品列表
+                        <span v-if="albumsDetail.workList?.length">({{ albumsDetail.workList?.length }})</span>
+                    </div>
                 </div>
             </el-col>
         </el-row>
@@ -69,10 +71,10 @@ service.getAlbumsList()
                     <el-table-column label="是否收费" prop="isPay" width="300">
                         <template #default="{row}">
                             <el-switch v-model="row.isPay"
-                                       active-color="#13ce66"
-                                       inactive-color="#ff4949"
                                        :active-value="0"
                                        :inactive-value="1"
+                                       active-color="#13ce66"
+                                       inactive-color="#ff4949"
                                        @change="service.changeSwitch(row)"></el-switch>
                         </template>
                     </el-table-column>
@@ -104,25 +106,12 @@ service.getAlbumsList()
 </template>
 <style lang="less" scoped>
 .buttonBox {
-    display: flex;
-    justify-content: flex-end;
-
-    .el-button {
-        color: white;
-        border: 0;
-    }
-
-    .el-button:nth-of-type(1) {
-        background-color: #c6c6c6;
-    }
-
-    .el-button:nth-of-type(2) {
-        background-color: #6e6e6f;
-    }
+    margin-left: auto;
 }
 
 .albumsDetail {
     margin-left: 20px;
+
     > div:nth-of-type(1) {
         font-size: 18px;
         color: #000000;
