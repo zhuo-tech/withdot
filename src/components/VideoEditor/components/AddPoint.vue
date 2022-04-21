@@ -34,7 +34,7 @@ const context = reactive(new AddPointContext(props, emits))
 <!-- 新增 模态框 -->
 <el-dialog
     v-model="context.formIsShow"
-    append-to-body
+    :append-to-body="true"
     close-on-click-modal
     destroy-on-close
     draggable

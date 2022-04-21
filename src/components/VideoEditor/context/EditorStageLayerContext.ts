@@ -24,7 +24,8 @@ type RightMenuAction = '+1' | '-1' | 'max' | 'min'
  * @date 2022年04月13日 19点22分
  */
 export class EditorStageLayerContext {
-    private static readonly ADSORPTION_Z_INDEX = 20000
+    // 这个值必须小于 所有的全屏 model (比如 element 默认的 2000+), 否则会覆盖在 model 之上
+    private static readonly ADSORPTION_Z_INDEX = 1000
     private static readonly Z_INDEX_MAX = 100
     private static readonly Z_INDEX_MIN = 0
     private static readonly Z_INDEX_DEFAULT = 1

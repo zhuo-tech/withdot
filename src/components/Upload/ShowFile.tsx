@@ -48,8 +48,9 @@ export default defineComponent({
                     </div>
                 ),
             }
+            // props 穿透最后添加, 确保 previewSrcList 还能关闭
             return (
-                <el-image src={ src } { ...this.$attrs } v-slots={ imageSlots } previewSrcList={ [src] } preview-teleported></el-image>
+                <el-image src={ src } v-slots={ imageSlots } previewSrcList={ [src] } preview-teleported { ...this.$attrs }></el-image>
             )
         },
 
