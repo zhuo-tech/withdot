@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import ShowDotSwitch from '@/components/VideoEditor/components/ShowDotSwitch'
 import { DraggableContext } from '@/components/VideoEditor/context/DraggableContext'
 import { CoreDot } from '@/model/entity/CoreDot'
 import { reactive } from 'vue'
@@ -57,7 +58,7 @@ const rightMenuClick = (action: RightMenuAction) => {
 
     <!-- 展开模式: 又称"海报" -->
     <div v-show="context.expectToExpand" class="details-mode" @dblclick.stop="context.showLabel()">
-        {{ item }}
+        <ShowDotSwitch :data="item" />
     </div>
 
 </div>

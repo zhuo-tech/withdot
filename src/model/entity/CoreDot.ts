@@ -75,7 +75,7 @@ export enum CoreDotType {
 /**
  * 类型配置映射
  */
-interface DotTypeConfigMapping {
+export interface DotTypeConfigMapping {
     [CoreDotType.文本]: TextConfig,
     [CoreDotType.链接]: UrlConfig,
     [CoreDotType.图片]: ImageConfig,
