@@ -47,8 +47,10 @@ service.getAlbumsList()
             <!--</el-row>-->
             <!--</el-col>-->
             <div class="buttonBox">
-                <el-button type="primary" @click="Editform.show()">编辑专辑</el-button>
-                <el-button type="primary" @click="subassembly.show()">添加作品</el-button>
+                <el-row :gutter="10" justify="end" type="flex">
+                    <el-button style="margin-top: 10px" type="primary" @click="Editform.show()">编辑专辑</el-button>
+                    <el-button style="margin-top: 10px" type="primary" @click="subassembly.show()">添加作品</el-button>
+                </el-row>
             </div>
         </div>
         <el-row>
@@ -78,7 +80,7 @@ service.getAlbumsList()
                                        @change="service.changeSwitch(row)"></el-switch>
                         </template>
                     </el-table-column>
-                    <el-table-column label="发布时间" prop="createTime">
+                    <el-table-column label="发布时间" min-width="200" prop="createTime">
                         <template #default="scope">
                             <span>{{ filterTime(scope.row.createTime) }}</span>
                         </template>

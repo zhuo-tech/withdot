@@ -72,7 +72,7 @@ getQuestionList(page)
                 <el-table-column label="类型" width="120">
                     <template #default="{row}">{{ QuestionType[row.type] }}</template>
                 </el-table-column>
-                <el-table-column label="更新时间">
+                <el-table-column label="更新时间" min-width="200">
                     <template #default="{row}">{{ filterTime(row.updateTime) }}</template>
                 </el-table-column>
             </el-table>

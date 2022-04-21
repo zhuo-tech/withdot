@@ -80,7 +80,7 @@ getListData()
 
         <el-table v-loading="loading" :data="data" stripe style="width: 100%">
             <el-table-column align="center" label="序号" type="index" width="80" />
-            <el-table-column label="标题" min-width="100" prop="name" />
+            <el-table-column label="标题" min-width="200" prop="name" />
             <el-table-column label="素材" min-width="300">
                 <template v-slot="{row}">
                     <span>{{ row['materialNews']?.title }}</span>

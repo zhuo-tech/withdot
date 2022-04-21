@@ -16,13 +16,13 @@ const props = defineProps({
             stripe
             style="width: 100%">
             <el-table-column label="序号" type="index" width="80" />
-            <el-table-column label="名称" prop="name" />
+            <el-table-column label="名称" min-width="200" prop="name"/>
             <el-table-column label="头像" width="200">
                 <template #default="{row}">
                     <ShowFile :href="row.avatar" style="height: 50px;border-radius: 5px" />
                 </template>
             </el-table-column>
-            <el-table-column label="是否付费">
+            <el-table-column label="是否付费" min-width="100">
                 <template #default="scope">
                     <span v-if="scope.row.isPay==='0'">免费</span>
                     <span v-if="scope.row.isPay==='1'">付费</span>
