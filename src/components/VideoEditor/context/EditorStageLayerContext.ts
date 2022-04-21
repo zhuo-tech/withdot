@@ -13,7 +13,7 @@ type PropsType = {
 }
 
 type EmitsType = {
-    (event: 'drag', index: number): void
+    (event: 'drag', index: CoreDot): void
 }
 
 type RightMenuAction = '+1' | '-1' | 'max' | 'min'
@@ -111,8 +111,8 @@ export class EditorStageLayerContext {
     }
 
     @Debounce(500)
-    private emitsDrag(index: number) {
-        this.emits('drag', index)
+    private emitsDrag(data: CoreDot) {
+        this.emits('drag', data)
     }
 
     public setZIndex(action: RightMenuAction, index: number) {
@@ -145,7 +145,7 @@ export class EditorStageLayerContext {
         }
         dot.position = {...dot.position, ...style}
 
-        this.emitsDrag(index)
+        this.emitsDrag(dot)
     }
 
 }

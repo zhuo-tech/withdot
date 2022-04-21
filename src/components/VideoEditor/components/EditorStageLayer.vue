@@ -18,7 +18,7 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits<{
-    (event: 'drag', index: number): void
+    (event: 'drag', index: CoreDot): void
 }>()
 
 const context = reactive(new EditorStageLayerContext(props, emits))

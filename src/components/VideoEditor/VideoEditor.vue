@@ -49,7 +49,7 @@ const displayDot = computed(() => {
     <!-- 播放器 -->
     <VideoPlayer :ref="setPlayerRef" :point-list="displayDot" :show-control="false" :src="fileService.showUrl(data.material?.href)">
         <template v-slot:stage="{list, box}">
-            <EditorStageLayer :box="box" :list="list" @drag="index => context.update(index)" />
+            <EditorStageLayer :box="box" :list="list" @drag="dot => context.update(dot)" />
         </template>
     </VideoPlayer>
 

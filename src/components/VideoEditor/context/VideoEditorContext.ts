@@ -74,11 +74,7 @@ export class VideoEditorContext {
             .then(dot => this.log.trace('保存基础信息', dot))
     }
 
-    public update(index: number) {
-        const dot = unref(this.pointList)[index]
-        if (ObjectUtil.isEmpty(dot)) {
-            return
-        }
+    public update(dot: CoreDot) {
         dot.updateTime = Date.now()
         this.client.updateById(dot._id, dot, '_id')
             .then(() => this.log.debug('更新保存完成', dot._id))
