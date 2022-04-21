@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { CoreDot, DotDisplayTypeShow } from '@/model/entity/CoreDot'
+import { CoreDot } from '@/model/entity/CoreDot'
+import { DotDisplayTypeShow } from '@/model/entity/Dot/DotDisplayType'
 import { ObjectUtil, TimeUnit } from 'typescript-util'
 import { reactive } from 'vue'
 import { AddPointContext } from '../context/AddPointContext'

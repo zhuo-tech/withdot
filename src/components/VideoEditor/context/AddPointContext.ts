@@ -1,4 +1,6 @@
-import { CoreDot, CoreDotPosition, CoreDotType, DotDisplayType } from '@/model/entity/CoreDot'
+import { CoreDot, CoreDotType } from '@/model/entity/CoreDot'
+import { CoreDotPosition } from '@/model/entity/Dot/CoreDotPosition'
+import { DotDisplayType } from '@/model/entity/Dot/DotDisplayType'
 import { RuleItem } from 'async-validator'
 import { FormInstance } from 'element-plus'
 import { CollUtil, ObjectUtil } from 'typescript-util'

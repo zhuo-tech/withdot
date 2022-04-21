@@ -1,4 +1,5 @@
-import { CoreDot, CoreDotPosition } from '@/model/entity/CoreDot'
+import { CoreDot } from '@/model/entity/CoreDot'
+import { CoreDotPosition } from '@/model/entity/Dot/CoreDotPosition'
 import { Debounce, Throttling } from '@/tool/annotation/Decorator'
 import { ObjectUtil } from 'typescript-util'
 import { reactive, watch } from 'vue'

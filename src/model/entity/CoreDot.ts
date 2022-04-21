@@ -1,21 +1,25 @@
 import { BaseEntity } from '@/model/BaseEntity'
-import { CoreExam } from './CoreExam'
+import { CoreDotPosition } from '@/model/entity/Dot/CoreDotPosition'
+import { ExamConfig, GeneralConfig, ImageConfig, TextConfig, UrlConfig } from '@/model/entity/Dot/DotConfig'
+import { DotDisplayType } from '@/model/entity/Dot/DotDisplayType'
 
 /**
  * 视频播放打点
  * @author HK
  * @date 2022年04月01日 12点57分
  */
-export class CoreDot implements BaseEntity {
+export class CoreDot<T extends CoreDotType = any> implements BaseEntity {
 
     public static readonly TABLE_NAME = 'core_dot'
+
+    _id: string
 
     workId: string
 
     /**
      * 组件 打点对应的组件
      */
-    type: CoreDotType
+    type: T
 
     /**
      * 打点的开始时间和结束时间
@@ -37,38 +41,13 @@ export class CoreDot implements BaseEntity {
 
     position: CoreDotPosition
 
-    config: DotConfig
+    config: DotTypeConfigMapping[T]
 
-    _id: string
     createTime: number
     updateTime: number
     createBy: string
     updateBy: string
 
-}
-
-/**
- * 打点定位属性
- */
-export class CoreDotPosition {
-    /**
-     * 新增打点时的初始位置
-     */
-    public static readonly DEFAULT = new CoreDotPosition(0.5, 0.5, 1, 0, 0)
-
-    x: number
-    y: number
-    z?: number
-    width?: number
-    height?: number
-
-    constructor(x: number = 0, y: number = 0, z: number = 0, width: number = 0, height: number = 0) {
-        this.x = x
-        this.y = y
-        this.z = z
-        this.width = width
-        this.height = height
-    }
 }
 
 /**
@@ -85,75 +64,14 @@ export enum CoreDotType {
 }
 
 /**
- * 展示类型
+ * 类型配置映射
  */
-export enum DotDisplayType {
-    BUTTON = 'button',
-    EXPANDED = 'expanded',
-    HIDE = 'hide'
-}
-
-export const DotDisplayTypeShow: Record<string, DotDisplayType> = {
-    '收起': DotDisplayType.BUTTON,
-    '展开': DotDisplayType.EXPANDED,
-    '隐藏': DotDisplayType.HIDE,
-}
-
-/**
- * 打点配置
- */
-type DotConfig = CoreExamDotConfig | CoreTextDotConfig | CoreImageDotConfig | CoreUrlDotConfig
-
-/**
- * 视频打点考试配置
- */
-export interface CoreExamDotConfig {
-    exam: Array<CoreExam>
-    totalScore: number,
-    passScore: number,
-    lockFlag: true
-}
-
-/**
- * 文本
- * @property text 文本内容
- * @property switch 是否设置展示时长 false
- * @property time 时长/s 默认3s
- * @property pause 是否暂停 默认是（当播放器播放到打点的位置时候，如果开启了则视频播放暂停）
- */
-export interface CoreTextDotConfig {
-    text: string
-    switch: boolean
-    pause: boolean
-    time: number
-}
-
-
-/**
- * 图片
- * @property url 图片地址
- * @property switch 是否设置展示时长 false
- * @property time 时长/s 默认3s
- * @property pause 是否暂停 默认是（当播放器播放到打点的位置时候，如果开启了则视频播放暂停）
- */
- export interface CoreImageDotConfig {
-    url: string
-    switch: boolean
-    pause: boolean
-    time: number
-}
-
-
-/**
- * 链接
- * @property url 链接地址
- * @property switch 是否设置展示时长 false
- * @property time 时长/s 默认3s
- * @property pause 是否暂停 默认是（当播放器播放到打点的位置时候，如果开启了则视频播放暂停）
- */
- export interface CoreUrlDotConfig {
-    url: string
-    switch: boolean
-    pause: boolean
-    time: number
+interface DotTypeConfigMapping {
+    [CoreDotType.文本]: TextConfig,
+    [CoreDotType.链接]: UrlConfig,
+    [CoreDotType.图片]: ImageConfig,
+    [CoreDotType.热区]: GeneralConfig,
+    [CoreDotType.题目]: ExamConfig,
+    [CoreDotType.表单]: GeneralConfig,
+    [CoreDotType.书签]: GeneralConfig,
 }

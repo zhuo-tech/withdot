@@ -1,4 +1,5 @@
-import { CoreDot, DotDisplayType } from '@/model/entity/CoreDot'
+import { CoreDot } from '@/model/entity/CoreDot'
+import { DotDisplayType } from '@/model/entity/Dot/DotDisplayType'
 
 export type PropsType = {
     item: CoreDot

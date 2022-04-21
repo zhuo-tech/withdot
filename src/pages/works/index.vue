@@ -78,19 +78,19 @@ getListData()
         <el-button class="create" type="primary" :icon="Plus" @click="createWorks">新增</el-button>
     </div>
     <el-table :data="data" stripe style="width: 100%" v-loading="loading">
-        <el-table-column label="序号" type="index" width="80"></el-table-column>
-        <el-table-column label="标题" prop="name" width="350"></el-table-column>
-        <el-table-column label="素材" width="600">
+        <el-table-column align="center" label="序号" type="index" width="80" />
+        <el-table-column label="标题" min-width="100" prop="name" />
+        <el-table-column label="素材" min-width="300">
             <template v-slot="{row}">
-                <span>{{ row.materialNews?.title }}</span>
+                <span>{{ row['materialNews']?.title }}</span>
             </template>
         </el-table-column>
-        <el-table-column label="创建时间" min-width="200" prop="createTime">
+        <el-table-column align="center" label="创建时间" prop="createTime" width="170">
             <template #default="scope">
                 <span>{{ filterTime(scope.row.createTime) }}</span>
             </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作">
+        <el-table-column align="center" label="操作" width="170">
             <template #default="scope">
                 <el-button :icon="Edit" type="text" @click="$router.push(`/works/editor/${ scope.row._id }`)">编辑</el-button>
                 <el-divider direction="vertical" />
