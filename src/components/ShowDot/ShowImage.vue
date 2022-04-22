@@ -14,12 +14,8 @@ const props = defineProps<{
 
 const fileService: FileService = inject(INJECT_KEY_FILE_SERVICE) as FileService
 
-const empty = () => {
-}
-
 </script>
 
 <template>
-<img :src="fileService.showUrl(data.url)" alt="预览" style="height: 100px" @mousedown="empty" @mouseup="empty" @mousemove.prevent="empty">
+<img :src="fileService.showUrl(data.url)" alt="预览" @mousemove.prevent="() => {}">
 </template>
-

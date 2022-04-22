@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import Resizable from '@/components/VideoEditor/components/Resizable.vue'
 import { CoreDot } from '@/model/entity/CoreDot'
 import { reactive } from 'vue'
 import { EditorStageLayerContext } from '../context/EditorStageLayerContext'
@@ -6,8 +7,8 @@ import Draggable from './Draggable.vue'
 
 /**
  * "舞台" 可互动元素的父容器
- * 所有子元素都应该是 可拖动的盒子 Draggable
  * @props list {Array<CoreDot>}
+ * @props box {{width: number, height: number}} 容器宽高
  */
 const props = defineProps<{
     list: Array<CoreDot>,
@@ -29,15 +30,16 @@ const context = reactive(new EditorStageLayerContext(props, emits))
 <div :ref="el => context.stageLayerRef = el"
      class="stage-box"
      @mousemove="context.onMouseMove"
-     @mouseup="event => context.onMouseUp(event) ">
+     @mouseup="event => context.onMouseUp(event)" @click.stop.prevent="() => {}">
 
-    <Draggable v-for="(item, index) in list"
-               :key="index"
-               :index="index"
-               :item="item"
-               :style="context.styleMap[index]"
-               @mousedown="event => context.onMouseDown(event, index)"
-               @setZIndex="action => context.setZIndex(action, index)" />
+    <Resizable v-for="(item, index) in list"
+               :key="item._id" :style="context.styleMap[index]"
+               @mousedown="event => context.onMouseDown(event, index)">
+        <Draggable
+            :index="index"
+            :item="item"
+            @setZIndex="action => context.setZIndex(action, index)" />
+    </Resizable>
 </div>
 </template>
 

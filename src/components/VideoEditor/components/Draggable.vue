@@ -52,7 +52,7 @@ const rightMenuClick = (action: RightMenuAction) => {
     </el-collapse-transition>
 
     <!-- 收起模式: button -->
-    <div v-show="!context.expectToExpand" class="label-mode" @click.stop="context.showDetail()">
+    <div v-show="!context.expectToExpand" class="label-mode" @click="context.showDetail()">
         {{ item.label }}
     </div>
 
