@@ -32,7 +32,7 @@ export class CoreExam implements BaseEntity {
      * 试题
      */
     questions: Array<Question>
-    
+    type:string
     createTime: number
     updateTime: number
     createBy: string

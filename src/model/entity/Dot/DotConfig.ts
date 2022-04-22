@@ -25,9 +25,12 @@ export interface GeneralConfig {
  * 考试 / 题目
  */
 export interface ExamConfig extends GeneralConfig {
+    /**
+     * exam题目类型
+     */
     exam: Array<CoreExam>
-    totalScore: number,
-    passScore: number,
+    totalScore?: number,
+    passScore?: number,
     lockFlag: true
 }
 

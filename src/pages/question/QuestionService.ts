@@ -251,10 +251,11 @@ export default class QuestionService {
                 this.formData.selectShow()
                 break
             case QuestionTypeEnum.TIANKONG:
+                this.tkList.content = this.formData.form.content as Array<any>
                 this.formData.tkShow()
                 break
             case QuestionTypeEnum.SAQ:
-                this.selectList.content = this.formData.form.content as Array<any>
+                // this.selectList.content = this.formData.form.content as Array<any>
                 this.formData.saqShow()
                 break
         }

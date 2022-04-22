@@ -20,5 +20,6 @@ const empty = () => {
 </script>
 
 <template>
-<img :src="fileService.showUrl(data.url)" alt="预览" @mousedown="empty" @mouseup="empty" @mousemove.prevent="empty">
+<img :src="fileService.showUrl(data.url)" alt="预览" style="height: 100px" @mousedown="empty" @mouseup="empty" @mousemove.prevent="empty">
 </template>
+

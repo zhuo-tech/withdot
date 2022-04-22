@@ -3,6 +3,7 @@
 import ShowImage from '@/components/ShowDot/ShowImage.vue'
 import ShowLink from '@/components/ShowDot/ShowLink.vue'
 import ShowText from '@/components/ShowDot/ShowText.vue'
+import ShowQuestions from '@/components/ShowDot/ShowQuestions.vue'
 import { CoreDot, CoreDotType } from '@/model/entity/CoreDot'
 import { defineComponent } from 'vue'
 
@@ -30,6 +31,9 @@ export default defineComponent({
                 break
             case CoreDotType.链接:
                 Show = <ShowLink></ShowLink>
+                break
+            case CoreDotType.题目:
+                Show = <ShowQuestions></ShowQuestions>
                 break
             default:
         }
