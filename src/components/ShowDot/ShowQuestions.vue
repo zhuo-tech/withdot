@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { CoreDotType, DotTypeConfigMapping } from '@/model/entity/CoreDot'
+import { ElMessage, FormInstance } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { QuestionTypeEnum } from '@/model/QuestionTypeEnum'
 
@@ -45,9 +46,16 @@ props.data.exam.forEach((item, index) => {
 const currentQuestion = ref(0)
 
 const nextQuestion = () => {
-    currentQuestion.value++
+    if (props.data.exam.length >= (currentQuestion.value + 1)) {
+        currentQuestion.value++
+    }
 }
-console.log('默认值 => ', formData)
+
+const uponQuestion = () => {
+    if (currentQuestion.value > 0) {
+        currentQuestion.value--
+    }
+}
 
 const form = reactive(formData)
 </script>
@@ -80,16 +88,31 @@ const form = reactive(formData)
                         <div>{{ item.label }}</div>
                     </el-form-item>
                     <el-form-item v-for="(i,ind) in item.content" :key="ind" label="答案">
-                        <el-radio v-model="form[index].currentAnswer[ind]" :label="true" size="large">{{ i.answer }}</el-radio>
+                        <el-checkbox v-model="form[index].currentAnswer[ind]" :label="true" name="type" size="large">{{ i.answer }}</el-checkbox>
                     </el-form-item>
                 </div>
             </div>
             <el-row justify="end" type="flex">
-                <el-button v-if="(currentQuestion+1) !== data.exam.length" style="margin: 0 20px 20px 0"
-                           type="primary"
-                           @click="nextQuestion">下一题
-                </el-button>
-                <el-button v-else style="margin: 0 20px 20px 0" type="primary">提交</el-button>
+                <div v-if="(currentQuestion+1) !== data.exam.length">
+                    <el-button v-if="currentQuestion !== 0"
+                               style="margin: 0 20px 20px 0"
+                               type="primary"
+                               @click="uponQuestion">上一题
+                    </el-button>
+                    <el-button style="margin: 0 20px 20px 0"
+                               type="primary"
+                               @click="nextQuestion">下一题
+                    </el-button>
+                </div>
+                <div v-else>
+                    <el-button v-if="currentQuestion !== 0"
+                               style="margin: 0 20px 20px 0"
+                               type="primary"
+                               @click="uponQuestion">上一题
+                    </el-button>
+                    <el-button style="margin: 0 20px 20px 0" type="primary">提交</el-button>
+                </div>
+
             </el-row>
 
         </el-form>
