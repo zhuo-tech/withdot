@@ -74,19 +74,11 @@ export class EditorStageLayerContext {
     }
 
     public onMouseDown(event: MouseEvent, index: number) {
-        this.selectIndex = index
-        const {offsetX, offsetY} = event
-        this.selectOffsetX = offsetX
-        this.selectOffsetY = offsetY
 
-        this.stageLayerRef.style.pointerEvents = 'auto'
     }
 
     // noinspection JSUnusedLocalSymbols
     public onMouseUp(event: MouseEvent) {
-        this.selectIndex = null
-
-        this.stageLayerRef.style.pointerEvents = 'none'
     }
 
     @Throttling(60)

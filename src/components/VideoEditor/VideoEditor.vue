@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import IconLabel from '@/components/VideoEditor/components/IconLabel'
+import IconLabel from '@/components/IconLabel/IconLabel'
+import List from '@/components/List/List.vue'
 import { CoreDotController } from '@/components/VideoEditor/service/CoreDotFilter'
 import DoubleSpeed from '@/components/VideoPlayer/components/DoubleSpeed.vue'
 import VideoPlayer from '@/components/VideoPlayer/index.vue'
@@ -11,8 +12,7 @@ import { Edit } from '@element-plus/icons-vue'
 import { TimeUnit } from 'typescript-util'
 import { computed, inject, reactive, Ref, ref } from 'vue'
 import AddPoint from './components/AddPoint.vue'
-import EditorStageLayer from './components/EditorStageLayer.vue'
-import List from './components/List.vue'
+import StageLayer from './components/Stage/StageLayer.vue'
 import TimeBubble from './components/TimeBubble'
 import Timeline from './components/Timeline'
 import { DotTypeIconShow, VideoEditorContext } from './context/VideoEditorContext'
@@ -49,7 +49,7 @@ const displayDot = computed(() => {
     <!-- 播放器 -->
     <VideoPlayer :ref="setPlayerRef" :point-list="displayDot" :show-control="false" :src="fileService.showUrl(data.material?.href)">
         <template v-slot:stage="{list, box}">
-            <EditorStageLayer :box="box" :list="list" @drag="dot => context.update(dot)" />
+            <StageLayer :box="box" :list="list" @drag="dot => context.update(dot)" />
         </template>
     </VideoPlayer>
 

@@ -3,6 +3,9 @@
 import { StrUtil } from 'typescript-util'
 import { defineComponent } from 'vue'
 
+/**
+ * 动态渲染 ICON 图标
+ */
 export default defineComponent({
     props: {
         icon: {

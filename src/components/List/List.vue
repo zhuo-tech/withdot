@@ -1,5 +1,9 @@
 <script lang="ts" setup>
 import { CollUtil } from 'typescript-util'
+
+/**
+ * 渲染基础列表样式信息
+ */
 defineProps<{
     list: Array<any>
 }>()

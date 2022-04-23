@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import IconLabel from '@/components/IconLabel/IconLabel'
 import { CoreDot } from '@/model/entity/CoreDot'
 import { DotDisplayTypeShow } from '@/model/entity/Dot/DotDisplayType'
 import { ObjectUtil, TimeUnit } from 'typescript-util'
@@ -6,7 +7,6 @@ import { reactive } from 'vue'
 import { AddPointContext } from '../context/AddPointContext'
 import { DotTypeOption } from '../context/VideoEditorContext'
 import DotConfigForm from './DotConfigForm'
-import IconLabel from './IconLabel'
 
 const props = defineProps({
     currentPlayTime: {
