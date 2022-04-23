@@ -6,7 +6,6 @@ import { ControlModelAdapter, PlayerContext } from './context/PlayerContext'
 import { VideoWrapperContext } from './context/VideoWrapperContext'
 import ControlLayer from './ControlLayer.vue'
 import { AspectRatio } from './service/AspectRatio'
-import StageLayer from './StageLayer.vue'
 import VideoWrapperLayer from './VideoWrapperLayer.vue'
 
 /**
@@ -63,7 +62,7 @@ defineExpose(controlProp)
 
         <div class="stage-wrapper">
             <slot :box="context.boxWidthHeight" :list="pointList" name="stage">
-                <StageLayer :list="pointList" />
+            <!--  预留 视频之上的悬浮层  -->
             </slot>
         </div>
     </div>
