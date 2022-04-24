@@ -1,15 +1,45 @@
 import { ObjectUtil } from 'typescript-util'
-import { Ref, ref } from 'vue'
-
-export type ResType = {
-    isShow: Ref<boolean>
-    show: () => void
-    close: () => void
-    start: (event: MouseEvent, type: ResizableType) => void
-}
+import { reactive, Ref, ref } from 'vue'
 
 type ChangeValueType = { w: number; h: number; leftValue: number; topValue: number }
+
 type ChangeRectType = Pick<DOMRect, 'width' | 'height' | 'left' | 'top'>
+
+export type ResizableLocation = {
+    width: number
+    height: number
+    left: number
+    top: number
+    lastTime: number
+}
+
+export type ResizableReturn = {
+    /**
+     * 是否显示控制按钮和虚线边框
+     */
+    isShow: Ref<boolean>
+    /**
+     * 定位信息
+     */
+    location: ResizableLocation
+    /**
+     * 显示控制按钮
+     */
+    show(): void
+    /**
+     * 隐藏控制按钮
+     */
+    close(): void
+    /**
+     * resizable
+     */
+    start(event: MouseEvent, type: ResizableType): void
+
+    /**
+     * 重设定位信息 (操作DOM)
+     */
+    reset(newLocation?: ResizableLocation): void
+}
 
 const CONFIG = {
     WIDTH_MIN: 50,
@@ -21,8 +51,15 @@ const CONFIG = {
  * @author LL
  * @date 2022-04-24 上午 12:39
  **/
-export function useResizable(element: Ref<HTMLDivElement>, boxRect: () => DOMRect): ResType {
+export function useResizable(element: Ref<HTMLDivElement>, boxRect: () => DOMRect, initValue?: Partial<ResizableLocation>, onChange?: () => void): ResizableReturn {
     const isShow = ref(false)
+    const location: ResizableLocation = reactive({
+        width: initValue?.width ?? 0,
+        height: initValue?.height ?? 0,
+        left: initValue?.left ?? 0,
+        top: initValue?.top ?? 0,
+        lastTime: Date.now(),
+    })
 
     // 被拖动的目标, 仅用来判断是否处于拖动状态
     let dragTarget: HTMLDivElement | null
@@ -42,7 +79,7 @@ export function useResizable(element: Ref<HTMLDivElement>, boxRect: () => DOMRec
         dragStart = {pageX: event.pageX, pageY: event.pageY}
         resizableStart = element.value.getBoundingClientRect()
 
-        const move = buildMove(dragTarget, resizableStart, dragStart, type, boxRect, element)
+        const move = buildMove(dragTarget, resizableStart, dragStart, type, boxRect, element, location, onChange)
 
         // 一次性事件监听: 开始拖动后 任意 mouseup 将导致拖动结束
         const mouseUp = () => {
@@ -61,10 +98,21 @@ export function useResizable(element: Ref<HTMLDivElement>, boxRect: () => DOMRec
 
     return {
         isShow,
+        location,
         close,
         start,
         show() {
             isShow.value = true
+        },
+        reset(newLocation: ResizableLocation = location) {
+            const {width, height, left, top} = newLocation
+            const {width: pw, height: ph} = boxRect()
+            renderDOM({
+                width: Math.max(width * pw, CONFIG.WIDTH_MIN),
+                height: Math.max(height * ph, CONFIG.HEIGHT_MIN),
+                left: left * pw,
+                top: top * ph,
+            }, element)
         },
     }
 }
@@ -76,6 +124,8 @@ function buildMove(
     type: ResizableType,
     boxRect: () => DOMRect,
     element: Ref<HTMLDivElement>,
+    location: ResizableLocation,
+    onChange?: () => void,
 ) {
     return (event: MouseEvent) => {
         if (!dragTarget) {
@@ -102,16 +152,31 @@ function buildMove(
         }
         resizableTypeHandle(type, change)
 
-        const {top: boxTop, left: boxLeft} = boxRect()
+        const {top: boxTop, left: boxLeft, width: pw, height: ph} = boxRect()
         let rect: ChangeRectType = {
             width: width + change.w,
             height: height + change.h,
             left: left + change.leftValue - boxLeft,
             top: top + change.topValue - boxTop,
         }
+        // 越界修正
         rect = criticalHandle(rect, element.value.getBoundingClientRect(), boxRect)
-        ObjectUtil.forEach(rect as any, (key, value) => element.value.style[key] = value + 'px')
+
+        // 应用
+        location.width = rect.width / pw
+        location.height = rect.height / ph
+        location.top = rect.top / ph
+        location.left = rect.left / pw
+        location.lastTime = Date.now()
+
+        onChange?.()
+
+        renderDOM(rect, element)
     }
+}
+
+function renderDOM(rect: ChangeRectType, element: Ref<HTMLDivElement>) {
+    ObjectUtil.forEach(rect as any, (key, value) => element.value.style[key] = value + 'px')
 }
 
 /**

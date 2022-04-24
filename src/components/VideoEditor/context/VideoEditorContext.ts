@@ -3,10 +3,11 @@ import { getLogger } from '@/main'
 import { CoreDot, CoreDotType } from '@/model/entity/CoreDot'
 import CoreMaterial from '@/model/entity/CoreMaterial'
 import { CoreWork } from '@/model/entity/CoreWork'
+import { Debounce } from '@/tool/annotation/Decorator'
 import { AddLocation, Comment, Crop, Document, ElementPlus, Link, PictureFilled } from '@element-plus/icons-vue'
 import { LafClient } from 'laf-db-query-wrapper'
-import { CollUtil, ObjectUtil, StrUtil } from 'typescript-util'
-import { isRef, Ref, ref, unref, watch } from 'vue'
+import { CollUtil, StrUtil } from 'typescript-util'
+import { isRef, Ref, ref, watch } from 'vue'
 
 export const DotTypeOption: Array<{ icon: any, type: CoreDotType, label: string }> = [
     {icon: Document, type: CoreDotType.题目, label: '题目'},
@@ -74,11 +75,12 @@ export class VideoEditorContext {
             .then(dot => this.log.trace('保存基础信息', dot))
     }
 
+    @Debounce(100)
     public update(dot: CoreDot) {
         dot.updateTime = Date.now()
         this.client.updateById(dot._id, dot, '_id')
-            .then(() => this.log.debug('更新保存完成', dot._id))
-            .catch(err => this.log.error('更新保存点信息失败: ', err))
+            .then(() => this.log.debug('更新点信息完成', dot._id))
+            .catch(err => this.log.error('更新点信息失败: ', err))
     }
 
     private initPointList() {

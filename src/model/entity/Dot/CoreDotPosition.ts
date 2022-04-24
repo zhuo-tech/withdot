@@ -20,4 +20,14 @@ export class CoreDotPosition {
         this.width = width
         this.height = height
     }
+
+    public static toLocation(position: CoreDotPosition) {
+        return {
+            width: position.width,
+            height: position.height,
+            left: position.x,
+            top: position.y,
+            zIndex: position.z,
+        }
+    }
 }

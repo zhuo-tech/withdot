@@ -13,9 +13,15 @@ const props = defineProps<{
 }>()
 
 const fileService: FileService = inject(INJECT_KEY_FILE_SERVICE) as FileService
+const src = fileService.showUrl(props.data.url)
 
 </script>
 
 <template>
-<img :src="fileService.showUrl(data.url)" alt="预览" @mousemove.prevent="() => {}">
+<img :src="src" alt="预览" class="show-image" @mousemove.prevent="() => {}">
 </template>
+
+<style lang="sass" scoped>
+.show-image
+    object-fit: cover
+</style>
