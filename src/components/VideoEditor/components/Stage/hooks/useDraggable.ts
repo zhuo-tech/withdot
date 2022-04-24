@@ -22,17 +22,24 @@ export function useDraggable(element: Ref<HTMLDivElement>, boxRect: () => DOMRec
         }
         const {pageX, pageY} = event
         const {pageX: oldX, pageY: oldY} = start
-        const {top: boxTop, left: boxLeft} = boxRect()
+        const {top: boxTop, left: boxLeft, width: pw, height: ph} = boxRect()
+        const {width, height} = element.value.getBoundingClientRect()
 
         const change = {
-            x: pageX - oldX - boxLeft,
-            y: pageY - oldY - boxTop,
+            left: pageX - oldX - boxLeft,
+            top: pageY - oldY - boxTop,
+        }
+
+        // 越界修正
+        const {left = 0, top = 0} = startRect
+        const end = {
+            left: Math.min(Math.max(left + change.left, 0), pw - width),
+            top: Math.min(Math.max(top + change.top, 0), ph - height),
         }
 
         // 应用更改
-        const {left = 0, top = 0} = startRect
-        element.value.style.left = left + change.x + 'px'
-        element.value.style.top = top + change.y + 'px'
+        element.value.style.left = end.left + 'px'
+        element.value.style.top = end.top + 'px'
     }
 
     return {

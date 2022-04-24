@@ -134,7 +134,7 @@ function criticalHandle(rect: ChangeRectType, oldRect: DOMRect, boxRect: () => D
     }
 
     const wv = Math.min(Math.max(width, CONFIG.WIDTH_MIN), pw)
-    const hv = Math.min(Math.max(height, CONFIG.HEIGHT_MIN))
+    const hv = Math.min(Math.max(height, CONFIG.HEIGHT_MIN), ph)
 
     // left top 最小值越界修正
     if (wv === oldRect.width) {
