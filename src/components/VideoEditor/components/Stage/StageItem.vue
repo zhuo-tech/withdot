@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ObjectUtil } from 'typescript-util'
-import { computed, onMounted, Ref, ref, watch } from 'vue'
+import { computed, onMounted, Ref, ref } from 'vue'
 import { useDraggable } from './hooks/useDraggable'
 import { ResizableType, useResizable } from './hooks/useResizable'
 import { useRightMenu } from './hooks/useRightMenu'
@@ -26,7 +26,8 @@ const emits = defineEmits<{
 }>()
 
 // 父容器变化时, 重设样式
-watch(() => props.boxRect(), () => resizable.reset(location.value))
+const reset = () => resizable.reset(location.value)
+
 // 合并值
 const location = computed(() => {
     if (resizable.location.lastTime > draggable.location.lastTime) {
@@ -48,9 +49,12 @@ const draggable = useDraggable(resizableRef, props.boxRect, props.location, upda
 
 // 右键菜单 设置 zIndex
 const rightMenuRef: Ref<HTMLDivElement> = ref({} as any)
-const rightMenu = useRightMenu(rightMenuRef, props.location, updateLocation)
+const contentRef: Ref<HTMLDivElement> = ref({} as any)
+const rightMenu = useRightMenu(rightMenuRef, () => contentRef.value.getBoundingClientRect(), props.location, updateLocation)
 
 onMounted(() => resizable.reset())
+
+defineExpose({reset})
 </script>
 
 <template>
@@ -71,7 +75,7 @@ onMounted(() => resizable.reset())
          :class="`controls ${item.value}`"
          @mousedown.stop="event => resizable.start(event, item.value)" />
 
-    <div class="content">
+    <div ref="contentRef" class="content">
         <!-- 右键菜单 -->
         <el-collapse-transition>
             <div v-show="rightMenu.isShow['value']"
@@ -89,7 +93,9 @@ onMounted(() => resizable.reset())
         </el-collapse-transition>
 
         <!-- 真正被包裹的内容 -->
-        <slot></slot>
+        <div class="config">
+            <slot></slot>
+        </div>
     </div>
 </div>
 </template>

@@ -1,3 +1,4 @@
+import { MouseButtonKeyType, MouseEventTool } from '@/tool/MouseEventTool'
 import { reactive, Ref, ref } from 'vue'
 
 type Location = Pick<MouseEvent, 'pageX' | 'pageY'>
@@ -89,6 +90,11 @@ export function useDraggable(element: Ref<HTMLDivElement>, boxRect: () => DOMRec
     return {
         location,
         start(event: MouseEvent) {
+            if (MouseEventTool.keyType(event) === MouseButtonKeyType.RIGHT) {
+                console.debug('draggable start: 丢弃 右键点击')
+                return
+            }
+
             enable.value = true
             startRect = element.value.getBoundingClientRect()
             start = event

@@ -3,7 +3,8 @@ import ShowDotSwitch from '@/components/VideoEditor/components/ShowDotSwitch'
 import StageItem from '@/components/VideoEditor/components/Stage/StageItem.vue'
 import { CoreDot } from '@/model/entity/CoreDot'
 import { CoreDotPosition } from '@/model/entity/Dot/CoreDotPosition'
-import { Ref, ref } from 'vue'
+import { useResizeMonitor } from '@/tool/hooks/useResizeMonitor'
+import { onBeforeUpdate, Ref, ref } from 'vue'
 
 /**
  * "舞台" 可互动元素的父容器
@@ -15,6 +16,9 @@ const emits = defineEmits<{
 }>()
 
 const stageBoxRef: Ref<HTMLDivElement> = ref({} as any)
+const stageItemRefArr = ref<Array<{ reset(): void }>>([])
+// 确保在每次更新之前重置ref
+onBeforeUpdate(() => stageItemRefArr.value = [])
 
 const updatePosition = (item: CoreDot, location: any) => {
     const {width, height, top, left, zIndex} = location
@@ -25,11 +29,15 @@ const updatePosition = (item: CoreDot, location: any) => {
     item.position.z = zIndex
     emits('drag', item)
 }
+
+useResizeMonitor(() => stageItemRefArr.value.forEach(i => i.reset()), () => stageBoxRef.value)
+
 </script>
 
 <template>
 <div ref="stageBoxRef" class="stage-box">
-    <StageItem v-for="item in list" :key="item._id"
+    <StageItem v-for="(item, index) in list" :key="item._id"
+               :ref="el => {if (el) stageItemRefArr[index] = el}"
                :boxRect="() => stageBoxRef.getBoundingClientRect()"
                :location="CoreDotPosition.toLocation(item.position)"
                @update:location="location => updatePosition(item, location)">
