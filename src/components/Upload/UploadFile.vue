@@ -2,6 +2,7 @@
 <script lang="tsx" setup>
 import ShowFile from '@/components/Upload/ShowFile'
 import { LafUploadResponse } from '@/components/Upload/Upload'
+import { useFilePreview } from '@/components/Upload/useFilePreview'
 import { getLogger } from '@/main'
 import { FileInfo } from '@/model/FileInfo'
 import { FileService, INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
@@ -118,30 +119,8 @@ function updateModel(fileList: UploadFiles, propValue: typeof props) {
     emits('input', fileList)
 }
 
-// 处理预览
-const previewControl = reactive<{
-    onPreview: UploadProps['onPreview']
-    isShow: boolean
-    file: FileInfo
-    show: () => void
-    close: () => void
-}>({
-    isShow: false,
-    file: {} as FileInfo,
-    show() {
-        this.isShow = true
-    },
-    close() {
-        this.isShow = false
-    },
-    onPreview(file) {
-        if (ObjectUtil.isEmpty(file)) {
-            return
-        }
-        this.file = file.response as FileInfo
-        this.show()
-    },
-})
+// 预览
+const preview = useFilePreview()
 
 </script>
 
@@ -149,7 +128,7 @@ const previewControl = reactive<{
 <el-upload :action="fileService.getActionUploadUrl()"
            :file-list="fileList"
            :headres="fileService.getActionUploadHeaders()"
-           :on-preview="file => previewControl.onPreview(file)"
+           :on-preview="file => preview.onPreview(file)"
            :on-remove="onRemove"
            :on-success="onUploadSuccess"
            style="width: 100%;"
@@ -179,7 +158,7 @@ const previewControl = reactive<{
     </template>
 
     <!-- 预览弹框 -->
-    <el-dialog v-model="previewControl.isShow"
+    <el-dialog v-model="preview.isShow"
                append-to-body
                close-on-click-modal
                destroy-on-close
@@ -187,71 +166,8 @@ const previewControl = reactive<{
                lock-scroll
                modal
                width="45%">
-        <ShowFile :file="previewControl.file" />
+        <ShowFile :file="preview.file" />
     </el-dialog>
 
 </el-upload>
 </template>
-
-<style lang="less" scoped>
-.fileStyle {
-    position: relative;
-    display: flex;
-    align-items: center;
-
-    audio {
-        height: 50px;
-    }
-
-    .el-image {
-        height: 80px;
-    }
-
-    video {
-        height: 80px;
-    }
-
-    .el-upload-list__item-actions {
-        z-index: 10;
-        position: absolute;
-        top: 50%;
-        left: 85%;
-        transform: translate(-50%, -50%);
-        display: none;
-    }
-
-    .el-upload-list__item-delete {
-        z-index: 10;
-        position: absolute;
-        top: 50%;
-        left: 40px;
-        transform: translate(-50%, -50%);
-        display: none;
-    }
-
-    .cover {
-        width: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        opacity: 0.2;
-        display: none;
-        background-color: #675f5f;
-    }
-}
-
-.fileStyle:hover {
-    .cover {
-        display: block;
-    }
-
-    .el-upload-list__item-actions {
-        display: block;
-    }
-
-    .el-upload-list__item-delete {
-        display: block;
-    }
-}
-</style>

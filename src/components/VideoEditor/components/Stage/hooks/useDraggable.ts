@@ -116,7 +116,7 @@ export function useDraggable(element: Ref<HTMLDivElement>, boxRect: () => DOMRec
             const {top, left} = newLocation
             const {width, height} = boxRect()
             element.value.style.left = width * left + 'px'
-            element.value.style.top = height + top + 'px'
+            element.value.style.top = height * top + 'px'
         },
     }
 }
