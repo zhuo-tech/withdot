@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ObjectUtil } from 'typescript-util'
-import { computed, onMounted, Ref, ref, watch } from 'vue'
+import { computed, onMounted, Ref, ref } from 'vue'
 import { useDraggable } from './hooks/useDraggable'
 import { ResizableType, useResizable } from './hooks/useResizable'
 import { useRightMenu } from './hooks/useRightMenu'
@@ -26,7 +26,8 @@ const emits = defineEmits<{
 }>()
 
 // 父容器变化时, 重设样式
-watch(() => props.boxRect(), () => resizable.reset(location.value))
+const reset = () => resizable.reset(location.value)
+
 // 合并值
 const location = computed(() => {
     if (resizable.location.lastTime > draggable.location.lastTime) {
@@ -51,6 +52,8 @@ const rightMenuRef: Ref<HTMLDivElement> = ref({} as any)
 const rightMenu = useRightMenu(rightMenuRef, props.location, updateLocation)
 
 onMounted(() => resizable.reset())
+
+defineExpose({reset})
 </script>
 
 <template>
