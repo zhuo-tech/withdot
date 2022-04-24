@@ -73,6 +73,9 @@ export default defineComponent({
             if (ObjectUtil.isNotEmpty(propsValue)) {
                 return propsValue
             }
+            if (!type) {
+                return {}
+            }
             return ObjectUtil.copy(formDataDefault[type])
         }
         return {

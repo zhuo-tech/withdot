@@ -107,28 +107,16 @@ const displayDot = computed(() => {
             {{ item.label }}
         </template>
         <template v-slot:operating="{item, index}">
-            <el-button :icon="Edit" type="text" @click="context.controlDrawer.show()">
-                编辑
-            </el-button>
+            <AddPoint :current-play-time="playerRef.time" @submit="dot => context.editSubmit(dot)">
+                <template v-slot="{edit: editAction}">
+                    <el-button :icon="Edit" type="text" @click="editAction(item)">
+                        编辑
+                    </el-button>
+                </template>
+            </AddPoint>
+
         </template>
     </List>
-
-    <!-- 侧边抽屉 -->
-    <el-drawer v-model="context.controlDrawer.isShow">
-        <template #title>
-            <h1>啊~ 抽屉列表-----------------</h1>
-        </template>
-        <List :list="context.pointList">
-            <template v-slot:prefix>
-                <el-icon>
-                    <postcard />
-                </el-icon>
-            </template>
-            <template v-slot:content="{item, index}">
-                {{ item }}
-            </template>
-        </List>
-    </el-drawer>
 
 </div>
 

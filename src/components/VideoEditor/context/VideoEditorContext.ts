@@ -83,6 +83,11 @@ export class VideoEditorContext {
             .catch(err => this.log.error('更新点信息失败: ', err))
     }
 
+    public editSubmit(dot: CoreDot) {
+        this.update(dot)
+        this.initPointList()
+    }
+
     private initPointList() {
         const workId = this.props.data._id
         if (StrUtil.isEmpty(workId)) {

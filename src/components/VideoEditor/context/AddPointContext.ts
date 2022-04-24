@@ -3,7 +3,7 @@ import { CoreDotPosition } from '@/model/entity/Dot/CoreDotPosition'
 import { DotDisplayType } from '@/model/entity/Dot/DotDisplayType'
 import { RuleItem } from 'async-validator'
 import { FormInstance } from 'element-plus'
-import { CollUtil, ObjectUtil } from 'typescript-util'
+import { CollUtil, ObjectUtil, StrUtil } from 'typescript-util'
 import { ExtractPropTypes } from 'vue'
 
 export type EmitsType = {
@@ -42,14 +42,20 @@ export class AddPointContext {
     }
 
     public formIsLoading: boolean = false
-    /**
-     * 当前打点类型
-     */
-    public currentType: CoreDotType = CoreDotType.题目
+    public isAdd: boolean = false
 
     constructor(props: PropsType, emits: EmitsType) {
         this.props = props
         this.emits = emits
+    }
+
+    public static formDataDefault() {
+        let dot = new CoreDot()
+        dot.display = DotDisplayType.BUTTON
+        dot.config = {} as any
+        dot.position = CoreDotPosition.DEFAULT
+        dot.type = StrUtil.EMPTY
+        return dot
     }
 
     public submit() {
@@ -61,9 +67,10 @@ export class AddPointContext {
                 // TODO: 临时措施, 从 config 数据中获取可能存在的结束时间偏移量; 默认值 0 未定义
                 const end = this.formData.config['time'] ?? 0
 
-                this.formData.type = this.currentType
-                this.formData.start = this.props.currentPlayTime
-                this.formData.end = this.props.currentPlayTime + end
+                if (this.isAdd) {
+                    this.formData.start = this.props.currentPlayTime
+                }
+                this.formData.end = this.formData.start + end
 
                 this.emits('submit', this.formData)
                 this.close()
@@ -74,16 +81,15 @@ export class AddPointContext {
             })
     }
 
-    public static formDataDefault() {
-        let dot = new CoreDot()
-        dot.display = DotDisplayType.BUTTON
-        dot.config = {} as any
-        dot.position = CoreDotPosition.DEFAULT
-        return dot
+    public onMenuSelect(type: CoreDotType) {
+        this.formData.type = type
+        this.isAdd = true
+        this.show()
     }
 
-    public onMenuSelect(type: CoreDotType) {
-        this.currentType = type
+    public editEcho(dot: CoreDot) {
+        Object.assign(this.formData, dot)
+        this.isAdd = false
         this.show()
     }
 

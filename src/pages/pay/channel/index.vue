@@ -1,20 +1,16 @@
 <script lang="ts" setup>
-import { getLogger } from "@/main"
-import { reactive, ref } from "vue"
-import { cloud } from "@/cloud"
-import { PayChannel } from "@/model/entity/PayChannel"
-import { PayChannelService } from "../service/PayChannelService"
-import { onMounted, onUpdated, onUnmounted } from "vue"
-import { getPayStatLabel } from "@/model/entity/PayState"
+import { getLogger } from '@/main'
+import { PayChannel } from '@/model/entity/PayChannel'
+import { getPayStatLabel } from '@/model/entity/PayState'
 import { ElMessage } from 'element-plus'
-import { id } from "element-plus/lib/locale"
+import { onMounted, ref } from 'vue'
+import { PayChannelService } from '../service/PayChannelService'
 
 //============================================================数据=============================================
 
-const log = getLogger("支付渠道")
+const log = getLogger('支付渠道')
 const service = new PayChannelService()
 const notifyList = ref<PayChannel[]>([])
-
 
 const total = ref(0) // 总数
 const size = ref(10) // 每页数量
@@ -166,15 +162,15 @@ const handlePayState = (row: PayChannel): string => {
 
    if(notifyList.value[currentIndex.value].channelMchId ==='')return ElMessage.error('商户号不能为空')
 
-  const obj = {
-    appId: notifyList.value[currentIndex.value].appId,
-    channelName: notifyList.value[currentIndex.value].channelName,
-    channelMchId: notifyList.value[currentIndex.value].channelMchId,
-    objstate: notifyList.value[currentIndex.value].state,
-    remark: notifyList.value[currentIndex.value].remark,
-    param: JSON.parse(notifyList.value[currentIndex.value].paramText) 
-  }
-  const a = await service.editPayChannel(obj, notifyList.value[currentIndex.value]._id)  
+     const obj = {
+         appId: notifyList.value[currentIndex.value].appId,
+         channelName: notifyList.value[currentIndex.value].channelName,
+         channelMchId: notifyList.value[currentIndex.value].channelMchId,
+         objstate: notifyList.value[currentIndex.value].state,
+         remark: notifyList.value[currentIndex.value].remark,
+         param: JSON.parse(notifyList.value[currentIndex.value].paramText),
+     }
+     const a = await service.editPayChannel(obj, notifyList.value[currentIndex.value]._id)
   redact.value = false
   return
 }
