@@ -49,7 +49,8 @@ const draggable = useDraggable(resizableRef, props.boxRect, props.location, upda
 
 // 右键菜单 设置 zIndex
 const rightMenuRef: Ref<HTMLDivElement> = ref({} as any)
-const rightMenu = useRightMenu(rightMenuRef, props.location, updateLocation)
+const contentRef: Ref<HTMLDivElement> = ref({} as any)
+const rightMenu = useRightMenu(rightMenuRef, () => contentRef.value.getBoundingClientRect(), props.location, updateLocation)
 
 onMounted(() => resizable.reset())
 
@@ -74,7 +75,7 @@ defineExpose({reset})
          :class="`controls ${item.value}`"
          @mousedown.stop="event => resizable.start(event, item.value)" />
 
-    <div class="content">
+    <div ref="contentRef" class="content">
         <!-- 右键菜单 -->
         <el-collapse-transition>
             <div v-show="rightMenu.isShow['value']"
@@ -92,7 +93,9 @@ defineExpose({reset})
         </el-collapse-transition>
 
         <!-- 真正被包裹的内容 -->
-        <slot></slot>
+        <div class="config">
+            <slot></slot>
+        </div>
     </div>
 </div>
 </template>
