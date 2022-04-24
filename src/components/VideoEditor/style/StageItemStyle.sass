@@ -1,0 +1,114 @@
+.stage-item
+    // 拖动大小控制按钮
+    --stage-item-control-bgc: rgba(238, 77, 77, 0.7)
+    --stage-item-control-size: 10px
+
+    // 右键菜单
+    --stage-item-menu-bgc: rgba(65, 71, 77, .7)
+    --stage-item-menu-color: rgba(255, 255, 255, 0.68)
+// =========================================================================================
+.dotted-border
+    border: 1px dashed var(--stage-item-control-bgc)
+
+// 顶层元素
+.stage-item
+    pointer-events: auto
+    display: block
+    cursor: pointer
+    position: absolute
+
+    // 控制按钮
+    .controls
+        position: absolute
+        width: var(--stage-item-control-size)
+        height: var(--stage-item-control-size)
+        background-color: var(--stage-item-control-bgc)
+        border-radius: 2px
+
+    // 顶部三个按钮
+    .tl,
+    .tc,
+    .tr
+        top: 0
+
+    .tl
+        left: 0
+        transform: translate(-50%, -50%)
+        cursor: nw-resize
+
+    .tc
+        left: 50%
+        transform: translate(-50%, -50%)
+        cursor: row-resize
+
+    .tr
+        right: 0
+        transform: translate(50%, -50%)
+        cursor: ne-resize
+
+    // 中间两个按钮 (左右两侧)
+    .cl,
+    .cr
+        top: 50%
+        cursor: col-resize
+
+    .cl
+        left: 0
+        transform: translate(-50%, -50%)
+
+    .cr
+        right: 0
+        transform: translate(50%, -50%)
+
+    // 底部三个按钮
+    .br,
+    .bc,
+    .bl
+        bottom: 0
+
+    .br
+        right: 0
+        transform: translate(50%, 50%)
+        cursor: se-resize
+
+    .bc
+        left: 50%
+        transform: translate(-50%, 50%)
+        cursor: row-resize
+
+    .bl
+        left: 0
+        transform: translate(-50%, 50%)
+        cursor: sw-resize
+
+    // 右键菜单
+    .draggable-right-menu
+        position: absolute
+        width: 100px
+        height: auto
+        list-style: none
+        background-color: var(--stage-item-menu-bgc)
+        color: var(--stage-item-menu-color)
+        box-shadow: 0 0 5px rgba(65, 71, 77, .7)
+        transition: all ease 0.5s
+
+        li
+            padding: 3px 10px
+            border-bottom: 1px solid rgba(16, 16, 16, .5)
+
+        li:last-child
+            border: none
+
+        li:hover
+            background-color: rgba(65, 71, 77, .5)
+
+
+    .content
+        width: 100%
+        height: 100%
+        overflow: hidden
+
+        display: flex
+
+    :deep(.content > *)
+        flex: 1 1 auto

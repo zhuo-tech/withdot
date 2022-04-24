@@ -19,7 +19,7 @@ const emits = defineEmits<{
 }>()
 
 const resizableRef: Ref<HTMLDivElement> = ref({} as any)
-const resizable = useResizable(resizableRef)
+const resizable = useResizable(resizableRef, props.boxRect)
 const draggable = useDraggable(resizableRef, props.boxRect)
 
 const rightMenuRef: Ref<HTMLDivElement> = ref({} as any)
@@ -30,20 +30,22 @@ const rightMenu = useRightMenu(rightMenuRef)
 <template>
 <!-- 可拖动 + 可调整大小 + 可设置层级的容器 -->
 <div ref="resizableRef"
-     :class="{'dotted-border': resizable.isShow}"
-     class="resizable"
-     @click="resizable.show()"
+     :class="{'dotted-border': resizable.isShow['value']}"
+     class="stage-item"
+     tabindex="-1"
+     @blur="resizable.close()"
+     @focus="resizable.show()"
      @mousedown="draggable.start"
      @mouseup="draggable.stop"
      @contextmenu.prevent.stop="rightMenu.show">
     <!-- 容器的 控制按钮 -->
     <div v-for="(item) in ObjectUtil.toArray(ResizableType)"
-         v-show="resizable.isShow"
+         v-show="resizable.isShow['value']"
          :key="item.key"
          :class="`controls ${item.value}`"
          @mousedown.stop="event => resizable.start(event, item.value)" />
 
-    <div class="content draggable">
+    <div class="content">
         <!-- 右键菜单 -->
         <el-collapse-transition>
             <div v-show="rightMenu.isShow.value"
@@ -61,12 +63,9 @@ const rightMenu = useRightMenu(rightMenuRef)
         </el-collapse-transition>
 
         <!-- 真正被包裹的内容 -->
-        <div>
-            <slot></slot>
-        </div>
+        <slot></slot>
     </div>
 </div>
 </template>
 
-<style lang="sass" scoped src="../../style/ResizableStyle.sass"></style>
-<style lang="sass" scoped src="../../style/DraggableStyle.sass"></style>
+<style lang="sass" scoped src="../../style/StageItemStyle.sass"></style>

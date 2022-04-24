@@ -28,7 +28,7 @@ const stageBoxRef: Ref<HTMLDivElement> = ref({} as any)
 <template>
 <div ref="stageBoxRef" class="stage-box">
     <StageItem v-for="(item, index) in list" :key="item._id" :boxRect="() => stageBoxRef.getBoundingClientRect()" @setZIndex="action => {}">
-        <div style="min-width: 100px; min-height: 100px; background-color:#fff;">
+        <div style="background-color:#fff;">
             2333333333333333
         </div>
     </StageItem>

@@ -42,9 +42,6 @@ export function useDraggable(element: Ref<HTMLDivElement>, boxRect: () => DOMRec
             offsetY = event.offsetY
             startRect = element.value.getBoundingClientRect()
             start = event
-
-            console.debug('开始拖动: ', {startRect, start})
-
             document.addEventListener('mousemove', mouseMove)
         },
         stop() {
