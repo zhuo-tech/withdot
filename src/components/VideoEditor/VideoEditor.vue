@@ -42,7 +42,7 @@ const displayDot = computed(
 
     <!-- 播放器 -->
     <!--suppress JSUndeclaredVariable -->
-    <VideoPlayer :ref="(el) => playerRef = el.value"
+    <VideoPlayer :ref="(el) => {if (el) playerRef = el.value}"
                  :point-list="displayDot"
                  :show-control="false"
                  :src="fileService.showUrl(data.material?.href)">
