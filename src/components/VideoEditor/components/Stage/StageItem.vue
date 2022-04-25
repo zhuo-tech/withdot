@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { ObjectUtil } from 'typescript-util'
-import { computed, onMounted, Ref, ref } from 'vue'
-import { useDraggable } from './hooks/useDraggable'
-import { ResizableType, useResizable } from './hooks/useResizable'
-import { useRightMenu } from './hooks/useRightMenu'
+import { onMounted, Ref, ref } from 'vue'
+import { ResizableType, useResizable } from '../../hooks/useResizable'
+import { useRightMenu } from '../../hooks/useRightMenu'
 
 /**
  * 可拖动 + 可调整大小 + 可设置层级的容器
@@ -21,38 +20,22 @@ const props = defineProps<{
     boxRect: () => DOMRect
 }>()
 
-const emits = defineEmits<{
-    (event: 'update:location', location: any): void
-}>()
+const emits = defineEmits<{ (event: 'update:location', location: any): void }>()
 
 // 父容器变化时, 重设样式
-const reset = () => resizable.reset(location.value)
-
-// 合并值
-const location = computed(() => {
-    if (resizable.location.lastTime > draggable.location.lastTime) {
-        return {...resizable.location, zIndex: rightMenu.zIndex.value}
-    }
-
-    let v = {...resizable.location, ...draggable.location, zIndex: rightMenu.zIndex.value}
-    // @ts-ignore
-    delete v.lastTime
-    return v
-})
-
-const updateLocation = () => emits('update:location', location.value)
+const reset = () => resizable.reset(resizable.location)
+const updateLocation = () => emits('update:location', resizable.location)
 
 // 拖动和缩放
 const resizableRef: Ref<HTMLDivElement> = ref({} as any)
 const resizable = useResizable(resizableRef, props.boxRect, props.location, updateLocation)
-const draggable = useDraggable(resizableRef, props.boxRect, props.location, updateLocation)
 
 // 右键菜单 设置 zIndex
 const rightMenuRef: Ref<HTMLDivElement> = ref({} as any)
 const contentRef: Ref<HTMLDivElement> = ref({} as any)
 const rightMenu = useRightMenu(rightMenuRef, () => contentRef.value.getBoundingClientRect(), props.location, updateLocation)
 
-onMounted(() => resizable.reset())
+onMounted(resizable.reset)
 
 defineExpose({reset})
 </script>
@@ -60,20 +43,19 @@ defineExpose({reset})
 <template>
 <!-- 可拖动 + 可调整大小 + 可设置层级的容器 -->
 <div ref="resizableRef"
-     :class="{'dotted-border': resizable.isShow['value']}"
+     :class="{'dotted-border': resizable.isShowResizable['value']}"
      class="stage-item"
      tabindex="-1"
-     @blur="resizable.close()"
-     @focus="resizable.show()"
-     @mousedown="draggable.start"
-     @mouseup="draggable.stop"
+     @blur="resizable.closeResizable()"
+     @focus="resizable.showResizable()"
+     @mousedown="resizable.startDraggable"
      @contextmenu.prevent.stop="rightMenu.show">
     <!-- 容器的 控制按钮 -->
     <div v-for="(item) in ObjectUtil.toArray(ResizableType)"
-         v-show="resizable.isShow['value']"
+         v-show="resizable.isShowResizable['value']"
          :key="item.key"
          :class="`controls ${item.value}`"
-         @mousedown.stop="event => resizable.start(event, item.value)" />
+         @mousedown.stop="event => resizable.startResizable(event, item.value)" />
 
     <div ref="contentRef" class="content">
         <!-- 右键菜单 -->

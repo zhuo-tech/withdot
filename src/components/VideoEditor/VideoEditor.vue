@@ -54,10 +54,11 @@ const displayDot = computed(
     <Toolbar :player-ref="playerRef" />
 
     <!-- timeline -->
-    <TimeBubble :container-width="timelineRef['containerWidth']"
+    <TimeBubble :container-width="timelineRef?.['containerWidth']"
                 :list="context.pointList"
                 :time-period="{start: playerRef.minTime, end: playerRef.maxDuration}"
-                @select="time => playerRef.setPlayTime(time)">
+                @select="time => playerRef.setPlayTime(time)"
+                @updateTime="dot => context.update(dot)">
         <Timeline ref="timelineRef"
                   :current="playerRef.playTime"
                   :end="playerRef.maxDuration"

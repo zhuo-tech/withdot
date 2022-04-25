@@ -47,7 +47,6 @@
         .row
             display: flex
             border-top: var(--timeline-line-border)
-            padding: 5px
             position: relative
             height: var(--timeline-line-height)
             box-sizing: border-box
@@ -66,8 +65,7 @@
         .item
             pointer-events: auto
             flex: 0 1 auto
-            padding: 3px 5px
-            height: 30px
+            height: var(--timeline-line-height)
             margin-right: 5px
             border-radius: 5px
             background-color: var(--time-item-bgc)
@@ -75,11 +73,25 @@
 
             text-align: center
 
-            transition: all linear 0.5s
             filter: opacity(.5)
 
             position: absolute
             overflow: hidden
+
+            display: flex
+
+            .label
+                flex: 1 1 auto
+                padding: 3px 5px
+                cursor: move
+                line-height: var(--timeline-line-height)
+
+                span
+                    cursor: auto
+
+            .stretch
+                flex: 0 1 5px
+                cursor: ew-resize
 
         .item:hover
             filter: opacity(1)

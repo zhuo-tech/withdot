@@ -1,23 +1,25 @@
+import { getLogger } from '@/main'
+import { MouseButtonKeyType, MouseEventTool } from '@/tool/MouseEventTool'
 import { ObjectUtil } from 'typescript-util'
-import { reactive, Ref, ref } from 'vue'
+import { reactive, readonly, Ref, ref } from 'vue'
 
 type ChangeValueType = { w: number; h: number; leftValue: number; topValue: number }
-
 type ChangeRectType = Pick<DOMRect, 'width' | 'height' | 'left' | 'top'>
+type Location = Pick<MouseEvent, 'pageX' | 'pageY'>
 
 export type ResizableLocation = {
     width: number
     height: number
     left: number
     top: number
-    lastTime: number
 }
 
 export type ResizableReturn = {
     /**
      * 是否显示控制按钮和虚线边框
      */
-    isShow: Ref<boolean>
+    isShowResizable: Ref<boolean>
+    enableDraggable: Ref<boolean>
     /**
      * 定位信息
      */
@@ -25,16 +27,19 @@ export type ResizableReturn = {
     /**
      * 显示控制按钮
      */
-    show(): void
+    showResizable(): void
     /**
      * 隐藏控制按钮
      */
-    close(): void
+    closeResizable(): void
     /**
      * resizable
      */
-    start(event: MouseEvent, type: ResizableType): void
-
+    startResizable(event: MouseEvent, type: ResizableType): void
+    /**
+     * 开始拖动
+     */
+    startDraggable(event: MouseEvent): void
     /**
      * 重设定位信息 (操作DOM)
      */
@@ -42,17 +47,27 @@ export type ResizableReturn = {
 }
 
 const CONFIG = {
+    // 拉伸时 宽高最小值
     WIDTH_MIN: 50,
     HEIGHT_MIN: 50,
+    // 开始拖动时的临时 zIndex
+    TEMP_Z_INDEX: '1000',
 }
 
+const log = getLogger('useResizable')
+
 /**
- * useResizableContainer
+ * useResizable
  * @author LL
  * @date 2022-04-24 上午 12:39
+ * @param {Ref<HTMLDivElement>} element 目标元素
+ * @param {() => DOMRect} boxRect 目标元素的意向父容器大小
+ * @param {Partial<ResizableLocation>} initValue 初始化值
+ * @param {() => void} onChange 发生变化后的回调
+ * @return {ResizableReturn} 控制属性
  **/
 export function useResizable(element: Ref<HTMLDivElement>, boxRect: () => DOMRect, initValue?: Partial<ResizableLocation>, onChange?: () => void): ResizableReturn {
-    const isShow = ref(false)
+    const isShowResizable = ref(false)
     const location: ResizableLocation = reactive({
         width: initValue?.width ?? 0,
         height: initValue?.height ?? 0,
@@ -68,13 +83,22 @@ export function useResizable(element: Ref<HTMLDivElement>, boxRect: () => DOMRec
     // 拖动初始大小
     let resizableStart: DOMRect | null
 
-    const close = () => {
-        if (isShow.value) {
-            isShow.value = false
+    // 拖动相关
+    const enableDraggable = ref(false)
+    let oldZIndex = '0'
+    let startRect: DOMRect
+    let start: Location
+
+    const showResizable = () => {
+        isShowResizable.value = true
+    }
+    const closeResizable = () => {
+        if (isShowResizable.value) {
+            isShowResizable.value = false
+            log.trace('关闭 Resizable')
         }
     }
-
-    const start = (event: MouseEvent, type: ResizableType) => {
+    const startResizable = (event: MouseEvent, type: ResizableType) => {
         dragTarget = event.target as any
         dragStart = {pageX: event.pageX, pageY: event.pageY}
         resizableStart = element.value.getBoundingClientRect()
@@ -88,32 +112,103 @@ export function useResizable(element: Ref<HTMLDivElement>, boxRect: () => DOMRec
                 dragStart = null
                 resizableStart = null
             }
-            document.removeEventListener('mouseup', mouseUp)
-            document.removeEventListener('mousemove', move)
+            document.removeEventListener('mouseup', mouseUp, true)
+            document.removeEventListener('mousemove', move, true)
+            log.trace('暂停 Resizable move 移除')
         }
 
-        document.addEventListener('mouseup', mouseUp, {passive: true})
-        document.addEventListener('mousemove', move, {passive: true})
+        document.addEventListener('mouseup', mouseUp, true)
+        document.addEventListener('mousemove', move, true)
+        log.trace('开始 Resizable')
+    }
+
+    // 拖动 move
+    const draggableMouseMove = (event: MouseEvent) => {
+        if (!enableDraggable.value) {
+            return
+        }
+        log.trace('拖动 move', enableDraggable.value)
+
+        const {pageX, pageY} = event
+        const {pageX: oldX, pageY: oldY} = start
+        const {top: boxTop, left: boxLeft, width: pw, height: ph} = boxRect()
+        const {width, height} = element.value.getBoundingClientRect()
+
+        const change = {
+            left: pageX - oldX - boxLeft,
+            top: pageY - oldY - boxTop,
+        }
+
+        // 越界修正
+        const {left = 0, top = 0} = startRect
+        const end = {
+            left: Math.min(Math.max(left + change.left, 0), pw - width),
+            top: Math.min(Math.max(top + change.top, 0), ph - height),
+        }
+
+        // 应用更改
+        location.left = end.left / pw
+        location.top = end.top / ph
+
+        element.value.style.left = end.left + 'px'
+        element.value.style.top = end.top + 'px'
+
+        onChange?.()
+    }
+    const startDraggable = (event: MouseEvent) => {
+        if (MouseEventTool.keyType(event) === MouseButtonKeyType.RIGHT) {
+            log.debug('draggable start: 丢弃 右键点击')
+            return
+        }
+        if (enableDraggable.value) {
+            log.warn(' start draggable: 已经启用 或 未注销, 丢弃')
+            return
+        }
+
+        enableDraggable.value = true
+        startRect = element.value.getBoundingClientRect()
+        start = event
+
+        oldZIndex = element.value.style.zIndex
+        element.value.style.zIndex = CONFIG.TEMP_Z_INDEX
+
+        document.addEventListener('mousemove', draggableMouseMove, true)
+        document.addEventListener('mouseup', stopDraggable, true)
+
+        log.trace('开始拖动 listener move; enableDraggable.value = ', enableDraggable.value)
+    }
+    const stopDraggable = () => {
+        if (enableDraggable.value) {
+            log.trace('停止拖动 enableDraggable = ', enableDraggable.value, 'move 移除')
+            enableDraggable.value = false
+            element.value.style.zIndex = oldZIndex
+            document.removeEventListener('mousemove', draggableMouseMove, true)
+            document.removeEventListener('mouseup', stopDraggable, true)
+        } else {
+            log.warn('抛弃 stopDraggable; enableDraggable = ', enableDraggable.value)
+        }
+    }
+
+    const reset = (newLocation: ResizableLocation = location) => {
+        const {width, height, left, top} = newLocation
+        const {width: pw, height: ph} = boxRect()
+        renderDOM({
+            width: Math.max(width * pw, CONFIG.WIDTH_MIN),
+            height: Math.max(height * ph, CONFIG.HEIGHT_MIN),
+            left: left * pw,
+            top: top * ph,
+        }, element)
     }
 
     return {
-        isShow,
+        isShowResizable: isShowResizable,
+        enableDraggable: readonly(enableDraggable),
         location,
-        close,
-        start,
-        show() {
-            isShow.value = true
-        },
-        reset(newLocation: ResizableLocation = location) {
-            const {width, height, left, top} = newLocation
-            const {width: pw, height: ph} = boxRect()
-            renderDOM({
-                width: Math.max(width * pw, CONFIG.WIDTH_MIN),
-                height: Math.max(height * ph, CONFIG.HEIGHT_MIN),
-                left: left * pw,
-                top: top * ph,
-            }, element)
-        },
+        showResizable,
+        startResizable,
+        closeResizable,
+        startDraggable,
+        reset,
     }
 }
 
@@ -132,7 +227,7 @@ function buildMove(
             return
         }
         if (!resizableStart || !dragStart) {
-            console.error('意料之外: resizableRefStart  dragStart  未初始化')
+            log.error('意料之外: resizableRefStart  dragStart  未初始化')
             return
         }
 
@@ -167,7 +262,6 @@ function buildMove(
         location.height = rect.height / ph
         location.top = rect.top / ph
         location.left = rect.left / pw
-        location.lastTime = Date.now()
 
         onChange?.()
 
@@ -175,6 +269,9 @@ function buildMove(
     }
 }
 
+/**
+ * 操作 DOM 应用计算后的样式
+ */
 function renderDOM(rect: ChangeRectType, element: Ref<HTMLDivElement>) {
     ObjectUtil.forEach(rect as any, (key, value) => element.value.style[key] = value + 'px')
 }
@@ -217,8 +314,12 @@ function criticalHandle(rect: ChangeRectType, oldRect: DOMRect, boxRect: () => D
     }
 }
 
+/**
+ * 鼠标坐标变化值 应如何改变盒子大小
+ * @param {ResizableType} type 拖动缩放方向
+ * @param {ChangeValueType} change 变化量
+ */
 function resizableTypeHandle(type: ResizableType, change: ChangeValueType) {
-    // 鼠标坐标变化值 应如何改变盒子大小
     switch (type) {
         // 四角: 改变宽高
         case ResizableType.TOP_LEFT: {
@@ -273,6 +374,9 @@ function resizableTypeHandle(type: ResizableType, change: ChangeValueType) {
     }
 }
 
+/**
+ * 拖动缩放方向
+ */
 export enum ResizableType {
     TOP_LEFT = 'tl',
     TOP_CENTER = 'tc',
