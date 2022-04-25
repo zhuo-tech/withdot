@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted } from 'vue'
+import { onBeforeUnmount, onMounted } from 'vue'
 
 /**
  * <h3>监听 DOM 元素大小变化</h3>
@@ -19,7 +19,7 @@ export function useResizeMonitor(resize: (width: number, height: number) => void
         })
 
         onMounted(() => ro.observe(domSupplier()))
-        onUnmounted(() => ro.unobserve(domSupplier()))
+        onBeforeUnmount(() => ro.unobserve(domSupplier()))
         return
     }
 
@@ -35,5 +35,5 @@ export function useResizeMonitor(resize: (width: number, height: number) => void
         }
     }
     onMounted(() => window.addEventListener('resize', eventCallback, {passive: true}))
-    onUnmounted(() => window.removeEventListener('resize', eventCallback))
+    onBeforeUnmount(() => window.removeEventListener('resize', eventCallback))
 }
