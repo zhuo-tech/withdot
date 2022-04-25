@@ -1,19 +1,15 @@
 <script lang="ts" setup>
 import { TimeUnit } from 'typescript-util'
-import { reactive } from 'vue'
-import { ControlLayer } from './context/ControlLayer'
-import { ControlModel } from './service/ControlModel'
 import DoubleSpeed from './components/DoubleSpeed.vue'
 import ProgressBar from './components/ProgressBar.vue'
+import { useControlLayer } from './hooks/useControlLayer'
+import { ControlModel } from './service/ControlModel'
 
 /**
  * 控制器层
  */
-const props = defineProps<{
-    show: boolean
-    model: ControlModel
-}>()
-const controlLayer = reactive(new ControlLayer())
+const props = defineProps<{ show: boolean, model: ControlModel }>()
+const controlLayer = useControlLayer(props)
 
 </script>
 
@@ -25,11 +21,7 @@ const controlLayer = reactive(new ControlLayer())
      @click.self="model.togglePlaybackStatus()">
 
     <!-- 顶部 -->
-    <div :class="{ 'opaque': controlLayer.isShow }"
-         v-if="show"
-         class="header"
-         @mouseout="controlLayer.preventClosing=false"
-         @mouseover="controlLayer.preventClosing=true">
+    <div v-if="show" :class="{ 'opaque': controlLayer.isShow }" class="header">
         <div class="buttons">
             <!-- 更多 -->
             <el-icon>
@@ -42,14 +34,11 @@ const controlLayer = reactive(new ControlLayer())
     </div>
 
     <!-- 底部 -->
-    <div v-if="show" :class="{ 'opaque': controlLayer.isShow }"
-         class="footer"
-         @mouseout="controlLayer.preventClosing=false"
-         @mouseover="controlLayer.preventClosing=true">
+    <div v-if="show" :class="{ 'opaque': controlLayer.isShow }" class="footer">
         <!--进度条-->
         <ProgressBar :buffer-value="model.bufferTime"
-                     :max="model.maxTime"
                      :format-tips="(t) => TimeUnit.SECOND.display(t)"
+                     :max="model.maxTime"
                      :min="model.minTime"
                      :value="model.time"
                      @change="time => model.setPlayTime?.(time)">

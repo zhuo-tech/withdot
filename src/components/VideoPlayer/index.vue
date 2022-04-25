@@ -1,8 +1,9 @@
 <script lang="ts" setup>
+import { ControlModelAdapter } from '@/components/VideoPlayer/context/ControlModelAdapter'
+import { usePlayerBox } from '@/components/VideoPlayer/hooks/usePlayerBox'
 import { ControlModel } from '@/components/VideoPlayer/service/ControlModel'
 import { CoreDot } from '@/model/entity/CoreDot'
-import { onMounted, reactive, Ref, ref, unref } from 'vue'
-import { ControlModelAdapter, PlayerContext } from './context/PlayerContext'
+import { onMounted, Ref, ref, unref } from 'vue'
 import { VideoWrapperContext } from './context/VideoWrapperContext'
 import ControlLayer from './ControlLayer.vue'
 import { AspectRatio } from './service/AspectRatio'
@@ -26,25 +27,25 @@ const props = defineProps({
         type: Array,
         default: () => ([]),
     },
-    playTime: {
-        type: Number,
-        default: 0,
-    },
     showControl: {
         type: Boolean,
         default: true,
     },
 })
 
-const emits = defineEmits<{
-    (event: 'update:playTime', time: number): void
-}>()
+const emits = defineEmits<{ (event: 'update:playTime', time: number): void }>()
+// ----------------------------------------------------------------------------------------
 
-const context: PlayerContext = reactive(new PlayerContext(props)) as any
-const videoRef: VideoWrapperContext = ref({}) as any
-
+const videoLayer: Ref<VideoWrapperContext> = ref({} as any)
+const playerRef: Ref<HTMLDivElement> = ref({} as any)
 const controlProp: Ref<ControlModel> = ref({} as any)
-onMounted(() => controlProp.value = new ControlModelAdapter(unref(videoRef), context.playerBoxElement))
+
+const player = usePlayerBox(playerRef, props.aspectRatio)
+
+onMounted(() => {
+    controlProp.value = new ControlModelAdapter(unref(videoLayer))
+    controlProp.value.toggleFullScreen = player.toggleFullScreen
+})
 
 defineExpose(controlProp)
 </script>
@@ -53,16 +54,14 @@ defineExpose(controlProp)
 <!-- 最外层容器 -->
 <div class="player-wrap">
     <!-- 持有绝对宽高 -->
-    <div id="player" :ref="el => context.playerBoxElement.setElement(el)">
+    <div id="player" ref="playerRef">
+        <VideoWrapperLayer ref="videoLayer" :src="src" />
 
-        <!--suppress JSUndeclaredVariable -->
-        <VideoWrapperLayer :ref="el => videoRef = el" :src="src" />
-        <!--suppress RequiredAttributes -->
         <ControlLayer :model="controlProp" :show="showControl" />
 
+        <!--  预留 视频之上的悬浮层  -->
         <div class="stage-wrapper">
-            <slot :box="context.boxWidthHeight" :list="pointList" name="stage">
-            <!--  预留 视频之上的悬浮层  -->
+            <slot :list="pointList" name="stage">
             </slot>
         </div>
     </div>

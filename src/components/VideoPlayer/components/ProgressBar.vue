@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { reactive } from 'vue'
-import { ProgressBarContext } from '../context/ProgressBarContext'
+import { Ref, ref } from 'vue'
+import { useProgressBar } from '../hooks/useProgressBar'
 
 /**
  * 自定义进度条
@@ -11,26 +11,11 @@ import { ProgressBarContext } from '../context/ProgressBarContext'
  * @props formatTips {(value: number) => string} 格式化函数
  */
 const props = defineProps({
-    value: {
-        type: Number,
-        default: 20,
-    },
-    bufferValue: {
-        type: Number,
-        default: 0,
-    },
-    min: {
-        type: Number,
-        default: 0,
-    },
-    max: {
-        type: Number,
-        default: 100,
-    },
-    formatTips: {
-        type: Function,
-        required: false,
-    },
+    value: {type: Number, default: 20},
+    bufferValue: {type: Number, default: 0},
+    min: {type: Number, default: 0},
+    max: {type: Number, default: 100},
+    formatTips: {type: Function, required: false},
 })
 
 const emits = defineEmits<{
@@ -38,17 +23,16 @@ const emits = defineEmits<{
     (event: 'change', value: number): void,
 }>()
 
-const data = reactive(new ProgressBarContext(props as any, (value) => {
-    emits('update:value', value)
-    emits('change', value)
-}))
+const trackRef: Ref<HTMLDivElement> = ref({} as any)
+const tipsRef: Ref<HTMLDivElement> = ref({} as any)
+const data = useProgressBar(trackRef, tipsRef, props as any, emits)
 
 </script>
 
 <template>
-<div class="progress-bar" @mousemove="data.trackMouseMove" @mouseleave="data.buttonMouseUp">
-    <div :ref="el => data.trackRef.setElement(el)" class="track" @click="data.trackOnClick">
-        <div :ref="el => data.tipsRef.setElement(el)" class="tips">
+<div class="progress-bar" @mouseleave="data.buttonMouseUp" @mousemove="data.trackMouseMove">
+    <div ref="trackRef" class="track" @click="data.trackOnClick">
+        <div ref="tipsRef" class="tips">
             {{ data.showTipsValue }}
         </div>
     </div>
@@ -58,10 +42,6 @@ const data = reactive(new ProgressBarContext(props as any, (value) => {
     <div :class="{'linear-animation': !data.buttonAdsorption}" :style="`width: ${data.percentage};`" class="display-layer">
         <!-- 控制按钮 -->
         <div :ref="el => data.progressButtonRef = el" class="progress-button" @mousedown="data.buttonMouseDown" @mouseup="data.buttonMouseUp"></div>
-    </div>
-    <!-- 扩展内容 -->
-    <div class="other">
-
     </div>
 </div>
 </template>
