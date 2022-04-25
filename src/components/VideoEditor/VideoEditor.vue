@@ -1,16 +1,16 @@
 <script lang="ts" setup>
+import DoubleSpeed from '@/components/VideoPlayer/components/DoubleSpeed.vue'
+import { TimeUnit } from 'typescript-util'
 import IconLabel from '@/components/IconLabel/IconLabel'
 import List from '@/components/List/List.vue'
 import { CoreDotController } from '@/components/VideoEditor/service/CoreDotFilter'
-import DoubleSpeed from '@/components/VideoPlayer/components/DoubleSpeed.vue'
+import { ControlModel } from '@/components/VideoPlayer/hooks/useVideo'
 import VideoPlayer from '@/components/VideoPlayer/index.vue'
-import { ControlModel } from '@/components/VideoPlayer/service/ControlModel'
 import CoreMaterial from '@/model/entity/CoreMaterial'
 import { CoreWork } from '@/model/entity/CoreWork'
 import { FileService, INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
 import { Edit } from '@element-plus/icons-vue'
-import { TimeUnit } from 'typescript-util'
-import { computed, inject, reactive, Ref, ref } from 'vue'
+import { computed, inject, reactive, Ref, ref, unref } from 'vue'
 import AddPoint from './components/AddPoint.vue'
 import StageLayer from './components/Stage/StageLayer.vue'
 import TimeBubble from './components/TimeBubble'
@@ -20,23 +20,18 @@ import { DotTypeIconShow, VideoEditorContext } from './context/VideoEditorContex
 /**
  * 编辑器
  */
-const props = defineProps<{
-    data: CoreWork & { material: CoreMaterial }
-}>()
-
+const props = defineProps<{ data: CoreWork & { material: CoreMaterial } }>()
 const fileService: FileService = inject(INJECT_KEY_FILE_SERVICE) as FileService
 
-const context = reactive(new VideoEditorContext(props))
-
 const playerRef: Ref<ControlModel> = ref({} as any)
-const setPlayerRef = (el: Ref<ControlModel>) => playerRef.value = el?.value
-
 const timelineRef = ref({})
+
+const context = reactive(new VideoEditorContext(props))
 
 const controller = new CoreDotController()
 const displayDot = computed(() => {
     return context.pointList.filter(i => controller.filter(i, {
-        currentPlaybackTime: playerRef.value.time ?? 0,
+        currentPlaybackTime: playerRef.value?.playTime?.value ?? 0,
     }))
 })
 </script>
@@ -44,10 +39,14 @@ const displayDot = computed(() => {
 <template>
 <div class="video-editor-box">
 
-    <AddPoint :current-play-time="playerRef.time" @submit="formData => context.createDot(formData)" />
+    <AddPoint :current-play-time="playerRef.playTime" @submit="formData => context.createDot(formData)" />
 
     <!-- 播放器 -->
-    <VideoPlayer :ref="setPlayerRef" :point-list="displayDot" :show-control="false" :src="fileService.showUrl(data.material?.href)">
+    <!--suppress JSUndeclaredVariable -->
+    <VideoPlayer :ref="(el) => playerRef = el.value"
+                 :point-list="displayDot"
+                 :show-control="false"
+                 :src="fileService.showUrl(data.material?.href)">
         <template v-slot:stage="{list, box}">
             <StageLayer :list="list" @drag="dot => context.update(dot)" />
         </template>
@@ -56,7 +55,7 @@ const displayDot = computed(() => {
     <div class="toolbar">
         <!-- 播放按钮 -->
         <el-tooltip placement="top">
-            <el-icon @click.stop="playerRef.togglePlaybackStatus()">
+            <el-icon @click.stop="playerRef.togglePlayState()">
                 <video-play v-show="!playerRef.playing" />
                 <video-pause v-show="playerRef.playing" />
             </el-icon>
@@ -67,8 +66,9 @@ const displayDot = computed(() => {
         </el-tooltip>
         <!-- 时间 -->
         <div class="time">
-            {{ TimeUnit.SECOND.display(playerRef.time) }} /
-            {{ TimeUnit.SECOND.display(playerRef.maxTime) }}
+            {{ TimeUnit.SECOND.display(unref(playerRef.playTime)) }}
+            /
+            {{ TimeUnit.SECOND.display(unref(playerRef.maxDuration)) }}
         </div>
         <!-- 倍速 -->
         <DoubleSpeed v-model:value="playerRef.playbackRate" />
@@ -88,11 +88,11 @@ const displayDot = computed(() => {
     <!-- timeline -->
     <TimeBubble :container-width="timelineRef['containerWidth']"
                 :list="context.pointList"
-                :time-period="{start: playerRef.minTime, end: playerRef.maxTime}"
+                :time-period="{start: playerRef.minTime, end: playerRef.maxDuration}"
                 @select="time => playerRef.setPlayTime(time)">
         <Timeline ref="timelineRef"
-                  :current="playerRef.time"
-                  :end="playerRef.maxTime"
+                  :current="playerRef.playTime"
+                  :end="playerRef.maxDuration"
                   :start="playerRef.minTime"
                   @drag="time => playerRef.setPlayTime(time)"
                   @select="time => playerRef.setPlayTime(time)" />
@@ -107,7 +107,7 @@ const displayDot = computed(() => {
             {{ item.label }}
         </template>
         <template v-slot:operating="{item, index}">
-            <AddPoint :current-play-time="playerRef.time" @submit="dot => context.editSubmit(dot)">
+            <AddPoint :current-play-time="playerRef.playTime" @submit="dot => context.editSubmit(dot)">
                 <template v-slot="{edit: editAction}">
                     <el-button :icon="Edit" type="text" @click="editAction(item)">
                         编辑

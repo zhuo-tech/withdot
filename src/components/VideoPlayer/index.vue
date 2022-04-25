@@ -1,53 +1,34 @@
 <script lang="ts" setup>
-import { ControlModelAdapter } from '@/components/VideoPlayer/context/ControlModelAdapter'
-import { usePlayerBox } from '@/components/VideoPlayer/hooks/usePlayerBox'
-import { ControlModel } from '@/components/VideoPlayer/service/ControlModel'
-import { CoreDot } from '@/model/entity/CoreDot'
-import { onMounted, Ref, ref, unref } from 'vue'
-import { VideoWrapperContext } from './context/VideoWrapperContext'
+import { computed, ComputedRef, Ref, ref } from 'vue'
 import ControlLayer from './ControlLayer.vue'
+import { usePlayerBox } from './hooks/usePlayerBox'
+import { ControlModel } from './hooks/useVideo'
 import { AspectRatio } from './service/AspectRatio'
-import VideoWrapperLayer from './VideoWrapperLayer.vue'
+import VideoLayer from './VideoLayer.vue'
 
 /**
  * 播放器
- * @props aspectRatio 播放器宽高比 {@link AspectRatio}
- * @props pointList 需要渲染的小组件列表 {@link Array<CoreDot>}
  */
 const props = defineProps({
-    aspectRatio: {
-        type: AspectRatio,
-        default: () => AspectRatio.DEFAULT,
-    },
-    src: {
-        type: String,
-        required: true,
-    },
-    pointList: {
-        type: Array,
-        default: () => ([]),
-    },
-    showControl: {
-        type: Boolean,
-        default: true,
-    },
+    aspectRatio: {type: AspectRatio, default: () => AspectRatio.DEFAULT},
+    src: {type: String, required: true},
+    pointList: {type: Array, default: () => ([])},
+    showControl: {type: Boolean, default: true},
 })
-
-const emits = defineEmits<{ (event: 'update:playTime', time: number): void }>()
 // ----------------------------------------------------------------------------------------
 
-const videoLayer: Ref<VideoWrapperContext> = ref({} as any)
+const videoLayer: Ref<Partial<ControlModel>> = ref({} as any)
 const playerRef: Ref<HTMLDivElement> = ref({} as any)
-const controlProp: Ref<ControlModel> = ref({} as any)
 
 const player = usePlayerBox(playerRef, props.aspectRatio)
 
-onMounted(() => {
-    controlProp.value = new ControlModelAdapter(unref(videoLayer))
-    controlProp.value.toggleFullScreen = player.toggleFullScreen
-})
+const controlProp: ComputedRef<ControlModel> = computed<ControlModel>(() => ({
+    ...videoLayer.value,
+    minTime: 0,
+    toggleFullScreen: player.toggleFullScreen,
+}) as ControlModel)
 
-defineExpose(controlProp)
+defineExpose<ComputedRef<ControlModel>>(controlProp)
 </script>
 
 <template>
@@ -55,7 +36,7 @@ defineExpose(controlProp)
 <div class="player-wrap">
     <!-- 持有绝对宽高 -->
     <div id="player" ref="playerRef">
-        <VideoWrapperLayer ref="videoLayer" :src="src" />
+        <VideoLayer ref="videoLayer" :src="src" />
 
         <ControlLayer :model="controlProp" :show="showControl" />
 

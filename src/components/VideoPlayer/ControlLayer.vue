@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import { TimeUnit } from 'typescript-util'
+import { unref } from 'vue'
 import DoubleSpeed from './components/DoubleSpeed.vue'
 import ProgressBar from './components/ProgressBar.vue'
 import { useControlLayer } from './hooks/useControlLayer'
-import { ControlModel } from './service/ControlModel'
+import { ControlModel } from './hooks/useVideo'
 
 /**
  * 控制器层
  */
 const props = defineProps<{ show: boolean, model: ControlModel }>()
 const controlLayer = useControlLayer(props)
-
 </script>
 
 <template>
@@ -18,7 +18,7 @@ const controlLayer = useControlLayer(props)
      @mousemove="controlLayer.show()"
      @mouseout="controlLayer.close()"
      @mouseover="controlLayer.show()"
-     @click.self="model.togglePlaybackStatus()">
+     @click.self="model.togglePlayState()">
 
     <!-- 顶部 -->
     <div v-if="show" :class="{ 'opaque': controlLayer.isShow }" class="header">
@@ -38,9 +38,9 @@ const controlLayer = useControlLayer(props)
         <!--进度条-->
         <ProgressBar :buffer-value="model.bufferTime"
                      :format-tips="(t) => TimeUnit.SECOND.display(t)"
-                     :max="model.maxTime"
+                     :max="model.maxDuration"
                      :min="model.minTime"
-                     :value="model.time"
+                     :value="model.playTime"
                      @change="time => model.setPlayTime?.(time)">
         </ProgressBar>
         <!-- 控制按钮 -->
@@ -48,7 +48,7 @@ const controlLayer = useControlLayer(props)
             <div class="left">
                 <!-- 播放按钮 -->
                 <el-tooltip placement="top">
-                    <el-icon @click.stop="model.togglePlaybackStatus()">
+                    <el-icon @click.stop="model.togglePlayState()">
                         <video-play v-show="!model.playing" />
                         <video-pause v-show="model.playing" />
                     </el-icon>
@@ -59,8 +59,8 @@ const controlLayer = useControlLayer(props)
                 </el-tooltip>
                 <!-- 时间 -->
                 <div class="time">
-                    {{ TimeUnit.SECOND.display(model.time) }} /
-                    {{ TimeUnit.SECOND.display(model.maxTime) }}
+                    {{ TimeUnit.SECOND.display(unref(model.playTime)) }} /
+                    {{ TimeUnit.SECOND.display(unref(model.maxDuration)) }}
                 </div>
             </div>
             <div class="right">
