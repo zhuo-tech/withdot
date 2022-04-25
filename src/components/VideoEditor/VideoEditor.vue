@@ -1,9 +1,6 @@
 <script lang="ts" setup>
-import DoubleSpeed from '@/components/VideoPlayer/components/DoubleSpeed.vue'
-import { TimeUnit } from 'typescript-util'
 import IconLabel from '@/components/IconLabel/IconLabel'
 import List from '@/components/List/List.vue'
-import { CoreDotController } from '@/components/VideoEditor/service/CoreDotFilter'
 import { ControlModel } from '@/components/VideoPlayer/hooks/useVideo'
 import VideoPlayer from '@/components/VideoPlayer/index.vue'
 import CoreMaterial from '@/model/entity/CoreMaterial'
@@ -15,6 +12,7 @@ import AddPoint from './components/AddPoint.vue'
 import StageLayer from './components/Stage/StageLayer.vue'
 import TimeBubble from './components/TimeBubble'
 import Timeline from './components/Timeline'
+import Toolbar from './components/Toolbar.vue'
 import { DotTypeIconShow, VideoEditorContext } from './context/VideoEditorContext'
 
 /**
@@ -28,12 +26,13 @@ const timelineRef = ref({})
 
 const context = reactive(new VideoEditorContext(props))
 
-const controller = new CoreDotController()
-const displayDot = computed(() => {
-    return context.pointList.filter(i => controller.filter(i, {
-        currentPlaybackTime: playerRef.value?.playTime?.value ?? 0,
-    }))
-})
+const displayDot = computed(
+    () => context.pointList.filter(dot => {
+        const {start, end} = dot
+        const playTime = unref(playerRef.value.playTime)
+        return playTime >= start && playTime <= (end ?? 0)
+    }),
+)
 </script>
 
 <template>
@@ -52,38 +51,7 @@ const displayDot = computed(() => {
         </template>
     </VideoPlayer>
 
-    <div class="toolbar">
-        <!-- 播放按钮 -->
-        <el-tooltip placement="top">
-            <el-icon @click.stop="playerRef.togglePlayState()">
-                <video-play v-show="!playerRef.playing" />
-                <video-pause v-show="playerRef.playing" />
-            </el-icon>
-            <template #content>
-                <span v-show="!playerRef.playing">播放</span>
-                <span v-show="playerRef.playing">暂停</span>
-            </template>
-        </el-tooltip>
-        <!-- 时间 -->
-        <div class="time">
-            {{ TimeUnit.SECOND.display(unref(playerRef.playTime)) }}
-            /
-            {{ TimeUnit.SECOND.display(unref(playerRef.maxDuration)) }}
-        </div>
-        <!-- 倍速 -->
-        <DoubleSpeed v-model:value="playerRef.playbackRate" />
-        <!-- 音量 -->
-        <el-slider v-model="playerRef.volume" height="200px" style="max-width: 150px" />
-        <!-- 全屏 -->
-        <el-tooltip placement="top">
-            <el-icon @click="() => playerRef.toggleFullScreen?.()">
-                <full-screen />
-            </el-icon>
-            <template #content>
-                切换全屏
-            </template>
-        </el-tooltip>
-    </div>
+    <Toolbar :player-ref="playerRef" />
 
     <!-- timeline -->
     <TimeBubble :container-width="timelineRef['containerWidth']"
@@ -121,5 +89,3 @@ const displayDot = computed(() => {
 </div>
 
 </template>
-
-<style lang="sass" scoped src="./style/VideoEditorStyle.sass" />

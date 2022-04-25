@@ -74,7 +74,7 @@ export default defineComponent({
             const width = Math.max(itemWidth, 50) + 'px'
 
             return (
-                <div class="item" key={ index } onClick={ () => this.itemOnClick(dot) } style={ {left, width} }>
+                <div class="item" key={ dot._id } onClick={ () => this.itemOnClick(dot) } style={ {left, width} }>
                     { dot.label }
                 </div>
             )

@@ -1,9 +1,9 @@
 <script lang="ts" setup>
+import { AspectRatio } from '@/model/AspectRatio'
 import { computed, ComputedRef, Ref, ref } from 'vue'
 import ControlLayer from './ControlLayer.vue'
 import { usePlayerBox } from './hooks/usePlayerBox'
 import { ControlModel } from './hooks/useVideo'
-import { AspectRatio } from './service/AspectRatio'
 import VideoLayer from './VideoLayer.vue'
 
 /**

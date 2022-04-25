@@ -1,4 +1,4 @@
-import { ControlModel } from '@/components/VideoPlayer/service/ControlModel'
+import { ControlModel } from '@/components/VideoPlayer/hooks/useVideo'
 import { TimeUnit } from 'typescript-util'
 import { Ref, ref } from 'vue'
 

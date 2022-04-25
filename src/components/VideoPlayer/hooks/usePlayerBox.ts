@@ -1,5 +1,5 @@
-import { AspectRatio } from '@/components/VideoPlayer/service/AspectRatio'
 import { getLogger } from '@/main'
+import { AspectRatio } from '@/model/AspectRatio'
 import { useResizeMonitor } from '@/tool/hooks/useResizeMonitor'
 import { Ref } from 'vue'
 

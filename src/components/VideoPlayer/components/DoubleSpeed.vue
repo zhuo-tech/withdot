@@ -1,15 +1,9 @@
 <script lang="ts" setup>
 import { ObjectUtil } from 'typescript-util'
 
-const props = defineProps({
-    value: {
-        type: Number,
-        default: 1,
-    },
-})
-const emits = defineEmits<{
-    (event: 'update:value', value: number): void
-}>()
+const props = defineProps({value: {type: Number, default: 1}})
+
+const emits = defineEmits<{ (event: 'update:value', value: number): void }>()
 
 const optionMapping = {
     '0.5x': 0.5,
