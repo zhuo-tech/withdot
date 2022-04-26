@@ -2,9 +2,9 @@
 <script lang="ts">
 import { ElMessage } from 'element-plus'
 import { onMounted, reactive, ref, toRefs } from "vue";
-import { PayTradeOrderService } from "@/pages/pay/service/PayTradeOrderService";
+import { PayTradeOrderService } from "@/pages/pay/order/PayTradeOrderService";
 import { getLogger } from "@/main";
-import { PayTradeOrderQo } from "@/pages/pay/service/qo/PayTradeOrderQo";
+import { PayTradeOrderQo } from "@/pages/pay/order/PayTradeOrderQo";
 import { PayTradeOrder } from '@/model/entity/PayTradeOrder';
 import { getPayStatLabel, StatusOptions } from '@/model/PayStatusEnum';
 const NAME = PayTradeOrder.name
@@ -120,9 +120,7 @@ export default {
                     <el-popconfirm icon="Warning" cancel-button-text="手滑了" confirm-button-text="确认删除" icon-color="red"
                         title=" 操作无法撤销, 确定要删除吗 ？" @click="handleDelete(scope.$index, scope.row)">
                         <template #reference>
-                            <el-button size="small" type="text" icon="Delete">
-                                删除
-                            </el-button>
+                            <el-button size="small" type="text" icon="Delete">删除</el-button>
                         </template>
                     </el-popconfirm>
                 </template>

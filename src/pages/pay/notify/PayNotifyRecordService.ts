@@ -5,7 +5,7 @@ import { CommonEnum } from '@/model/CommonEnum';
 import { PayNotifyRecord } from "@/model/entity/PayNotifyRecord"
 import { LogicDelete } from '@/model/LogicDelete';
 import { ObjectUtil } from 'typescript-util';
-import { PayNotifyRecordQo } from '@/pages/pay/service/qo/PayNotifyRecordQo';
+import { PayNotifyRecordQo } from '@/pages/pay/notify/PayNotifyRecordQo';
 import { getLogger } from "@/main";
 
 /**

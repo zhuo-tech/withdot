@@ -5,7 +5,6 @@ import { RouteRecordRaw } from 'vue-router'
 const RouterConfigItem: RouteRecordRaw = {
     path: '/pay',
     component: Layout,
-    redirect: '/pay/channel',
     meta: {
         icon: Money,
         isMenu: true,
@@ -14,7 +13,7 @@ const RouterConfigItem: RouteRecordRaw = {
     children: [
         {
             path: 'channel',
-            component: () => import('./channel/index.vue'),
+            component: () => import('@/pages/pay/channel/index.vue'),
             meta: {
                 icon: Cloudy,
                 isMenu: true,
@@ -22,8 +21,24 @@ const RouterConfigItem: RouteRecordRaw = {
             }
         },
         {
+            path: 'channel/addPayChannel',
+            component: () => import('@/pages/pay/channel/component/add.vue'),
+            meta: {
+                isMenu: false,
+                title: '新增支付渠道'
+            }
+        },
+        {
+            path: 'channel/editPayChannel',
+            component: () => import('@/pages/pay/channel/component/edit.vue'),
+            meta: {
+                isMenu: false,
+                title: '编辑支付渠道'
+            }
+        },
+        {
             path: 'goods',
-            component: () => import('./goods/index.vue'),
+            component: () => import('@/pages/pay/goods/index.vue'),
             meta: {
                 icon: Goods,
                 isMenu: true,
@@ -32,7 +47,7 @@ const RouterConfigItem: RouteRecordRaw = {
         },
         {
             path: 'order',
-            component: () => import('./order/index.vue'),
+            component: () => import('@/pages/pay/order/index.vue'),
             meta: {
                 icon: Coin,
                 isMenu: true,
@@ -41,7 +56,7 @@ const RouterConfigItem: RouteRecordRaw = {
         },
         {
             path: 'notify',
-            component: () => import('./notify/index.vue'),
+            component: () => import('@/pages/pay/notify/index.vue'),
             meta: {
                 icon: ChatRound,
                 isMenu: true,

@@ -25,15 +25,13 @@
 
      /**
       * 正常
-      * @deprecated
       */
-     DELETE_N = "0",
+      Y= "0",
 
      /**
-      * 删除
-      * @deprecated
+      * 禁用
       */
-     DELETE_Y = "1",
+     N = "1",
 
      /**
       * 添加
@@ -43,7 +41,27 @@
      /**
       * 删除
       */
-     ACTION_UPDATE = 'update'
+     ACTION_UPDATE = 'update',
+
+     /**
+      * 操作成功
+      */
+     OK = 0
+}
+
+export const JustOptions = [
+   { value: '0', label: '正常' },
+   { value: '1', label: '禁用' }
+]
+
+/**
+* 获取名称
+* @param key 值
+* @returns 名称
+*/
+export function getJustLabel(key: string): string {
+   const o = JustOptions.find(item => item.value === key)
+   return o ? o.label : '-'
 }
 
 export const PayTypeOptions = [

@@ -4,7 +4,7 @@ import { PayTradeOrder } from "@/model/entity/PayTradeOrder"
 import { LogicDelete } from '@/model/LogicDelete';
 import { ObjectUtil } from 'typescript-util';
 import { BaseMo } from '@/model/BaseMo';
-import { PayTradeOrderQo } from '@/pages/pay/service/qo/PayTradeOrderQo';
+import { PayTradeOrderQo } from '@/pages/pay/order/PayTradeOrderQo';
 import { getLogger } from "@/main";
 
 /**

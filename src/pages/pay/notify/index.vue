@@ -3,8 +3,8 @@
 import { ElMessage } from 'element-plus'
 import { onMounted, reactive, ref, toRefs } from "vue"
 import { getLogger } from "@/main"
-import { PayNotifyRecordService } from "@/pages/pay/service/PayNotifyRecordService"
-import { PayNotifyRecordQo } from "@/pages/pay/service/qo/PayNotifyRecordQo"
+import { PayNotifyRecordService } from "@/pages/pay/notify/PayNotifyRecordService"
+import { PayNotifyRecordQo } from "@/pages/pay/notify/PayNotifyRecordQo"
 import { PayNotifyRecord } from "@/model/entity/PayNotifyRecord"
 const NAME = PayNotifyRecord.name
 export default {

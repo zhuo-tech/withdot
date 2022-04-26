@@ -56,7 +56,7 @@ export class PayChannel {
    *  }
    */
   param: {
-    keyPath: string
+    keyPath?: string
     keyPem: string
     certPem: string
     secret: string
@@ -76,20 +76,16 @@ export class PayChannel {
   /**
    * 创建时间
    */
-  createTime: number
+  createTime: string
 
   /**
    * 更新时间
    */
-  updateTime: number
+  updateTime: string
 
   /**
    * 删除状态 是否删除 0否1是
    */
   delFlag: number
 
-  /**
-   * 保存param字符串形式，用来展示
-   */
-  paramText:string
 }
