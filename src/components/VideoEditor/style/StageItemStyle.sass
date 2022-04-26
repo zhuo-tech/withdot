@@ -12,14 +12,16 @@
 
 // 顶层元素
 .stage-item
-    pointer-events: auto
+    pointer-events: none
     display: block
     cursor: pointer
     position: absolute
 
     // 控制按钮
     .controls
+        pointer-events: auto
         position: absolute
+        z-index: 200
         width: var(--stage-item-control-size)
         height: var(--stage-item-control-size)
         background-color: var(--stage-item-control-bgc)
@@ -83,6 +85,7 @@
 
     // 右键菜单
     .draggable-right-menu
+        pointer-events: auto
         position: absolute
         width: 100px
         height: auto
@@ -91,6 +94,8 @@
         color: var(--stage-item-menu-color)
         box-shadow: 0 0 5px rgba(65, 71, 77, .7)
         transition: all ease 0.5s
+
+        z-index: 200
 
         li
             padding: 3px 10px
@@ -102,13 +107,16 @@
         li:hover
             background-color: rgba(65, 71, 77, .5)
 
-
+    // 真正的内容区域
     .content
         width: 100%
         height: 100%
         overflow: hidden
-        display: flex
 
-    :deep(.content > *)
-        flex: 1 1 auto
-        position: relative
+        .config
+            width: 100%
+            height: 100%
+            position: relative
+
+            display: flex
+            align-items: baseline

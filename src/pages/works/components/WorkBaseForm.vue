@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import UploadFile from '@/components/Upload/UploadFile.vue'
 import { CoreWork } from '@/model/entity/CoreWork'
-import { LafClient } from 'laf-db-query-wrapper'
-import { reactive, toRefs, watchEffect } from 'vue'
+import { FormInstance } from 'element-plus'
+import { ref, Ref } from 'vue'
+import { useWorkBaseForm } from './useWorkBaseForm'
 
 /**
  * 作品基本信息编辑
@@ -13,58 +14,25 @@ const props = defineProps({
         default: () => (new CoreWork()),
     },
 })
-
-const context = reactive({
-    isShow: false,
-    show() {
-        this.isShow = true
-    },
-    close() {
-        this.isShow = false
-    },
-
-    formRef: null,
-    formData: {
-        _id: '',
-        covers: {}
-    } as CoreWork,
-    formRule: {},
-    formIsLoading: false,
-
-    formSubmit() {
-        this.formIsLoading = true
-        const {_id, covers} = this.formData
-        new LafClient<CoreWork>(CoreWork.TABLE_NAME)
-            .updateById(_id, {covers})
-            .then(() => this.close())
-            .catch(err => console.error(err))
-            .finally(() => this.formIsLoading = false)
-    },
-})
-
-watchEffect(() => {
-    const {_id, covers} = props.data
-    context.formData._id = _id
-    context.formData.covers = covers ?? {}
-})
-
-const {isShow, show, close, formRule, formSubmit, formIsLoading, formData} = toRefs(context)
+const formRef: Ref<FormInstance> = ref({} as any)
+const {isShow, formIsLoading, formData, formRule, show, close, submit} = useWorkBaseForm(formRef, props as any)
 
 </script>
 
 <template>
-<el-icon @click="show()" ><edit-pen /></el-icon>
-<el-dialog
-    v-model="isShow"
-    append-to-body
-    close-on-click-modal
-    destroy-on-close
-    draggable
-    lock-scroll
-    modal
-    title="封面编辑"
-    width="45%">
-    <el-form :ref="el => context.formRef = el"
+<el-icon @click="show">
+    <edit-pen />
+</el-icon>
+<el-dialog v-model="isShow"
+           append-to-body
+           close-on-click-modal
+           destroy-on-close
+           draggable
+           lock-scroll
+           modal
+           title="封面编辑"
+           width="45%">
+    <el-form ref="formRef"
              v-loading="formIsLoading"
              :model="formData"
              :rules="formRule"
@@ -83,7 +51,7 @@ const {isShow, show, close, formRule, formSubmit, formIsLoading, formData} = toR
 
     <div slot="footer" class="drawer-body-footer" style="padding-left: 30px">
         <el-button @click="close">取 消</el-button>
-        <el-button :loading="formIsLoading" type="primary" @click="formSubmit()">
+        <el-button :loading="formIsLoading" type="primary" @click="submit">
             {{ formIsLoading ? '提交中 ...' : '确 定' }}
         </el-button>
     </div>

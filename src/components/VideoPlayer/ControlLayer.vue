@@ -1,20 +1,16 @@
 <script lang="ts" setup>
 import { TimeUnit } from 'typescript-util'
-import { reactive } from 'vue'
-import { ControlLayer } from './context/ControlLayer'
-import { ControlModel } from './service/ControlModel'
+import { unref } from 'vue'
 import DoubleSpeed from './components/DoubleSpeed.vue'
 import ProgressBar from './components/ProgressBar.vue'
+import { useControlLayer } from './hooks/useControlLayer'
+import { ControlModel } from './hooks/useVideo'
 
 /**
  * 控制器层
  */
-const props = defineProps<{
-    show: boolean
-    model: ControlModel
-}>()
-const controlLayer = reactive(new ControlLayer())
-
+const props = defineProps<{ show: boolean, model: ControlModel }>()
+const controlLayer = useControlLayer(props)
 </script>
 
 <template>
@@ -22,14 +18,10 @@ const controlLayer = reactive(new ControlLayer())
      @mousemove="controlLayer.show()"
      @mouseout="controlLayer.close()"
      @mouseover="controlLayer.show()"
-     @click.self="model.togglePlaybackStatus()">
+     @click.self="model.togglePlayState()">
 
     <!-- 顶部 -->
-    <div :class="{ 'opaque': controlLayer.isShow }"
-         v-if="show"
-         class="header"
-         @mouseout="controlLayer.preventClosing=false"
-         @mouseover="controlLayer.preventClosing=true">
+    <div v-if="show" :class="{ 'opaque': controlLayer.isShow }" class="header">
         <div class="buttons">
             <!-- 更多 -->
             <el-icon>
@@ -42,16 +34,13 @@ const controlLayer = reactive(new ControlLayer())
     </div>
 
     <!-- 底部 -->
-    <div v-if="show" :class="{ 'opaque': controlLayer.isShow }"
-         class="footer"
-         @mouseout="controlLayer.preventClosing=false"
-         @mouseover="controlLayer.preventClosing=true">
+    <div v-if="show" :class="{ 'opaque': controlLayer.isShow }" class="footer">
         <!--进度条-->
         <ProgressBar :buffer-value="model.bufferTime"
-                     :max="model.maxTime"
                      :format-tips="(t) => TimeUnit.SECOND.display(t)"
+                     :max="model.maxDuration"
                      :min="model.minTime"
-                     :value="model.time"
+                     :value="model.playTime"
                      @change="time => model.setPlayTime?.(time)">
         </ProgressBar>
         <!-- 控制按钮 -->
@@ -59,7 +48,7 @@ const controlLayer = reactive(new ControlLayer())
             <div class="left">
                 <!-- 播放按钮 -->
                 <el-tooltip placement="top">
-                    <el-icon @click.stop="model.togglePlaybackStatus()">
+                    <el-icon @click.stop="model.togglePlayState()">
                         <video-play v-show="!model.playing" />
                         <video-pause v-show="model.playing" />
                     </el-icon>
@@ -70,8 +59,8 @@ const controlLayer = reactive(new ControlLayer())
                 </el-tooltip>
                 <!-- 时间 -->
                 <div class="time">
-                    {{ TimeUnit.SECOND.display(model.time) }} /
-                    {{ TimeUnit.SECOND.display(model.maxTime) }}
+                    {{ TimeUnit.SECOND.display(unref(model.playTime)) }} /
+                    {{ TimeUnit.SECOND.display(unref(model.maxDuration)) }}
                 </div>
             </div>
             <div class="right">

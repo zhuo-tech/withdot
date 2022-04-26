@@ -19,10 +19,17 @@ export type RightMenuReturn = {
  * @date 2022-04-24 上午 12:21
  * @param {HTMLDivElement} element 右键菜单容器元素引用
  * @param {number} offset 偏移量, 单位 px; 默认 20
+ * @param boxRect 父容器, 用于相对定位
  * @param onChange 发生变化时的回调
  * @param initValue 初始值
  **/
-export function useRightMenu(element: Ref<HTMLDivElement>, initValue: { zIndex: number }, onChange?: (zIndex: number) => void, offset: number = 20): RightMenuReturn {
+export function useRightMenu(
+    element: Ref<HTMLDivElement>,
+    boxRect: () => DOMRect,
+    initValue: { zIndex: number },
+    onChange?: (zIndex: number) => void,
+    offset: number = 20,
+): RightMenuReturn {
     const isShow: Ref<boolean> = ref(false)
     const zIndex: Ref<number> = ref(initValue.zIndex)
 
@@ -33,9 +40,10 @@ export function useRightMenu(element: Ref<HTMLDivElement>, initValue: { zIndex: 
             if (isShow.value) {
                 return
             }
-            const {offsetX, offsetY} = event
-            element.value.style.top = offsetY - offset + 'px'
-            element.value.style.left = offsetX - offset + 'px'
+            const {pageX, pageY} = event
+            const {left, top} = boxRect()
+            element.value.style.top = pageY - top - offset + 'px'
+            element.value.style.left = pageX - left - offset + 'px'
             isShow.value = true
         },
         close() {

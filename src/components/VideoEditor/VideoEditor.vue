@@ -1,98 +1,67 @@
 <script lang="ts" setup>
 import IconLabel from '@/components/IconLabel/IconLabel'
 import List from '@/components/List/List.vue'
-import { CoreDotController } from '@/components/VideoEditor/service/CoreDotFilter'
-import DoubleSpeed from '@/components/VideoPlayer/components/DoubleSpeed.vue'
+import { ControlModel } from '@/components/VideoPlayer/hooks/useVideo'
 import VideoPlayer from '@/components/VideoPlayer/index.vue'
-import { ControlModel } from '@/components/VideoPlayer/service/ControlModel'
 import CoreMaterial from '@/model/entity/CoreMaterial'
 import { CoreWork } from '@/model/entity/CoreWork'
 import { FileService, INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
 import { Edit } from '@element-plus/icons-vue'
-import { TimeUnit } from 'typescript-util'
-import { computed, inject, reactive, Ref, ref } from 'vue'
+import { computed, inject, reactive, Ref, ref, unref } from 'vue'
 import AddPoint from './components/AddPoint.vue'
 import StageLayer from './components/Stage/StageLayer.vue'
 import TimeBubble from './components/TimeBubble'
 import Timeline from './components/Timeline'
+import Toolbar from './components/Toolbar.vue'
 import { DotTypeIconShow, VideoEditorContext } from './context/VideoEditorContext'
 
 /**
  * 编辑器
  */
-const props = defineProps<{
-    data: CoreWork & { material: CoreMaterial }
-}>()
-
+const props = defineProps<{ data: CoreWork & { material: CoreMaterial } }>()
 const fileService: FileService = inject(INJECT_KEY_FILE_SERVICE) as FileService
+
+const playerRef: Ref<ControlModel> = ref({} as any)
+const timelineRef = ref({})
 
 const context = reactive(new VideoEditorContext(props))
 
-const playerRef: Ref<ControlModel> = ref({} as any)
-const setPlayerRef = (el: Ref<ControlModel>) => playerRef.value = el?.value
-
-const timelineRef = ref({})
-
-const controller = new CoreDotController()
-const displayDot = computed(() => {
-    return context.pointList.filter(i => controller.filter(i, {
-        currentPlaybackTime: playerRef.value.time ?? 0,
-    }))
-})
+const displayDot = computed(
+    () => context.pointList.filter(dot => {
+        const {start, end} = dot
+        const playTime = unref(playerRef.value.playTime)
+        return playTime >= start && playTime <= (end ?? 0)
+    }),
+)
 </script>
 
 <template>
 <div class="video-editor-box">
 
-    <AddPoint :current-play-time="playerRef.time" @submit="formData => context.createDot(formData)" />
+    <AddPoint :current-play-time="playerRef.playTime" @submit="formData => context.createDot(formData)" />
 
     <!-- 播放器 -->
-    <VideoPlayer :ref="setPlayerRef" :point-list="displayDot" :show-control="false" :src="fileService.showUrl(data.material?.href)">
+    <!--suppress JSUndeclaredVariable -->
+    <VideoPlayer :ref="(el) => {if (el) playerRef = el.value}"
+                 :point-list="displayDot"
+                 :show-control="false"
+                 :src="fileService.showUrl(data.material?.href)">
         <template v-slot:stage="{list, box}">
             <StageLayer :list="list" @drag="dot => context.update(dot)" />
         </template>
     </VideoPlayer>
 
-    <div class="toolbar">
-        <!-- 播放按钮 -->
-        <el-tooltip placement="top">
-            <el-icon @click.stop="playerRef.togglePlaybackStatus()">
-                <video-play v-show="!playerRef.playing" />
-                <video-pause v-show="playerRef.playing" />
-            </el-icon>
-            <template #content>
-                <span v-show="!playerRef.playing">播放</span>
-                <span v-show="playerRef.playing">暂停</span>
-            </template>
-        </el-tooltip>
-        <!-- 时间 -->
-        <div class="time">
-            {{ TimeUnit.SECOND.display(playerRef.time) }} /
-            {{ TimeUnit.SECOND.display(playerRef.maxTime) }}
-        </div>
-        <!-- 倍速 -->
-        <DoubleSpeed v-model:value="playerRef.playbackRate" />
-        <!-- 音量 -->
-        <el-slider v-model="playerRef.volume" height="200px" style="max-width: 150px" />
-        <!-- 全屏 -->
-        <el-tooltip placement="top">
-            <el-icon @click="() => playerRef.toggleFullScreen?.()">
-                <full-screen />
-            </el-icon>
-            <template #content>
-                切换全屏
-            </template>
-        </el-tooltip>
-    </div>
+    <Toolbar :player-ref="playerRef" />
 
     <!-- timeline -->
-    <TimeBubble :container-width="timelineRef['containerWidth']"
+    <TimeBubble :container-width="timelineRef?.['containerWidth']"
                 :list="context.pointList"
-                :time-period="{start: playerRef.minTime, end: playerRef.maxTime}"
-                @select="time => playerRef.setPlayTime(time)">
+                :time-period="{start: playerRef.minTime, end: playerRef.maxDuration}"
+                @select="time => playerRef.setPlayTime(time)"
+                @updateTime="dot => context.update(dot)">
         <Timeline ref="timelineRef"
-                  :current="playerRef.time"
-                  :end="playerRef.maxTime"
+                  :current="playerRef.playTime"
+                  :end="playerRef.maxDuration"
                   :start="playerRef.minTime"
                   @drag="time => playerRef.setPlayTime(time)"
                   @select="time => playerRef.setPlayTime(time)" />
@@ -107,31 +76,17 @@ const displayDot = computed(() => {
             {{ item.label }}
         </template>
         <template v-slot:operating="{item, index}">
-            <el-button :icon="Edit" type="text" @click="context.controlDrawer.show()">
-                编辑
-            </el-button>
+            <AddPoint :current-play-time="playerRef.playTime" @submit="dot => context.editSubmit(dot)">
+                <template v-slot="{edit: editAction}">
+                    <el-button :icon="Edit" type="text" @click="editAction(item)">
+                        编辑
+                    </el-button>
+                </template>
+            </AddPoint>
+
         </template>
     </List>
-
-    <!-- 侧边抽屉 -->
-    <el-drawer v-model="context.controlDrawer.isShow">
-        <template #title>
-            <h1>啊~ 抽屉列表-----------------</h1>
-        </template>
-        <List :list="context.pointList">
-            <template v-slot:prefix>
-                <el-icon>
-                    <postcard />
-                </el-icon>
-            </template>
-            <template v-slot:content="{item, index}">
-                {{ item }}
-            </template>
-        </List>
-    </el-drawer>
 
 </div>
 
 </template>
-
-<style lang="sass" scoped src="./style/VideoEditorStyle.sass" />

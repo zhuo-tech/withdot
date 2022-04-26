@@ -90,7 +90,6 @@ export default {
     }
 }
 </script>
-
 <template>
     <el-card class="box-card">
         <template #header>

@@ -7,11 +7,6 @@ const props = defineProps({
         required: true,
     },
 })
-//
-// const emit = defineEmits(['change'])
-// watch(() => config, (newConfig) => {
-//     emit('change', newConfig)
-// })
 
 </script>
 <template>

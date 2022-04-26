@@ -63,7 +63,7 @@ const submit = async () => {
     if (!ruleFormRef.value) {
         return
     }
-    await ruleFormRef.value.validate((valid, fields) => {
+    await ruleFormRef.value.validate((valid) => {
         if (!valid) {
             ElMessage.error('请按要求填写表单')
             return
@@ -72,9 +72,10 @@ const submit = async () => {
         setTimeout(() => {
             props.subassembly.visible = false
             ElMessage.success('作业添加成功')
+            props.getListData?.()
             initialization()
         }, 1000)
-        props.getListData?.()
+
     })
 }
 const initForm = () => {

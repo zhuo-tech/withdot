@@ -2,14 +2,15 @@
 <script lang="tsx" setup>
 import ShowFile from '@/components/Upload/ShowFile'
 import { LafUploadResponse } from '@/components/Upload/Upload'
+import { useFilePreview } from '@/components/Upload/useFilePreview'
 import { getLogger } from '@/main'
 import { FileInfo } from '@/model/FileInfo'
+import { FileService, INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
 // noinspection ES6UnusedImports
 import { UploadFilled } from '@element-plus/icons-vue'
 import { UploadFile, UploadFiles, UploadProps, UploadUserFile } from 'element-plus'
 import { CollUtil, ObjectUtil, StrUtil } from 'typescript-util'
 import { inject, reactive, watchEffect } from 'vue'
-import { FileService, INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
 
 /**
  * 对 el-upload 的包装,
@@ -27,7 +28,7 @@ import { FileService, INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
  *</h3>
  * @inject {@link FileService}
  * */
-const propsValue = defineProps<{
+const props = defineProps<{
     tips?: string
     href?: string
     hrefs?: Array<String>
@@ -35,7 +36,7 @@ const propsValue = defineProps<{
     fileInfoList?: Array<FileInfo>
 }>()
 
-const emit = defineEmits<{
+const emits = defineEmits<{
     (event: 'update:href', value: string): void
     (event: 'update:hrefs', value: Array<string>): void
     (event: 'update:fileInfo', value: FileInfo): void
@@ -47,8 +48,7 @@ const log = getLogger('UploadFile')
 const fileService: FileService = inject(INJECT_KEY_FILE_SERVICE) as FileService
 
 let fileList = reactive<Array<UploadUserFile>>([])
-const {href, hrefs, fileInfo, fileInfoList} = propsValue
-
+const {href, hrefs, fileInfo, fileInfoList} = props
 // 处理回显
 watchEffect(() => {
     const fileInfoToUploadFile = (fileInfo: FileInfo) => {
@@ -84,27 +84,27 @@ watchEffect(() => {
     }
     if (StrUtil.isNotEmpty(href)) {
         // @ts-ignore
-        fileList = strToUploadFile(href)
+        fileList = [strToUploadFile(href)]
     }
 })
 
 const onUploadSuccess = (response: LafUploadResponse, uploadFile: UploadFile, uploadFiles: UploadFiles) => {
     uploadFile.response = fileService.formatResponse(response, uploadFile.raw)
     log.trace('上传完成, 格式化响应', uploadFile.response)
-    updateModel(uploadFiles, propsValue)
+    updateModel(uploadFiles, props)
 }
 const onRemove = (uploadFile: UploadFile) => {
     log.trace('移除文件', uploadFile.response, '文件列表', fileList)
-    updateModel(fileList as any, propsValue)
+    updateModel(fileList as any, props)
 }
 
-function updateModel(fileList: UploadFiles, propValue: typeof propsValue) {
+function updateModel(fileList: UploadFiles, propValue: typeof props) {
     if (CollUtil.isEmpty(fileList)) {
-        emit('update:href', StrUtil.EMPTY)
-        emit('update:hrefs', [])
-        emit('update:fileInfo', undefined as any)
-        emit('update:fileInfoList', [])
-        emit('input', [])
+        emits('update:href', StrUtil.EMPTY)
+        emits('update:hrefs', [])
+        emits('update:fileInfo', undefined as any)
+        emits('update:fileInfoList', [])
+        emits('input', [])
         return
     }
     const fileInfo = fileList.filter(i => i.status === 'success')
@@ -112,37 +112,15 @@ function updateModel(fileList: UploadFiles, propValue: typeof propsValue) {
     const value = fileInfo.map(i => i.href)
     log.trace('v-model 更新', value, fileInfo)
 
-    emit('update:href', value[0] ?? StrUtil.EMPTY)
-    emit('update:hrefs', value)
-    emit('update:fileInfo', fileInfo[0])
-    emit('update:fileInfoList', fileInfo)
-    emit('input', fileList)
+    emits('update:href', value[0] ?? StrUtil.EMPTY)
+    emits('update:hrefs', value)
+    emits('update:fileInfo', fileInfo[0])
+    emits('update:fileInfoList', fileInfo)
+    emits('input', fileList)
 }
 
-// 处理预览
-const previewControl = reactive<{
-    onPreview: UploadProps['onPreview']
-    isShow: boolean
-    file: FileInfo
-    show: () => void
-    close: () => void
-}>({
-    isShow: false,
-    file: {} as FileInfo,
-    show() {
-        this.isShow = true
-    },
-    close() {
-        this.isShow = false
-    },
-    onPreview(file) {
-        if (ObjectUtil.isEmpty(file)) {
-            return
-        }
-        this.file = file.response as FileInfo
-        this.show()
-    },
-})
+// 预览
+const {isShow, onPreview, file} = useFilePreview()
 
 </script>
 
@@ -150,7 +128,7 @@ const previewControl = reactive<{
 <el-upload :action="fileService.getActionUploadUrl()"
            :file-list="fileList"
            :headres="fileService.getActionUploadHeaders()"
-           :on-preview="file => previewControl.onPreview(file)"
+           :on-preview="file => onPreview(file)"
            :on-remove="onRemove"
            :on-success="onUploadSuccess"
            style="width: 100%;"
@@ -180,7 +158,7 @@ const previewControl = reactive<{
     </template>
 
     <!-- 预览弹框 -->
-    <el-dialog v-model="previewControl.isShow"
+    <el-dialog v-model="isShow"
                append-to-body
                close-on-click-modal
                destroy-on-close
@@ -188,71 +166,8 @@ const previewControl = reactive<{
                lock-scroll
                modal
                width="45%">
-        <ShowFile :file="previewControl.file" />
+        <ShowFile :file="file" />
     </el-dialog>
 
 </el-upload>
 </template>
-
-<style lang="less" scoped>
-.fileStyle {
-    position: relative;
-    display: flex;
-    align-items: center;
-
-    audio {
-        height: 50px;
-    }
-
-    .el-image {
-        height: 80px;
-    }
-
-    video {
-        height: 80px;
-    }
-
-    .el-upload-list__item-actions {
-        z-index: 10;
-        position: absolute;
-        top: 50%;
-        left: 85%;
-        transform: translate(-50%, -50%);
-        display: none;
-    }
-
-    .el-upload-list__item-delete {
-        z-index: 10;
-        position: absolute;
-        top: 50%;
-        left: 40px;
-        transform: translate(-50%, -50%);
-        display: none;
-    }
-
-    .cover {
-        width: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        opacity: 0.2;
-        display: none;
-        background-color: #675f5f;
-    }
-}
-
-.fileStyle:hover {
-    .cover {
-        display: block;
-    }
-
-    .el-upload-list__item-actions {
-        display: block;
-    }
-
-    .el-upload-list__item-delete {
-        display: block;
-    }
-}
-</style>
