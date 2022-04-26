@@ -24,7 +24,7 @@ const emits = defineEmits<{ (event: 'update:location', location: any): void }>()
 
 // 父容器变化时, 重设样式
 const reset = () => resizable.reset(resizable.location)
-const updateLocation = () => emits('update:location', resizable.location)
+const updateLocation = () => emits('update:location', {...resizable.location, zIndex: rightMenu.zIndex})
 
 // 拖动和缩放
 const resizableRef: Ref<HTMLDivElement> = ref({} as any)

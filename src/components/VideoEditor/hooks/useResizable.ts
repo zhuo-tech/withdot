@@ -73,7 +73,6 @@ export function useResizable(element: Ref<HTMLDivElement>, boxRect: () => DOMRec
         height: initValue?.height ?? 0,
         left: initValue?.left ?? 0,
         top: initValue?.top ?? 0,
-        lastTime: Date.now(),
     })
 
     // 被拖动的目标, 仅用来判断是否处于拖动状态
