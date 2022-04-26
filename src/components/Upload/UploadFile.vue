@@ -120,7 +120,7 @@ function updateModel(fileList: UploadFiles, propValue: typeof props) {
 }
 
 // 预览
-const preview = useFilePreview()
+const {isShow, onPreview, file} = useFilePreview()
 
 </script>
 
@@ -128,7 +128,7 @@ const preview = useFilePreview()
 <el-upload :action="fileService.getActionUploadUrl()"
            :file-list="fileList"
            :headres="fileService.getActionUploadHeaders()"
-           :on-preview="file => preview.onPreview(file)"
+           :on-preview="file => onPreview(file)"
            :on-remove="onRemove"
            :on-success="onUploadSuccess"
            style="width: 100%;"
@@ -158,7 +158,7 @@ const preview = useFilePreview()
     </template>
 
     <!-- 预览弹框 -->
-    <el-dialog v-model="preview.isShow"
+    <el-dialog v-model="isShow"
                append-to-body
                close-on-click-modal
                destroy-on-close
@@ -166,7 +166,7 @@ const preview = useFilePreview()
                lock-scroll
                modal
                width="45%">
-        <ShowFile :file="preview.file" />
+        <ShowFile :file="file" />
     </el-dialog>
 
 </el-upload>

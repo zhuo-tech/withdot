@@ -2,7 +2,7 @@ import { CoreWork } from '@/model/entity/CoreWork'
 import { RuleItem } from 'async-validator'
 import { FormInstance } from 'element-plus'
 import { LafClient } from 'laf-db-query-wrapper'
-import { reactive, ref, Ref, watchEffect } from 'vue'
+import { reactive, ref, Ref, watch } from 'vue'
 
 const formRule: Partial<Record<keyof CoreWork, Array<RuleItem>>> = {}
 
@@ -32,23 +32,22 @@ export function useWorkBaseForm(formRef: Ref<FormInstance>, props: PropsType): W
         covers: {} as any,
     })
 
-    watchEffect(() => {
+    watch(() => props.data, () => {
         const {_id, covers} = props.data
         formData._id = _id
         formData.covers = covers ?? {}
     })
+
+    const show = () => isShow.value = true
+    const close = () => isShow.value = false
 
     return {
         isShow,
         formData,
         formRule,
         formIsLoading,
-        show() {
-            isShow.value = true
-        },
-        close() {
-            isShow.value = false
-        },
+        show,
+        close,
         submit() {
             formRef.value.validate()
                 .then(() => {
@@ -56,7 +55,7 @@ export function useWorkBaseForm(formRef: Ref<FormInstance>, props: PropsType): W
                     const {_id, covers} = formData
                     new LafClient<CoreWork>(CoreWork.TABLE_NAME)
                         .updateById(_id, {covers})
-                        .then(() => this.close())
+                        .then(close)
                         .catch(err => console.error(err))
                         .finally(() => formIsLoading.value = false)
                 })
