@@ -10,7 +10,7 @@ const L = getLogger("支付渠道添加");
 const S = new PayChannelService();
 const router = useRouter()
 const o = new PayChannelDo()
-const gotoRouter = ref('/pay/channel')
+const gotoRouter = '/pay/channel'
 const channelRef = ref<FormInstance>()
 const formState = reactive({
   channelForm: o,
@@ -61,7 +61,7 @@ const channelRule = reactive<FormRules>({
 })
 
 const goto = () => {
-  router.push({ path: gotoRouter.value })
+  router.push({ path: gotoRouter })
 }
 const handleSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return

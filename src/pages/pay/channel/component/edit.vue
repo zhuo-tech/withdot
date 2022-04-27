@@ -16,7 +16,7 @@ type RouteParams = {
 }
 const { id } = route.query as RouteParams
 const o = new PayChannelDo()
-const gotoRouter = ref('/pay/channel')
+const gotoRouter = '/pay/channel'
 const channelRef = ref<FormInstance>()
 const formState = reactive({
   channelForm: o,
@@ -78,7 +78,7 @@ const getPayChannelById = async (id: string) => {
 }
 
 const goto = () => {
-  router.push({ path: gotoRouter.value })
+  router.push({ path: gotoRouter })
 }
 
 const handleSubmit = async (formEl: FormInstance | undefined) => {

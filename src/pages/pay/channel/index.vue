@@ -16,8 +16,8 @@ export default {
         const L = getLogger("支付渠道");
         const S = new PayChannelService();
         const Q = new PayChannelQo(1, 10)
-        const ADD_ROUTER= ref('/pay/channel/addPayChannel')
-        const EDIT_ROUTER= ref('/pay/channel/editPayChannel')
+        const ADD_ROUTER = '/pay/channel/addPayChannel'
+        const EDIT_ROUTER = '/pay/channel/editPayChannel'
         const state = reactive({
             tableKey: 0,
             list: Array<PayChannel>(),
@@ -36,10 +36,10 @@ export default {
             return JSON.stringify(row.param)
         }
         const handleAdd = () => {
-            router.push({ path: ADD_ROUTER.value })
+            router.push({ path: ADD_ROUTER })
         }
-        const handleEdit =(id: string) =>{
-            router.push({ path: EDIT_ROUTER.value, query: { id } })
+        const handleEdit = (id: string) => {
+            router.push({ path: EDIT_ROUTER, query: { id } })
         }
         const handleDelete = async (obj: PayChannel) => {
             await S.removeById(obj._id)
@@ -75,7 +75,6 @@ export default {
         })
         return {
             ...toRefs(state),
-            ADD_ROUTER,
             genSn,
             handleAdd,
             handleEdit,
@@ -122,30 +121,26 @@ export default {
         </el-row>
         <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row
             style="width: 100%">
-        <el-table-column label="序号" type="index" :sn="genSn" width="60" />
-        <el-table-column label="应用标识" prop="appId" />
-        <el-table-column label="渠道名称" prop="channelName" />
-        <el-table-column label="商户号" prop="channelMchId" />
-        <el-table-column label="渠道状态" prop="state" :formatter="handleState" />
-        <el-table-column label="备注" prop="remark" />
-        <el-table-column label="配置参数" prop="param" :show-overflow-tooltip="true" :formatter="handlePayParam" />
-        <el-table-column label="创建时间" prop="createTime" />
-        <el-table-column label="操作" prop="operation">
-          <template #default="scope">
+            <el-table-column label="序号" type="index" :sn="genSn" width="60" />
+            <el-table-column label="应用标识" prop="appId" />
+            <el-table-column label="渠道名称" prop="channelName" />
+            <el-table-column label="商户号" prop="channelMchId" />
+            <el-table-column label="渠道状态" prop="state" :formatter="handleState" />
+            <el-table-column label="备注" prop="remark" />
+            <el-table-column label="配置参数" prop="param" :show-overflow-tooltip="true" :formatter="handlePayParam" />
+            <el-table-column label="创建时间" prop="createTime" />
+            <el-table-column label="操作" prop="operation">
+                <template #default="scope">
                     <el-button icon="Edit" type="text" @click="handleEdit(scope.row._id)">编辑</el-button>
-                    <el-popconfirm icon="Warning" 
-                        cancel-button-text="手滑了" 
-                        confirm-button-text="确认删除" 
-                        icon-color="red"
-                        title=" 操作无法撤销, 确定要删除吗 ？" 
-                        @click="handleDelete(scope.$index, scope.row)">
+                    <el-popconfirm icon="Warning" cancel-button-text="手滑了" confirm-button-text="确认删除" icon-color="red"
+                        title=" 操作无法撤销, 确定要删除吗 ？" @click="handleDelete(scope.$index, scope.row)">
                         <template #reference>
                             <el-button size="small" type="text" icon="Delete">删除</el-button>
                         </template>
                     </el-popconfirm>
-                </template>  
-        </el-table-column>
-      </el-table>
+                </template>
+            </el-table-column>
+        </el-table>
         <el-pagination class="pages" :total="total" v-show="total > 0" v-model:page="queryParam.current"
             v-model:limit="queryParam.size" @size-change="handleSizeChange" @current-change="handleCurrentChange"
             :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper" />
@@ -158,6 +153,7 @@ export default {
     display: flex;
     justify-content: flex-end;
 }
+
 .add-channel-btn {
     margin-bottom: 20px;
 }
