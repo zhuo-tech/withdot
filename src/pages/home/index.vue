@@ -132,7 +132,7 @@ const value2 = ref("");
 }
 .paging {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     margin: 20px 0 0 0;
 }
 </style>
