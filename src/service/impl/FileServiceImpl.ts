@@ -1,6 +1,6 @@
 import { getToken } from '@/api/token'
-import { LAF_BLASE_URL } from '@/cloud'
 import { LafUploadResponse } from '@/components/Upload/Upload'
+import { LAF } from '@/config'
 import { getLogger } from '@/main'
 import { FileInfo } from '@/model/FileInfo'
 import type { FileService } from '@/service/FileService'
@@ -21,7 +21,7 @@ export const FILE = {
 // noinspection JSUnusedLocalSymbols
 export class FileServiceImpl implements FileService {
     private readonly log = getLogger('FileService')
-    private readonly BASE_URL = LAF_BLASE_URL + '/file'
+    private readonly BASE_URL = LAF.BASE_URL + '/file'
 
     /**
      * 默认, 基础 文件桶名
