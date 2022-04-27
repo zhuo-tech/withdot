@@ -12,6 +12,8 @@ export default defineConfig({
     server: {
         port: 13000,
     },
+    envDir: './env',
+    envPrefix: ['VUE_APP_'],
     resolve: {
         alias: {
             '@': path.join(__dirname, 'src'),

@@ -1,13 +1,12 @@
+import { LAF } from '@/config'
 import { Cloud } from 'laf-client-sdk'
 import { LafWrapperConfig, LoggerLevel } from 'laf-db-query-wrapper'
 import { getToken } from './api/token'
 
-export const LAF_BLASE_URL = 'https://7dd2f8e8-6102-492c-a522-b5a7db2ab00a.lafyun.com'
-
 export const cloud = new Cloud({
-    baseUrl: LAF_BLASE_URL,
+    baseUrl: LAF.BASE_URL,
     getAccessToken: () => getToken(),
-    dbProxyUrl: '/proxy/app',
+    dbProxyUrl: LAF.DB_PROXY,
 })
 
 /* 包装器 cloud 引用注入 */
