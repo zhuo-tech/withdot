@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { loginAccount } from '@/api/login'
+import { adminInfo, loginAccount } from '@/api/login'
 import { setToken } from '@/api/token'
 import { Lock, Message, UserFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
@@ -25,7 +25,7 @@ const registerFormRef = registerFormRefs
 const loginFormRef = loginFormRefs
 
 /*
-登录按钮
+ 登录按钮
  */
 const login = () => {
     loginFormRef.value?.validate(valid => {
@@ -36,10 +36,13 @@ const login = () => {
                     ElMessage.error(response.error)
                     return
                 }
-                const {access_token, expire,user} = response.data
-                const userId = user._id
-                setToken(access_token, expire,userId)
+                const {access_token, expire} = response.data
+                setToken(access_token, expire, '')
                 ElMessage.success('登录成功')
+
+                // TODO: 临时措施, 补全UID
+                adminInfo().then(({data: {_id}}) => setToken(access_token, expire, _id))
+
             }).catch(err => {
                 ElMessage.error(err)
             }).finally(() => {
@@ -56,66 +59,66 @@ const login = () => {
 </script>
 
 <template>
-    <!--登录页面-->
-    <el-row v-if="!whetherToRegister">
-        <el-col :offset="17" :span="6" class="loginBox">
-            <div class="logo"></div>
-            <el-form ref="loginFormRef" :model="formRefs" :rules="rules" label-width="55px">
-                <el-form-item label="账号:" prop="username">
-                    <el-input v-model="formRefs.username" clearable placeholder="请输入账号"></el-input>
-                </el-form-item>
-                <el-form-item label="密码:" prop="password">
-                    <el-input v-model="formRefs.password" clearable placeholder="请输入密码" type="password"></el-input>
-                </el-form-item>
-                <el-button round size="large" type="primary" @click="login">登录</el-button>
-            </el-form>
-            <div class="passwordItem">
-                <el-checkbox v-model="checkboxRefs">记住密码</el-checkbox>
-                <div class="forgotPassword">忘记密码?</div>
-            </div>
-            <div class="noAccount">没有账号? 去
-                <span @click="toRegistered">注册</span>
-            </div>
-        </el-col>
-    </el-row>
+<!--登录页面-->
+<el-row v-if="!whetherToRegister">
+    <el-col :offset="17" :span="6" class="loginBox">
+        <div class="logo"></div>
+        <el-form ref="loginFormRef" :model="formRefs" :rules="rules" label-width="55px">
+            <el-form-item label="账号:" prop="username">
+                <el-input v-model="formRefs.username" clearable placeholder="请输入账号"></el-input>
+            </el-form-item>
+            <el-form-item label="密码:" prop="password">
+                <el-input v-model="formRefs.password" clearable placeholder="请输入密码" type="password"></el-input>
+            </el-form-item>
+            <el-button round size="large" type="primary" @click="login">登录</el-button>
+        </el-form>
+        <div class="passwordItem">
+            <el-checkbox v-model="checkboxRefs">记住密码</el-checkbox>
+            <div class="forgotPassword">忘记密码?</div>
+        </div>
+        <div class="noAccount">没有账号? 去
+            <span @click="toRegistered">注册</span>
+        </div>
+    </el-col>
+</el-row>
 
-    <!--注册-->
-    <el-row v-else>
-        <el-col :offset="17" :span="6" class="registerBox">
-            <div class="logo"></div>
-            <el-form ref="registerFormRef" :model="registerForm" :rules="rules" label-width="0">
-                <el-form-item prop="phone">
-                    <el-input v-model="registerForm.phone"
-                              :prefix-icon="UserFilled"
-                              clearable placeholder="请输入手机号" type="number">
-                    </el-input>
-                </el-form-item>
-                <el-form-item prop="verificationCode">
-                    <el-row style="width: 100%">
-                        <el-col :span="11">
-                            <el-input v-model="registerForm.verificationCode"
-                                      :prefix-icon="Message"
-                                      clearable
-                                      placeholder="请输入验证码"
-                                      type="number"></el-input>
-                        </el-col>
-                        <el-col :offset="1" :span="12">
-                            <el-button v-if="smsCounter<=0" type="primary" @click="getVerificationCode">获取验证码</el-button>
-                            <el-button v-else type="primary">{{ smsCounter }}秒</el-button>
-                        </el-col>
-                    </el-row>
-                </el-form-item>
-                <el-form-item prop="password">
-                    <el-input v-model="registerForm.password"
-                              :prefix-icon="Lock"
-                              clearable
-                              placeholder="请输入密码"
-                              type="password"></el-input>
-                </el-form-item>
-                <el-button round size="large" type="primary" @click="register">注册</el-button>
-            </el-form>
-        </el-col>
-    </el-row>
+<!--注册-->
+<el-row v-else>
+    <el-col :offset="17" :span="6" class="registerBox">
+        <div class="logo"></div>
+        <el-form ref="registerFormRef" :model="registerForm" :rules="rules" label-width="0">
+            <el-form-item prop="phone">
+                <el-input v-model="registerForm.phone"
+                          :prefix-icon="UserFilled"
+                          clearable placeholder="请输入手机号" type="number">
+                </el-input>
+            </el-form-item>
+            <el-form-item prop="verificationCode">
+                <el-row style="width: 100%">
+                    <el-col :span="11">
+                        <el-input v-model="registerForm.verificationCode"
+                                  :prefix-icon="Message"
+                                  clearable
+                                  placeholder="请输入验证码"
+                                  type="number"></el-input>
+                    </el-col>
+                    <el-col :offset="1" :span="12">
+                        <el-button v-if="smsCounter<=0" type="primary" @click="getVerificationCode">获取验证码</el-button>
+                        <el-button v-else type="primary">{{ smsCounter }}秒</el-button>
+                    </el-col>
+                </el-row>
+            </el-form-item>
+            <el-form-item prop="password">
+                <el-input v-model="registerForm.password"
+                          :prefix-icon="Lock"
+                          clearable
+                          placeholder="请输入密码"
+                          type="password"></el-input>
+            </el-form-item>
+            <el-button round size="large" type="primary" @click="register">注册</el-button>
+        </el-form>
+    </el-col>
+</el-row>
 </template>
 
 <style lang="less" scoped>

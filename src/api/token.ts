@@ -16,7 +16,7 @@ export function getToken(): string {
     return token
 }
 
-export function setToken(token: string, expire: number, userId: number): void {
+export function setToken(token: string, expire: number, userId: string): void {
     localStorage.setItem(kToken, token)
     localStorage.setItem(kTokenExpire, `${ expire }`)
     localStorage.setItem('userId', `${ userId }`)

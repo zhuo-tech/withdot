@@ -1,6 +1,5 @@
 import { cloud } from '@/cloud'
-
-const DB = cloud.database()
+import { SysAdmin } from '@/model/entity/SysAdmin'
 
 /**
  * 获取短信验证
@@ -23,7 +22,7 @@ export async function registerAccount(phone: any, code: any, password: any) {
     return await cloud.invokeFunction('register-an-account', {
         phone: phone,
         code: code,
-        password: password
+        password: password,
     })
 }
 
@@ -32,9 +31,14 @@ export async function registerAccount(phone: any, code: any, password: any) {
  * @param username:any
  * @param password:any
  */
-export async function  loginAccount(username:any,password:any){
-    return await cloud.invokeFunction('app-login-password',{
-        username:username,
-        password:password
+export async function loginAccount(username: any, password: any): Promise<{ code: number, data: { access_token: string, expire: number, uid: string }, error: any }> {
+    return await cloud.invokeFunction('admin-login', {
+        username: username,
+        password: password,
     })
+}
+
+export function adminInfo() {
+    // noinspection SpellCheckingInspection
+    return cloud.invokeFunction<{ error_code: string, data: SysAdmin & { permissions: Array<string> } }>('admin-getinfo', {})
 }
