@@ -59,7 +59,7 @@ export default {
         }
         const handlePage = async (params: PayNotifyRecordQo): Promise<void> => {
             state.listLoading = true
-            const res = await S.pageByParams(params)
+            const res = await S.page(params)
             state.data = res.record ?? []
             state.total = res.total ?? 0
             state.listLoading = false
