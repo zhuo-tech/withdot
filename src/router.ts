@@ -9,6 +9,7 @@ import PayRouter from '@/pages/pay/PayRouter'
 import QuestionRouter from '@/pages/question/QuestionRouter'
 import StudentRouter from '@/pages/student/StudentRouter'
 import WorksRouter from '@/pages/works/WorksRouter'
+import SystemRouter from '@/pages/system/Router'
 import { LoggerLevel } from '@/tool/log/LoggerLevel'
 import { StrUtil } from 'typescript-util'
 
@@ -33,6 +34,7 @@ const routes: RouteRecordRaw[] = [
     QuestionRouter,
     PayRouter,
     ...AccountRouter,
+    SystemRouter,
     ...ErrorRouter,
 ]
 

@@ -30,7 +30,7 @@ export class SysRole implements BaseEntity {
     /**
      * 权限
      */
-    public permissions: []
+    public permissions: Array<string>
 
     /**
      * 创建时间
