@@ -12,6 +12,11 @@ function switchOpenMenu() {
 }
 
 const user = useUserStore()
+
+ function exit(){
+    localStorage.clear()
+    location.reload()
+   }
 </script>
 
 <template>
@@ -43,12 +48,24 @@ const user = useUserStore()
                 </el-icon>
                 <span>消息</span>
             </el-menu-item>
-            <el-menu-item>
-                <el-icon>
+
+
+                <el-sub-menu index="quit">
+                <template #title>
+                       <el-icon>
                     <avatar />
                 </el-icon>
                 <span>{{ user.username }}</span>
-            </el-menu-item>
+                </template>
+                <el-menu-item @click="exit()" index="exit">
+                <el-icon><circle-close /></el-icon>
+                退出</el-menu-item>
+            </el-sub-menu>
+
+
+
+
+       
         </el-menu>
     </div>
     <div class="menu flex-auto flex justify-end sm:hidden mr-2">

@@ -15,6 +15,7 @@ import {
     smsCounter,
     toRegistered,
     whetherToRegister,
+    toFormRefs
 } from './loginFun'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -60,32 +61,37 @@ const login = () => {
 
 <template>
 <!--登录页面-->
+<div class="box">
 <el-row v-if="!whetherToRegister">
     <el-col :offset="17" :span="6" class="loginBox">
-        <div class="logo"></div>
+      <div class="title">登录</div>
+                <div class="hint">请输入用户信息</div>
         <el-form ref="loginFormRef" :model="formRefs" :rules="rules" label-width="55px">
-            <el-form-item label="账号:" prop="username">
+            <el-form-item  class="input"   prop="username">
                 <el-input v-model="formRefs.username" clearable placeholder="请输入账号"></el-input>
             </el-form-item>
-            <el-form-item label="密码:" prop="password">
+            <el-form-item class="input"   prop="password">
                 <el-input v-model="formRefs.password" clearable placeholder="请输入密码" type="password"></el-input>
             </el-form-item>
-            <el-button round size="large" type="primary" @click="login">登录</el-button>
+            <el-button class="login-but" round size="large" type="primary" @click="login">登录</el-button>
         </el-form>
-        <div class="passwordItem">
+        <!-- <div class="passwordItem">
             <el-checkbox v-model="checkboxRefs">记住密码</el-checkbox>
             <div class="forgotPassword">忘记密码?</div>
         </div>
         <div class="noAccount">没有账号? 去
             <span @click="toRegistered">注册</span>
-        </div>
+        </div> -->
     </el-col>
 </el-row>
 
+
 <!--注册-->
-<el-row v-else>
+<!-- <el-row v-else>
+
+
     <el-col :offset="17" :span="6" class="registerBox">
-        <div class="logo"></div>
+        <div style="cursor:pointer" @click="toFormRefs"><el-icon :size = 30 color="#f4f4f5" ><back/></el-icon></div>
         <el-form ref="registerFormRef" :model="registerForm" :rules="rules" label-width="0">
             <el-form-item prop="phone">
                 <el-input v-model="registerForm.phone"
@@ -118,34 +124,80 @@ const login = () => {
             <el-button round size="large" type="primary" @click="register">注册</el-button>
         </el-form>
     </el-col>
-</el-row>
+</el-row> -->
+</div>
+
 </template>
 
 <style lang="less" scoped>
+.box {
+    width: 100%;
+    height: 100vh;
+    background: url('../../assets/loginbj.png') no-repeat;
+    background-size: 100% 100%;
+}
+
 .loginBox {
+    background-color: #fff;
+
     :deep(.el-input__inner) {
         border-radius: 30px;
+    }
+
+    .title {
+        width: 72px;
+        height: 48px;
+        font-weight: 700;
+        font-size: 36px;
+        margin: 30px 0 0 33px;
+        color: rgba(51, 51, 51, 1);
+    }
+
+    .hint {
+        width: 105px;
+        height: 20px;
+        font-size: 15px;
+        margin: 10px 0 32px 33px;
+        color: rgba(152, 159, 188, 1);
+    }
+
+    .input {
+        width: 90%;
+        margin-bottom: 20px;
+    }
+
+    .login-but {
+        width: 80%;
+        margin-left:50px;
+        background-color: #3348f7;
     }
 }
 
 
-.loginBox, .registerBox {
-    width: 319px;
+
+.loginBox,
+.registerBox {
+    width: 426px;
+    height: 360px;
+    border-radius: 30px;
     position: fixed;
     top: 50%;
     transform: translate(0, -50%);
 }
+
+
 
 .el-button {
     width: 100%;
 }
 
 .passwordItem {
-    margin: 40px 0;
+    margin: 20px 0 0 33px;
     display: flex;
     justify-content: space-between;
 
     .forgotPassword {
+       margin: 6px 33px 0 0px;
         color: #3A62D7;
         font-size: 14px;
         font-family: SourceHanSansSC-regular;
@@ -159,28 +211,23 @@ const login = () => {
     font-size: 14px;
     font-family: SourceHanSansSC-regular;
     font-weight: normal;
+    margin: 10px 0 0 33px;
 
-    > span {
+    >span {
         color: #3A62D7;
         cursor: pointer;
     }
 }
 
-.logo {
-    width: 75px;
-    height: 75px;
-    border-radius: 50%;
-    background-color: #3A62D7;
-    margin-bottom: 97px;
-}
+
 
 
 //去除number输入框的上下控制键
-:deep(input::-webkit-outer-spin-button ) {
+:deep(input::-webkit-outer-spin-button) {
     -webkit-appearance: none !important;
 }
 
-:deep(input::-webkit-inner-spin-button ) {
+:deep(input::-webkit-inner-spin-button) {
     -webkit-appearance: none !important;
 }
 

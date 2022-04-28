@@ -1,7 +1,7 @@
 import { loginAccount, mobileSendCode, registerAccount } from '@/api/login'
 import { setToken } from '@/api/token'
 import { ElMessage, FormInstance } from 'element-plus'
-import { reactive, ref } from 'vue'
+import { reactive,ref} from 'vue'
 
 export const formRefs = reactive({                //登录表单
     username: null,
@@ -16,6 +16,11 @@ export const loginFormRef = ref<FormInstance>()
  */
 export const toRegistered = (): void => {
     whetherToRegister.value = true
+}
+
+
+export const toFormRefs = (): void => {
+    whetherToRegister.value = false
 }
 
 export let whetherToRegister = ref(false)         //是否已经注册
