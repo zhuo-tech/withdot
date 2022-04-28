@@ -6,7 +6,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
     props: {
         service: {
-            type: [BasisCrud],
+            type: [BasisCrud, Object],
             required: true,
         },
     },

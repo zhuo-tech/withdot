@@ -1,7 +1,9 @@
 <script lang="ts" setup>
+import CrudPagination from '@/components/CrudPagination/CrudPagination'
 import ShowFile from '@/components/Upload/ShowFile'
 import UploadFile from '@/components/Upload/UploadFile.vue'
 import { SysAdmin } from '@/model/entity/SysAdmin'
+import { SysRole } from '@/model/entity/SysRole'
 import { request } from '@/pages/system/admin/SysAdminRequest'
 import { useModalForm } from '@/tool/hooks/useModalForm'
 import { useTableList } from '@/tool/hooks/useTableList'
@@ -17,11 +19,12 @@ import { ref, Ref } from 'vue'
 const formRef: Ref<FormInstance> = ref({} as any)
 
 const table = useTableList<SysAdmin>(request)
-const modalForm = useModalForm<SysAdmin>(formRef, request)
-
+const modalForm = useModalForm<SysAdmin>(formRef, request, {submitComplete: () => table.getPageList()})
 const {isLoading, queryIsShow} = table
-
 const {formData, formIsLoading, formIsAdd, isShow} = modalForm
+
+const roleList = ref<Array<SysRole>>([])
+request.getAllRole().then(list => roleList.value = list)
 
 </script>
 
@@ -68,7 +71,7 @@ const {formData, formIsLoading, formIsAdd, isShow} = modalForm
         <el-table-column align="left" label="角色" min-width="200" prop="roles" />
         <el-table-column align="left" label="权限" min-width="400" prop="permission">
             <template v-slot="{row}">
-                <el-tag v-for="({label, name}, index) in row.permission" :key="index + name">
+                <el-tag v-for="({label, name}, index) in row.permission" :key="index + name" class="lower-right-margin">
                     {{ label }}
                 </el-tag>
             </template>
@@ -93,7 +96,7 @@ const {formData, formIsLoading, formIsAdd, isShow} = modalForm
         </el-table-column>
     </el-table>
     <!-- 分页 -->
-    <!--<CrudPagination :service="{}" style="padding-top: 20px" />-->
+    <CrudPagination :service="table" style="padding-top: 20px" />
 
     <!--  编辑抽屉 -->
     <el-dialog
@@ -129,7 +132,9 @@ const {formData, formIsLoading, formIsAdd, isShow} = modalForm
             </el-form-item>
 
             <el-form-item label="角色" prop="roles">
-                <el-input v-model="formData.roles" clearable placeholder="roles"></el-input>
+                <el-select v-model="formData.roles" clearable multiple placeholder="选择角色">
+                    <el-option v-for="(rule, index) in roleList" :key="index" :label="rule.label" :value="rule.name" />
+                </el-select>
             </el-form-item>
 
         </el-form>
@@ -146,4 +151,7 @@ const {formData, formIsLoading, formIsAdd, isShow} = modalForm
 </template>
 
 <style lang="sass" scope>
+.lower-right-margin
+    margin-right: 10px
+    margin-bottom: 10px
 </style>

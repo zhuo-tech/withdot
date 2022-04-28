@@ -5,8 +5,8 @@ import { CollUtil, ObjectUtil } from 'typescript-util'
 import { ref, Ref } from 'vue'
 
 type FormInitConfig<T> = {
-    formData: Partial<T>
-    submitComplete(res: any, isAdd: boolean): void
+    formData?: Partial<T>
+    submitComplete?: (res: any, isAdd: boolean) => void
 }
 
 export type ModalFormReturn<T> = {
@@ -28,9 +28,11 @@ const log = getLogger('useModalForm')
  * @returns {ModalFormReturn<T>}
  */
 export function useModalForm<T>(formRef: Ref<FormInstance>, request: Pick<Request<T>, 'create' | 'update'>, init?: FormInitConfig<T>): ModalFormReturn<T> {
+    const getDefaultFormData = () => init?.formData ?? {}
+
     const isShow: Ref<boolean> = ref(false)
     const formIsLoading: Ref<boolean> = ref(false)
-    const formData: Ref<Partial<T>> = ref(init?.formData ?? {}) as any
+    const formData: Ref<Partial<T>> = ref(getDefaultFormData()) as any
 
     const formIsAdd: Ref<boolean> = ref(false)
 
@@ -43,7 +45,9 @@ export function useModalForm<T>(formRef: Ref<FormInstance>, request: Pick<Reques
             isShow.value = true
             formIsAdd.value = isAdd
             if (data) {
-                formData.value = data
+                formData.value = (() => data)()
+            } else {
+                formData.value = getDefaultFormData()
             }
         },
         close() {
@@ -60,7 +64,10 @@ export function useModalForm<T>(formRef: Ref<FormInstance>, request: Pick<Reques
                     formIsLoading.value = true;
 
                     (formIsAdd ? request.create : request.update)?.(formData.value)
-                        .then(res => init?.submitComplete(res, formIsAdd.value))
+                        .then(res => {
+                            isShow.value = false
+                            init?.submitComplete?.(res, formIsAdd.value)
+                        })
                         .catch(err => {
                             log.debug('submit Error: ', err)
                             ElMessage.error(err?.toString())
