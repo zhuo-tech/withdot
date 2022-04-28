@@ -1,11 +1,9 @@
-import { BaseEntity } from "../BaseEntity";
-
 /**
  * 学员观看作品历史记录表
  * @author LL
  * @date 2022年04月01日 12点57分
  */
-export class HisVodReourd {
+export class HisVodRecord {
 
     _id: string;
 
