@@ -1,6 +1,5 @@
 import { LoggerFactory } from '@/tool/log/LoggerFactory'
 import { LoggerLevel } from '@/tool/log/LoggerLevel'
-import { ObjectUtil } from 'typescript-util'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import ElementPlus from 'element-plus'
@@ -20,6 +19,7 @@ export const getLogger = factory.getLogger
 
 export const app = createApp(App)
 export const VueRouter = createVueRouterInstantiate()
+
 app.config.globalProperties.$echarts = echarts
 
 app.use(VueRouter)
@@ -27,4 +27,4 @@ app.use(VueRouter)
     .use(ElementPlus)
     .mount('#app')
 
-ObjectUtil.toArray(ElIconModules).forEach(({value}) => app.component(value.name, value))
+Object.values(ElIconModules).forEach(icon => app.component(icon.name, icon))
