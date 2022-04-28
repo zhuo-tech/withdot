@@ -26,6 +26,11 @@ const {formData, formIsLoading, formIsAdd, isShow} = modalForm
 const roleList = ref<Array<SysRole>>([])
 request.getAllRole().then(list => roleList.value = list)
 
+const formRule: FormValidationRules<SysAdmin> = {
+    name: [{type: 'string', max: 128, min: 1, message: '不能为空, 最多128字符', trigger: 'blur', required: true}],
+    username: [{type: 'string', max: 128, min: 1, message: '不能为空, 最多128字符', trigger: 'blur', required: true}],
+    roles: [{type: 'array', message: '不能为空', trigger: 'blur', required: true}],
+}
 </script>
 
 <template>
@@ -76,8 +81,8 @@ request.getAllRole().then(list => roleList.value = list)
                 </el-tag>
             </template>
         </el-table-column>
-        <el-table-column align="center" label="创建时间" prop="created_at" width="180" />
-        <el-table-column align="center" label="更新时间" prop="updated_at" width="180" />
+        <el-table-column align="center" label="创建时间" prop="createTime" width="180" />
+        <el-table-column align="center" label="更新时间" prop="updateTime" width="180" />
         <el-table-column align="center" fixed="right" label="操作" prop="Operate" width="180">
             <template v-slot="{row}">
                 <el-button :icon="Edit" type="text" @click="modalForm.showModel(false, row)">编辑</el-button>
@@ -112,7 +117,7 @@ request.getAllRole().then(list => roleList.value = list)
         <el-form ref="formRef"
                  v-loading="formIsLoading"
                  :model="modalForm.formData"
-                 :rules="{}"
+                 :rules="formRule"
                  label-width="140px"
                  style="max-width: 1000px">
 
@@ -132,7 +137,7 @@ request.getAllRole().then(list => roleList.value = list)
             </el-form-item>
 
             <el-form-item label="角色" prop="roles">
-                <el-select v-model="formData.roles" clearable multiple placeholder="选择角色">
+                <el-select v-model="formData.roles" clearable multiple placeholder="选择角色" style="width: 100%;">
                     <el-option v-for="(rule, index) in roleList" :key="index" :label="rule.label" :value="rule.name" />
                 </el-select>
             </el-form-item>

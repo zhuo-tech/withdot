@@ -60,13 +60,10 @@ export const request: AdminRequest = {
     create: async (data) => {
         data.createTime = Date.now()
         data.updateTime = Date.now()
-        data['created_at'] = Date.now()
-        data['updated_at'] = Date.now()
         return await client.insert(data)
     },
     update: async (data) => {
         data.updateTime = Date.now()
-        data['updated_at'] = Date.now()
         return await client.updateById(data._id as string, data, '_id')
     },
     del: (data) => client.deleteById(data._id as string),

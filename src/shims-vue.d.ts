@@ -1,4 +1,5 @@
 import 'vue-router'
+import { RuleItem } from 'async-validator'
 
 
 declare module 'vue-router' {
@@ -43,8 +44,17 @@ declare module 'async-validator' {
 
 declare global {
 
+    /**
+     * 环境变量类型定义
+     */
     interface ImportMetaEnv {
         VUE_APP_LAF_BASE_URL: string
         VUE_APP_LAF_DB_PROXY: string
     }
+
+    /**
+     * 表单验证规则
+     */
+    type FormValidationRules<T> = Partial<Record<keyof T, Array<RuleItem>>>
+
 }
