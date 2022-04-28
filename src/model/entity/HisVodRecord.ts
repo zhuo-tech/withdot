@@ -5,6 +5,8 @@
  */
 export class HisVodRecord {
 
+    public static readonly TABLE_NAME = 'his_vod_record'
+
     _id: string;
 
     /**
