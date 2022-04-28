@@ -11,7 +11,7 @@ export class PayGoodsOrder {
   _id: string
 
   /**
-   * 商品名称
+   * 商品名称（专辑ID）
    */
   goodsId: string
 
