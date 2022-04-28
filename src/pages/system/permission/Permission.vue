@@ -28,7 +28,7 @@ const formRule: FormValidationRules<SysPermission> = {
 </script>
 
 <template>
-<el-card class="box-card" header="管理员账号">
+<el-card class="box-card" header="权限管理">
     <!-- 搜索区域 & 功能按钮 -->
     <el-row justify="end" type="flex">
         <el-collapse-transition>

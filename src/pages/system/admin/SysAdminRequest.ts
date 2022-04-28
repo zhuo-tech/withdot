@@ -1,8 +1,10 @@
+import { cloud } from '@/cloud'
 import { SysAdmin } from '@/model/entity/SysAdmin'
 import { SysPermission } from '@/model/entity/SysPermission'
 import { SysRole } from '@/model/entity/SysRole'
 import { Request } from '@/tool/hooks/useTableList'
 import { distinct } from '@/utils/utils'
+import { AddRes } from 'database-ql/src/result-types'
 import { LafClient, QueryChainWrapper } from 'laf-db-query-wrapper'
 import { CollUtil } from 'typescript-util'
 
@@ -58,9 +60,14 @@ export const request: AdminRequest = {
         return adminPage
     },
     create: async (data) => {
-        data.createTime = Date.now()
-        data.updateTime = Date.now()
-        return await client.insert(data)
+        const res = await cloud.invokeFunction<string | (AddRes & { uid: string })>('admin-create', data)
+        if (typeof res === 'string') {
+            throw new Error(res)
+        }
+        if (!res.ok) {
+            throw new Error(res.error)
+        }
+        return res
     },
     update: async (data) => {
         data.updateTime = Date.now()

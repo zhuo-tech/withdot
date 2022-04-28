@@ -125,6 +125,10 @@ const formRule: FormValidationRules<SysAdmin> = {
                 <el-input v-model="formData.username" :disabled="!formIsAdd" clearable placeholder="登录账户"></el-input>
             </el-form-item>
 
+            <el-form-item v-if="formIsAdd" label="登录密码" prop="password">
+                <el-input v-model="formData.password" clearable placeholder="密码"></el-input>
+            </el-form-item>
+
             <el-form-item label="姓名" prop="name">
                 <el-input v-model="formData.name" clearable placeholder="姓名"></el-input>
             </el-form-item>
