@@ -10,6 +10,7 @@ import QuestionRouter from '@/pages/question/QuestionRouter'
 import StudentRouter from '@/pages/student/StudentRouter'
 import WorksRouter from '@/pages/works/WorksRouter'
 import SystemRouter from '@/pages/system/Router'
+import { useUserStore } from '@/store/user'
 import { LoggerLevel } from '@/tool/log/LoggerLevel'
 import { StrUtil } from 'typescript-util'
 
@@ -54,13 +55,17 @@ export function createVueRouterInstantiate(): Router {
     const beforeEach: NavigationGuard = (to, from, next) => {
         console.groupCollapsed('Router')
         log.trace('导航之前: ', from.path, ' => ', to.path)
+
+        // 前往登录页
         if (to.path === ROUTER_PATH_LOGIN) {
             if (judgmentLogin()) {
                 return next(ROUTER_PATH_HOME)
             }
             return next()
         }
-        if (!judgmentLogin()) {
+        if (judgmentLogin()) {
+            useUserStore().init()
+        } else {
             return next(ROUTER_PATH_LOGIN)
         }
         next()

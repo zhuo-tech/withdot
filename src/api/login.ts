@@ -26,19 +26,33 @@ export async function registerAccount(phone: any, code: any, password: any) {
     })
 }
 
-/**
- * 登录
- * @param username:any
- * @param password:any
- */
-export async function loginAccount(username: any, password: any): Promise<{ code: number, data: { access_token: string, expire: number, uid: string }, error: any }> {
-    return await cloud.invokeFunction('admin-login', {
-        username: username,
-        password: password,
-    })
+type LoginFailureRes = { code: string, msg: string }
+type LoginSuccessRes = {
+    code: 0,
+    data: {
+        access_token: string
+        expire: number
+        uid: string
+    }
 }
 
-export function adminInfo() {
+/**
+ * 登录
+ */
+export async function loginAccount(data: { username: string, password: string }): Promise<LoginSuccessRes['data']> {
+    const res = await cloud.invokeFunction<LoginFailureRes | LoginSuccessRes>('admin-login', data)
+    if (res.code !== 0) {
+        throw new Error(res.msg)
+    }
+
+    return res.data
+}
+
+export async function adminInfo() {
     // noinspection SpellCheckingInspection
-    return cloud.invokeFunction<{ error_code: string, data: SysAdmin & { permissions: Array<string> } }>('admin-getinfo', {})
+    const res = await cloud.invokeFunction<{ error_code: string, error: string, data: SysAdmin & { permissions: Array<string> } }>('admin-getinfo', {})
+    if (res.error_code !== '0') {
+        throw new Error(res.error)
+    }
+    return res.data
 }

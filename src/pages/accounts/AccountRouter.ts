@@ -6,7 +6,7 @@ export const ROUTER_PATH_LOGIN = '/login'
 const RouterConfigItem: RouteRecordRaw[] = [
     {
         path: ROUTER_PATH_LOGIN,
-        component: () => import('./login.vue'),
+        component: () => import('./login/login.vue'),
         meta: {
             isMenu: false,
             title: '登录页',
