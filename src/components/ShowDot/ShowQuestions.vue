@@ -124,6 +124,7 @@ const form = reactive(formData)
     display: flex;
     justify-content: space-evenly;
     margin-bottom: 20px;
+    margin-top: 20px;
 
     > div {
         color: #FFFFFF;

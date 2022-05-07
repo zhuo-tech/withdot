@@ -21,7 +21,7 @@ export const FILE = {
 // noinspection JSUnusedLocalSymbols
 export class FileServiceImpl implements FileService {
     private readonly log = getLogger('FileService')
-    private readonly BASE_URL = LAF.BASE_URL + '/file'
+    private readonly BASE_URL = LAF.FILE_URL
 
     /**
      * 默认, 基础 文件桶名
@@ -49,7 +49,7 @@ export class FileServiceImpl implements FileService {
         }
         let source: string
         if (url.startsWith(StrUtil.PATH_INTEGRAL)) {
-            source = this.BASE_URL + url
+            source = this.BASE_URL + url.slice(1)
         } else {
             source = this.BASE_URL + StrUtil.PATH_INTEGRAL + url
         }

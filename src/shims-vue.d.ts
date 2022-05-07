@@ -50,6 +50,7 @@ declare global {
     interface ImportMetaEnv {
         VUE_APP_LAF_BASE_URL: string
         VUE_APP_LAF_DB_PROXY: string
+        VUE_APP_LAF_FILE: string
     }
 
     /**
