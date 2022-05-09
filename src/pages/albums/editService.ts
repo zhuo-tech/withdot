@@ -165,6 +165,7 @@ export default class EditService {
         list.forEach((item: any) => {
             if (item._id === row._id) {
                 item.isPay = row.isPay
+                item.trialTime = row.trialTime
             }
         })
         const res = await DB.collection(CoreAlbum.TABLE_NAME)
