@@ -95,7 +95,7 @@ export default {
                 <el-button type="primary" icon="Search" @click="handleSearch()">查询</el-button>
             </el-col>
         </el-row>
-        <el-table v-loading="listLoading" :data="data" border fit highlight-current-row style="width: 100%">
+        <el-table v-loading="listLoading" :data="data" :border="true" fit highlight-current-row style="width: 100%">
             <el-table-column label="序号" type="index" :sn="handleSn" width="60" />
             <el-table-column label="订单号码" prop="orderNo" width="180" />
             <el-table-column label="响应通知" prop="notifyId" />

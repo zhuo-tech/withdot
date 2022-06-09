@@ -119,7 +119,7 @@ export default {
         <el-row justify="end" type="flex">
             <el-button icon="Plus" class="add-channel-btn" type="primary" @click="handleAdd">新增</el-button>
         </el-row>
-        <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row
+        <el-table :key="tableKey" v-loading="listLoading" :data="list" :border="true" fit highlight-current-row
             style="width: 100%">
             <el-table-column label="序号" type="index" :sn="genSn" width="60" />
             <el-table-column label="应用标识" prop="appId" />

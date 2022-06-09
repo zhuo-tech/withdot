@@ -99,7 +99,7 @@ export default {
                 </el-col>
             </el-form>
         </el-row>
-        <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row
+        <el-table :key="tableKey" v-loading="listLoading" :data="list" :border="true" fit highlight-current-row
             style="width: 100%">
             <el-table-column label="序号" type="index" :sn="genSn" width="60" />
             <el-table-column prop="goodsName" label="商品名称" />

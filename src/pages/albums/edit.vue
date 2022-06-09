@@ -81,7 +81,9 @@ service.getAlbumsList()
                     </el-table-column>
                     <el-table-column label="试看时长" prop="trialTime" width="300">
                         <template #default="{ row}">
-                            <el-input-number v-model="row.trialTime" :min="1" size="small" @change="service.changeSwitch(row)"/> 秒
+                            <el-input-number v-if="row.isPay === 0" v-model="row.trialTime" :min="1" size="small" @change="service.changeSwitch(row)"/>
+                            <div v-if="row.isPay === 0" style="display: inline-block">秒</div>
+                            <div v-if="row.isPay === 1">/</div>
                         </template>
                     </el-table-column>
                     <el-table-column label="发布时间" min-width="200" prop="createTime">
