@@ -102,7 +102,7 @@ export default {
                 </el-col>
             </el-form>
         </el-row>
-        <el-table v-loading="listLoading" :data="data" border fit highlight-current-row style="width: 100%">
+        <el-table v-loading="listLoading" :data="data" :border="true" fit highlight-current-row style="width: 100%">
             <el-table-column label="序号" type="index" :sn="handleSn" width="60" />
             <el-table-column prop="orderId" label="订单号" />
             <el-table-column prop="channelId" label="支付渠道" />
