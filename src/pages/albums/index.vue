@@ -20,8 +20,8 @@ service.getAlbumList()
                     <el-table-column label="序号" type="index" width="100"></el-table-column>
                     <el-table-column label="标题" prop="title" width="280"></el-table-column>
                     <el-table-column label="价格(元)" prop="sellingPrice" width="280">
-                        <template #default="{row }">
-                            <span>{{ row.sellingPrice ?? '免费'}}</span>
+                        <template #default="{ row }">
+                            <span>{{ row.sellingPrice ? row.sellingPrice:'免费'}}</span>
                         </template>
                     </el-table-column>
                     <el-table-column label="作品数量" width="280">
