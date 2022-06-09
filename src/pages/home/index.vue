@@ -5,13 +5,14 @@ import { PayGoodsOrder } from "../../model/entity/PayGoodsOrder"
 import { PayGoodsOrderQo } from "@/pages/pay/goods/PayGoodsOrderQo"
 import { PayGoodsOrderService } from "@/model/entity/AlbumSlod";
 import { acquire } from "@/model/entity/AlbumSlod";
+import { PlayNumber } from "../../model/entity/PlayNumber"
 
-
-
+//播放量
+const play = ref(0)
 //学员数量
-const studentCount = ref()
+const studentCount = ref(0)
 //专辑售出
-const sold = ref()
+const sold = ref(0)
 //收入总数
 const income = ref(0)
 //分页,每页有多少行
@@ -31,6 +32,14 @@ const data = reactive({
 })
 
 
+
+//总播放量
+async function inquirePaly() {
+    const res = await PlayNumber()
+    play.value = res.data.length
+}
+
+
 //日期查询函数
 async function changgetime(val:any){
     if(val==null)return 
@@ -43,6 +52,7 @@ async function changgetime(val:any){
 async function inquire() {
     const res = await studentSum()
     studentCount.value = res.data.length
+    
 }
 
 
@@ -53,7 +63,10 @@ async function topStatistics() {
        income.value += Number(item.amount)
     })
 }
-
+      const handleSizeChange = (size: number) => {
+            data.queryParam.size = size
+            handlePage(data.queryParam)
+        }
 
 
 async function handlePage(queryParam: PayGoodsOrderQo,starTime?:number,endTime?:number) {
@@ -99,6 +112,7 @@ function handleCurrentChange(current: number) {
 topStatistics()
 handlePage(data.queryParam)
 inquire()//获取学员数量
+inquirePaly()
 
 
 </script>
@@ -109,7 +123,7 @@ inquire()//获取学员数量
             <div class="card">
                 <div class="text">总播放量</div>
                 <div style="color: rgba(255, 77, 79, 1)" class="number">
-                    2100
+                    {{play}}
                 </div>
             </div>
             <div class="card">
@@ -127,7 +141,7 @@ inquire()//获取学员数量
             <div class="card">
                 <div class="text">收入(元)</div>
                 <div style="color: rgba(255, 77, 79, 1)" class="number">
-                    {{ income}}
+                    {{ income }}
                 </div>
             </div>
         </div>
@@ -155,7 +169,7 @@ inquire()//获取学员数量
         </el-table>
         <div class="paging">
                <el-pagination  :total="data.total"  v-model:page="data.queryParam.current"
-                v-model:limit="data.queryParam.size"  @current-change="handleCurrentChange"
+                v-model:limit="data.queryParam.size" @size-change="handleSizeChange"  @current-change="handleCurrentChange"
                 background layout="total,  prev, pager, next" />
         </div>
     </el-card>
