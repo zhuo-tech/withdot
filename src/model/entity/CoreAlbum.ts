@@ -66,7 +66,7 @@ export class CoreAlbumWork {
     /**
      * 是否免费默认否
      */
-    public isFree: CommonEnum.NORMAL | CommonEnum.DISABLE
+    public isPay: CommonEnum.NORMAL | CommonEnum.DISABLE
 
     /**
      * 试看时长
