@@ -120,7 +120,7 @@ export default defineComponent({
         return (
             <el-menu
                 class="h-full"
-                default-active="/"
+                default-active={ this.$route.path }
                 collapse={ collapse }
                 router={ true }
                 onSelect={ this.onSelect }>
