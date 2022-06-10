@@ -28,7 +28,7 @@ const data = reactive({
     listLoading: true,//数据加载动画
     queryParam: Q,//分页参数
     total: 0,//总条数
-    
+
 })
 
 
@@ -42,7 +42,7 @@ async function inquirePaly() {
 
 //日期查询函数
 async function changgetime(val:any){
-    if(val==null)return 
+    if(val==null)return
     const starTime =  Date.parse(val[0])
     const endTime = Date.parse(val[1])
     handlePage(data.queryParam,starTime,endTime)
@@ -52,7 +52,7 @@ async function changgetime(val:any){
 async function inquire() {
     const res = await studentSum()
     studentCount.value = res.data.length
-    
+
 }
 
 
@@ -60,7 +60,8 @@ async function topStatistics() {
     const r = await acquire()
     sold.value = r.data.length //获取专辑售出数量
     r.data.forEach(item => {// 获取总收入
-       income.value += Number(item.amount)
+      let total = Number(income.value) + Number(item.amount)
+      income.value = Number(total.toFixed(2))
     })
 }
       const handleSizeChange = (size: number) => {
@@ -71,7 +72,7 @@ async function topStatistics() {
 
 async function handlePage(queryParam: PayGoodsOrderQo,starTime?:number,endTime?:number) {
     data.listLoading = true //获取数据加载动画
-    const res = await S.page(queryParam,starTime,endTime);   
+    const res = await S.page(queryParam,starTime,endTime);
     res.record.forEach(item => {//获取状态转换成中文
         if(item.status==='0')item.status='待支付'
         if(item.status==='1')item.status='支付成功'
@@ -79,7 +80,7 @@ async function handlePage(queryParam: PayGoodsOrderQo,starTime?:number,endTime?:
         if(item.status==='-1')item.status='支付失败'
         if(item.status==='-2')item.status='支付取消'
     })
-        res.record.forEach(item => {   //转换时间   
+        res.record.forEach(item => {   //转换时间
          item.createTime = formatDate(
             new Date(item.createTime)
         )
