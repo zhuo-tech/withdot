@@ -3,6 +3,7 @@ import { addWorkToAlbums, workList } from '@/api/works'
 import EditService from '@/pages/albums/editService'
 import { filterTime } from '@/utils/utils'
 import { ElMessage } from 'element-plus'
+import { Logger } from 'sass'
 import { reactive, ref } from 'vue'
 
 const props = defineProps({
@@ -53,7 +54,7 @@ const initialization = () => {
 }
 
 const submit = async () => {
-    if (!form.workId) {
+    if ((form.workId as Array<String>).length <= 0) {
         ElMessage.error('请选择添加的作品')
         return
     }
