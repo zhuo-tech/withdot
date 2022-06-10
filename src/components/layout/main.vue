@@ -20,7 +20,7 @@ window.addEventListener('resize', (ev) => {
         <top-header />
     </div>
     <div class="main flex">
-        <div class="menu hidden sm:block">
+        <div class="menu hidden sm:block overflow-x-hidden">
             <div
                 class="collapse-btn flex justify-center items-center shadow-md"
                 @click="isMenuHidden = !isMenuHidden"
