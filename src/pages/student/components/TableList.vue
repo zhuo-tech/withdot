@@ -24,8 +24,8 @@ const props = defineProps({
             </el-table-column>
             <el-table-column label="是否付费" min-width="100">
                 <template #default="scope">
-                    <span v-if="scope.row.isPay==='0'">免费</span>
-                    <span v-if="scope.row.isPay==='1'">付费</span>
+                    <span v-if="scope.row.isPay==='0'">付费</span>
+                    <span v-if="scope.row.isPay==='1'">未付费</span>
                 </template>
             </el-table-column>
             <el-table-column label="手机号" prop="phone" width="250" />

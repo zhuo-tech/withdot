@@ -18,7 +18,7 @@ service.getTableList()
         <!--搜索框 刷新-->
         <QueryForm :service="service" />
         <el-tabs type="border-card" style="margin-top: 20px" @tab-click="service.tabClick" v-model="service.activeName">
-            <el-tab-pane label="免费">
+            <el-tab-pane label="未付费">
                 <TableList :service="service" name="0"/>
             </el-tab-pane>
             <el-tab-pane label="付费">
