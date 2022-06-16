@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import EditService from '@/pages/albums/editService'
+import EditService from '@/pages/albums/hooks/editService'
 import UploadFile from '@/components/upload/UploadFile.vue'
 import { toRefs } from 'vue'
 

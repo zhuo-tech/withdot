@@ -2,10 +2,24 @@ import { cloud } from '@/cloud'
 import { CoreAlbum } from '@/model/entity/CoreAlbum'
 import { LogicDelete } from '@/model/LogicDelete'
 import { ElMessage, FormInstance } from 'element-plus'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 export default class AlbumsService {
+    //搜索框数据 显示 隐藏
+    public queryData = reactive({
+        visible: false,
+        label: '',
+        show() {
+            this.visible = true
+        },
+        close() {
+            this.visible = false
+        },
+        init() {
+            this.label = ''
+        },
+    })
     public addFormRef: FormInstance
     //控制新建专辑组件显示隐藏
     public formStates = reactive({
@@ -24,14 +38,13 @@ export default class AlbumsService {
         },
         addFormIsLoading: false,
     })
-    public query = reactive({            //搜索数据
-        title: '',
-    })
     public page = reactive({
         currentPage: 1,
         pageSize: 10,
         total: 20,
     })
+
+
     public list: any = reactive([])
     //表单验证
     public rules = reactive({
@@ -82,7 +95,6 @@ export default class AlbumsService {
     }
 
     public currentPageChange = async (val: number) => {
-        console.log(val)
         this.page.currentPage = val
         await this.getAlbumList()
     }
@@ -93,10 +105,18 @@ export default class AlbumsService {
      */
     public getAlbumList = async () => {
 
+        let whereFlag = {}
         const action = async () => {
             this.addFormData.addFormIsLoading = true
-            let whereFlag: any = {
-                delFlag: LogicDelete.NORMAL,
+            if(this.queryData.label) {
+                whereFlag = {
+                    title: new RegExp(`.*${this.queryData.label}.*`),
+                    delFlag: LogicDelete.NORMAL,
+                }
+            }else {
+                whereFlag = {
+                    delFlag: LogicDelete.NORMAL,
+                }
             }
             const countRes = await this.DB
                 .where(whereFlag)

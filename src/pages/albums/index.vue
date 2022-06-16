@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { reactive } from 'vue'
+import QueryForm from './components/QueryForm.vue'
 import AddForm from './components/AddForm.vue'
-import AlbumsService from './AlbumsService'
+import AlbumsService from './hooks/AlbumsService'
 import { filterTime } from '@/utils/utils'
 const service = reactive(new AlbumsService())
 service.getAlbumList()
@@ -11,9 +12,8 @@ service.getAlbumList()
         <template #header>
             <div>专辑管理</div>
         </template>
-        <el-row :gutter="10" justify="end" type="flex">
-            <el-button icon="Plus" type="primary" @click="service.clickAddForm()">新增</el-button>
-        </el-row>
+        <QueryForm :service="service" />
+
         <el-row :gutter="10" style="margin-top: 20px">
             <el-col :span="24">
                 <el-table v-loading="service.addFormData.addFormIsLoading" :data="service.list" stripe style="width: 100%" >

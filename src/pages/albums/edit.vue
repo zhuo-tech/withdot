@@ -3,7 +3,7 @@ import { Delete, Warning } from '@element-plus/icons-vue'
 import { reactive, toRefs } from 'vue'
 import Dialog from './components/Dialog.vue'
 import Form from './components/Form.vue'
-import EditService from './EditService'
+import EditService from './hooks/editService'
 import { filterTime } from '@/utils/utils'
 import ShowFile from '@/components/Upload/ShowFile'
 
@@ -81,7 +81,7 @@ service.getAlbumsList()
                     </el-table-column>
                     <el-table-column label="试看时长" prop="trialTime" width="300">
                         <template #default="{ row}">
-                            <el-input-number v-if="row.isPay === 0" v-model="row.trialTime" :min="1" size="small" @change="service.changeSwitch(row)"/>
+                            <el-input-number v-if="row.isPay === 0" v-model="row.trialTime" :controls="false" :min="1" size="small" @change="service.changeSwitch(row)"/>
                             <div v-if="row.isPay === 0" style="display: inline-block">秒</div>
                             <div v-if="row.isPay === 1">/</div>
                         </template>

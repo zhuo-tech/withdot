@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import AlbumsService from '@/pages/albums/AlbumsService'
+import AlbumsService from '@/pages/albums/hooks/AlbumsService'
 
 const props = defineProps<{
     service: AlbumsService
