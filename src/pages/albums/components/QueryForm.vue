@@ -35,7 +35,7 @@ const props = defineProps<{
                                :disabled="service.addFormData.addFormIsLoading"
                                :icon="Refresh"
                                type="primary"
-                               @click="service.getTableList()"></el-button>
+                               @click="service.getAlbumList()"></el-button>
                 </div>
             </el-row>
         </el-col>

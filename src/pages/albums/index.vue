@@ -13,7 +13,6 @@ service.getAlbumList()
             <div>专辑管理</div>
         </template>
         <QueryForm :service="service" />
-
         <el-row :gutter="10" style="margin-top: 20px">
             <el-col :span="24">
                 <el-table v-loading="service.addFormData.addFormIsLoading" :data="service.list" stripe style="width: 100%" >
