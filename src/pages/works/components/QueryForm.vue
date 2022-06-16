@@ -16,10 +16,10 @@ const props = defineProps<{
                     <el-col>
                         <el-form ref="queryFormRef" :model="service.queryData" inline>
                             <el-form-item style="width: 200px">
-                                <el-input v-model="service.queryData.label" clearable placeholder="请输入专辑名称"></el-input>
+                                <el-input v-model="service.queryData.label" clearable placeholder="请输入作品名称"></el-input>
                             </el-form-item>
                             <el-form-item>
-                                <el-button :icon="Search" type="primary" @click="service.getAlbumList()"></el-button>
+                                <el-button :icon="Search" type="primary" @click="service.getListData()"></el-button>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -29,13 +29,13 @@ const props = defineProps<{
         <el-col :span="24">
             <el-row justify="end" type="flex">
                 <div>
-                    <el-button :icon="Plus" type="primary" @click="service.clickAddForm()">新增</el-button>
+                    <el-button :icon="Plus" class="create" type="primary" @click="service.createWorks">新增</el-button>
                     <el-button :icon="Search" type="primary" @click="service.queryData.visible = !service.queryData.visible;service.queryData.init()" />
-                    <el-button v-loading="service.addFormData.addFormIsLoading"
-                               :disabled="service.addFormData.addFormIsLoading"
+                    <el-button v-loading="service.loading"
+                               :disabled="service.loading"
                                :icon="Refresh"
                                type="primary"
-                               @click="service.getAlbumList()"></el-button>
+                               @click="service.getListData()"></el-button>
                 </div>
             </el-row>
         </el-col>

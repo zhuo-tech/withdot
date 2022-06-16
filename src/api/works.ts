@@ -55,7 +55,7 @@ export async function addWork(params: any) {
             name: params.name,
             profile: '',
             content: '',
-            isPay:1,
+            isPay: 1,
             material_id: params.materialId,
             createBy: '',
             createTime: Date.now(),
@@ -76,8 +76,16 @@ export async function addWork(params: any) {
  * @returns {Promise<{current: any, total: number, data: any[], size: any}>}
  */
 export async function dataList(page: any, query: any) {
-    const whereFlag = {
-        delFlag: LogicDelete.NORMAL,
+    let whereFlag = {}
+    if (query) {
+        whereFlag = {
+            name: new RegExp(`.*${query}.*`),
+            delFlag: LogicDelete.NORMAL,
+        }
+    } else {
+        whereFlag = {
+            delFlag: LogicDelete.NORMAL,
+        }
     }
     const r = await DB.collection(CoreWork.TABLE_NAME)
         .where(whereFlag)
@@ -130,12 +138,12 @@ export async function del(id: string) {
     }
 }
 
-export async function workList(page: any,_idList:any) {
-    const _=DB.command
+export async function workList(page: any, _idList: any) {
+    const _ = DB.command
     const r = await DB.collection(CoreWork.TABLE_NAME)
         .where({
             delFlag: LogicDelete.NORMAL,
-            _id:_.nin(_idList)
+            _id: _.nin(_idList),
         })
         .count()
     if (!r.ok) {
@@ -145,7 +153,7 @@ export async function workList(page: any,_idList:any) {
     const res = await DB.collection(CoreWork.TABLE_NAME)
         .where({
             delFlag: LogicDelete.NORMAL,
-            _id:_.nin(_idList)
+            _id: _.nin(_idList),
         })
         .page({
             current: page.current,
