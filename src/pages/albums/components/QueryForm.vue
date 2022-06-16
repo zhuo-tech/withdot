@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import StudentService from '@/pages/student/StudentService'
+import AlbumsService from '@/pages/albums/hooks/AlbumsService'
 import { Refresh, Search, Plus } from '@element-plus/icons-vue'
 
 const props = defineProps<{
-    service: StudentService
+    service: AlbumsService
 }>()
 
 </script>
