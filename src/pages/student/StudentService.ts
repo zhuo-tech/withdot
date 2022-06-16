@@ -4,64 +4,64 @@ import { cloud } from '@/cloud'
 import { CoreStudent } from '@/model/entity/CoreStudent'
 import { PayGoodsOrder } from '@/model/entity/PayGoodsOrder'
 import { LogicDelete } from '@/model/LogicDelete'
-import { ElMessage } from 'element-plus'
+import { ElMessage, TabsPaneContext } from 'element-plus'
 import { reactive, ref } from 'vue'
 
 const DB = cloud.database().collection(CoreStudent.TABLE_NAME)
 const db = cloud.database().collection(PayGoodsOrder.TABLE_NAME)
 
 export const StatusType = {
-    '0':'订单生成',
-    '1':'支付成功',
-    '2':'处理完成',
-    '-1':'处理失败'
+    '0': '订单生成',
+    '1': '支付成功',
+    '2': '处理完成',
+    '-1': '处理失败',
 }
 
 export const StudyType = {
-    '0':'完成',
-    '1':'未完成'
+    '0': '完成',
+    '1': '未完成',
 }
 
 export default class StudentService {
     //搜索框数据 显示 隐藏
     public queryData = reactive({
         visible: false,
-        label:'',
+        label: '',
         show() {
             this.visible = true
         },
         close() {
             this.visible = false
         },
-        init(){
-            this.label=''
-        }
+        init() {
+            this.label = ''
+        },
     })
 
     //表格数据
     public tableData = reactive({
         tableIsLoading: false,
+        currentTab: '0',
         list: [],
+        payList: [],
         page: {
             current: 1,
             size: 10,
             total: 100,
         },
     })
-    //tabs
-    public activeName = ref('0')
 
     //详情
     public detail = reactive({
-        data:{},
-        visible:false,
-        collapseActiveName:'1',
-        show(){
+        data: {},
+        visible: false,
+        collapseActiveName: '1',
+        show() {
             this.visible = true
         },
-        close(){
+        close() {
             this.visible = false
-        }
+        },
 
     })
 
@@ -78,28 +78,33 @@ export default class StudentService {
     /**
      * 切换tabs
      */
-    public tabClick = () => {
+    public tabClick = (pane: TabsPaneContext) => {
+        this.tableData.currentTab = pane.index as string
         this.getTableList()
     }
 
     /**
      * 查看详情
      */
-    public handleClick = (id:string) => {
-       this.detail.show()
-       this.getDetailApi(id).then(response=>{
-           console.log(response)
-           this.detail.data=response.detailData
+    public handleClick = (id: string) => {
+        this.detail.show()
+        this.getDetailApi(id).then(response => {
+            console.log(response)
+            this.detail.data = response.detailData
 
-       }).catch(err=>{
-           ElMessage.error(err)
-       })
+        }).catch(err => {
+            ElMessage.error(err)
+        })
     }
 
     public getTableList = () => {
         this.tableData.tableIsLoading = true
-        this.getTableDataApi(this.activeName.value, this.tableData.page, this.queryData.label).then((response: any) => {
-            this.tableData.list = response.data
+        this.getTableDataApi(this.tableData.currentTab, this.tableData.page, this.queryData.label).then((response: any) => {
+            if (this.tableData.currentTab === '0') {
+                this.tableData.list = response.data
+            } else {
+                this.tableData.payList = response.data
+            }
             this.tableData.page.total = response.total
             this.tableData.tableIsLoading = false
         }).catch((err: any) => {
@@ -124,7 +129,7 @@ export default class StudentService {
         } else {
             whereFlag = {
                 isPay: isPay,
-                name: new RegExp(`.*${params}.*`)
+                name: new RegExp(`.*${params}.*`),
             }
         }
         const totalRes = await DB
@@ -150,30 +155,30 @@ export default class StudentService {
         }
     }
 
-    private async getDetailApi(id:string){
+    private async getDetailApi(id: string) {
         const detailRes = await DB
             .where({
-                _id:id
+                _id: id,
             })
             .getOne()
-        if(!detailRes.ok){
+        if (!detailRes.ok) {
             throw new Error(detailRes.error)
         }
         const payRes = await db
             .where({
-                userId:id,
-                delFlag:LogicDelete.NORMAL
+                userId: id,
+                delFlag: LogicDelete.NORMAL,
             })
-            .orderBy('createTime','desc')
+            .orderBy('createTime', 'desc')
             .get()
-        if(!payRes.ok){
+        if (!payRes.ok) {
             throw new Error(payRes.error)
         }
         return {
-            detailData:{
+            detailData: {
                 ...detailRes.data,
-                payData:payRes.data
-            }
+                payData: payRes.data,
+            },
         }
     }
 }
