@@ -10,18 +10,6 @@ import { reactive, ref } from 'vue'
 const DB = cloud.database().collection(CoreStudent.TABLE_NAME)
 const db = cloud.database().collection(PayGoodsOrder.TABLE_NAME)
 
-export const StatusType = {
-    '0': '订单生成',
-    '1': '支付成功',
-    '2': '处理完成',
-    '-1': '处理失败',
-}
-
-export const StudyType = {
-    '0': '完成',
-    '1': '未完成',
-}
-
 export default class StudentService {
     //搜索框数据 显示 隐藏
     public queryData = reactive({
@@ -39,7 +27,7 @@ export default class StudentService {
     })
 
     //表格数据
-    public tableData = reactive({
+    public tableData = reactive<TableDataType>({
         tableIsLoading: false,
         currentTab: '0',
         list: [],
@@ -181,4 +169,30 @@ export default class StudentService {
             },
         }
     }
+}
+
+export const StatusType = {
+    '0': '订单生成',
+    '1': '支付成功',
+    '2': '处理完成',
+    '-1': '处理失败',
+}
+
+export const StudyType = {
+    '0': '完成',
+    '1': '未完成',
+}
+
+type TableDataType = {
+    tableIsLoading: Boolean,
+    currentTab: string,
+    list: [],
+    payList: [],
+    page: PageType
+}
+
+type PageType = {
+    current: number,
+    size: number,
+    total: number
 }
