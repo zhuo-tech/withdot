@@ -50,7 +50,7 @@ listUpdate()
 
         <el-table-column align="center" fixed="right" label="操作" prop="Operate" width="180">
             <template v-slot="{row}">
-                <el-button :icon="Edit" type="text" @click="readyEdit(row)">编辑</el-button>
+                <el-button :icon="Edit" link @click="readyEdit(row)">编辑</el-button>
                 <el-divider direction="vertical" />
                 <el-popconfirm :icon="Warning"
                                cancel-button-text="手滑了"
@@ -59,7 +59,7 @@ listUpdate()
                                title=" 操作无法撤销, 确定要删除吗 ？"
                                @confirm="readyDelete(row)">
                     <template #reference>
-                        <el-button :icon="Delete" type="text">删除</el-button>
+                        <el-button :icon="Delete" link>删除</el-button>
                     </template>
                 </el-popconfirm>
             </template>

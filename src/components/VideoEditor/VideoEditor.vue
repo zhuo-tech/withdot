@@ -78,7 +78,7 @@ const displayDot = computed(
         <template v-slot:operating="{item, index}">
             <AddPoint :current-play-time="playerRef.playTime" @submit="dot => context.editSubmit(dot)">
                 <template v-slot="{edit: editAction}">
-                    <el-button :icon="Edit" type="text" @click="editAction(item)">
+                    <el-button :icon="Edit" link @click="editAction(item)">
                         编辑
                     </el-button>
                 </template>

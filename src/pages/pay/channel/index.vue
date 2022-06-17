@@ -131,11 +131,11 @@ export default {
             <el-table-column label="创建时间" prop="createTime" />
             <el-table-column label="操作" prop="operation">
                 <template #default="scope">
-                    <el-button icon="Edit" type="text" @click="handleEdit(scope.row._id)">编辑</el-button>
+                    <el-button icon="Edit" link @click="handleEdit(scope.row._id)">编辑</el-button>
                     <el-popconfirm icon="Warning" cancel-button-text="手滑了" confirm-button-text="确认删除" icon-color="red"
                         title=" 操作无法撤销, 确定要删除吗 ？" @click="handleDelete(scope.$index, scope.row)">
                         <template #reference>
-                            <el-button size="small" type="text" icon="Delete">删除</el-button>
+                            <el-button icon="Delete" link size="small">删除</el-button>
                         </template>
                     </el-popconfirm>
                 </template>

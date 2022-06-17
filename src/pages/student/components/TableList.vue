@@ -41,7 +41,7 @@ const props = defineProps({
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="120">
                 <template #default="{row}">
-                    <el-button size="small" type="text" @click="service.handleClick(row._id)">查看</el-button>
+                    <el-button link size="small" @click="service.handleClick(row._id)">查看</el-button>
                 </template>
             </el-table-column>
         </el-table>

@@ -85,7 +85,7 @@ const formRule: FormValidationRules<SysAdmin> = {
         <el-table-column align="center" label="更新时间" prop="updateTime" width="180" />
         <el-table-column align="center" fixed="right" label="操作" prop="Operate" width="180">
             <template v-slot="{row}">
-                <el-button :icon="Edit" type="text" @click="modalForm.showModel(false, row)">编辑</el-button>
+                <el-button :icon="Edit" link @click="modalForm.showModel(false, row)">编辑</el-button>
                 <el-divider direction="vertical" />
                 <el-popconfirm :icon="Warning"
                                cancel-button-text="手滑了"
@@ -94,7 +94,7 @@ const formRule: FormValidationRules<SysAdmin> = {
                                title=" 操作无法撤销, 确定要删除吗 ？"
                                @confirm="table.execDelete(row)">
                     <template #reference>
-                        <el-button :icon="Delete" type="text">删除</el-button>
+                        <el-button :icon="Delete" link>删除</el-button>
                     </template>
                 </el-popconfirm>
             </template>

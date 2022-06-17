@@ -35,7 +35,7 @@ service.getAlbumList()
                     </el-table-column>
                     <el-table-column fixed="right" label="操作" width="180">
                         <template #default="scope">
-                            <el-button icon="Edit" type="text" @click="service.handleEdit(scope.row)">编辑</el-button>
+                            <el-button icon="Edit" link @click="service.handleEdit(scope.row)">编辑</el-button>
                             <el-divider direction="vertical" />
                             <el-popconfirm icon="Warning"
                                            cancel-button-text="手滑了"
@@ -44,7 +44,7 @@ service.getAlbumList()
                                            title=" 操作无法撤销, 确定要删除吗 ？"
                                            @confirm="service.handleDelete(scope.row)">
                                 <template #reference>
-                                    <el-button icon="Delete" type="text">删除</el-button>
+                                    <el-button icon="Delete" link>删除</el-button>
                                 </template>
                             </el-popconfirm>
                         </template>

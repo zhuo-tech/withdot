@@ -100,7 +100,7 @@ service.getAlbumsList()
                                            title=" 操作无法撤销, 确定要删除吗 ？"
                                            @confirm="service.deleteWork(scope.row)">
                                 <template #reference>
-                                    <el-button :icon="Delete" type="text">删除</el-button>
+                                    <el-button :icon="Delete" link>删除</el-button>
                                 </template>
                             </el-popconfirm>
                         </template>

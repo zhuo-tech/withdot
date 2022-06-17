@@ -107,7 +107,7 @@ export default {
                     <el-popconfirm icon="Warning" title=" 操作无法撤销, 确定要删除吗 ？" cancel-button-text="手滑了"
                         confirm-button-text="确认删除" icon-color="red" @click="handleDelete(scope.$index, scope.row)">
                         <template #reference>
-                            <el-button size="small" type="text" icon="Delete">删除</el-button>
+                            <el-button icon="Delete" link size="small">删除</el-button>
                         </template>
                     </el-popconfirm>
                 </template>
