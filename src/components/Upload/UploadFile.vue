@@ -128,7 +128,12 @@ function updateModel(fileList: UploadFiles, propValue: typeof props) {
 const upLoadRequest = (options: UploadRequestOptions) => {
     const file = options.file
     const {name, size, type} = file
-    uploadApi(file).then(href => {
+    uploadApi(file, (event: ProgressEvent) => {
+        options.onProgress({
+            ...event,
+            percent: event.loaded / event.total * 100,
+        } as any)
+    }).then(href => {
         options.onSuccess({id: file['uid'] || Date.now(), href, name, size, type,} as FileInfo)
     }).catch(err => {
         options.onError(err)
