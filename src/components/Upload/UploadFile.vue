@@ -1,5 +1,6 @@
 <!--suppress JSUnusedLocalSymbols -->
 <script lang="tsx" setup>
+import { uploadApi } from '@/api/upload'
 import ShowFile from '@/components/Upload/ShowFile'
 import { LafUploadResponse } from '@/components/Upload/Upload'
 import { useFilePreview } from '@/components/Upload/useFilePreview'
@@ -8,7 +9,7 @@ import { FileInfo } from '@/model/FileInfo'
 import { FileService, INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
 // noinspection ES6UnusedImports
 import { UploadFilled } from '@element-plus/icons-vue'
-import { UploadFile, UploadFiles, UploadProps, UploadUserFile } from 'element-plus'
+import { UploadFile, UploadFiles, UploadProps, UploadRequestOptions, UploadUserFile } from 'element-plus'
 import { CollUtil, ObjectUtil, StrUtil } from 'typescript-util'
 import { inject, reactive, watchEffect } from 'vue'
 
@@ -53,7 +54,14 @@ const {href, hrefs, fileInfo, fileInfoList} = props
 watchEffect(() => {
     const fileInfoToUploadFile = (fileInfo: FileInfo) => {
         const {id, href, size, type, name} = fileInfo
-        return {size, name, uid: id, url: fileService.showUrl(href), response: fileInfo, status: 'success'} as UploadUserFile
+        return {
+            size,
+            name,
+            uid: id,
+            url: fileService.showUrl(href),
+            response: fileInfo,
+            status: 'success',
+        } as UploadUserFile
     }
 
     const strToUploadFile = (s: any) => ({
@@ -89,8 +97,6 @@ watchEffect(() => {
 })
 
 const onUploadSuccess = (response: LafUploadResponse, uploadFile: UploadFile, uploadFiles: UploadFiles) => {
-    uploadFile.response = fileService.formatResponse(response, uploadFile.raw)
-    log.trace('上传完成, 格式化响应', uploadFile.response)
     updateModel(uploadFiles, props)
 }
 const onRemove = (uploadFile: UploadFile) => {
@@ -119,55 +125,65 @@ function updateModel(fileList: UploadFiles, propValue: typeof props) {
     emits('input', fileList)
 }
 
+const upLoadRequest = (options: UploadRequestOptions) => {
+    const file = options.file
+    const {name, size, type} = file
+    uploadApi(file).then(href => {
+        options.onSuccess({id: file['uid'] || Date.now(), href, name, size, type,} as FileInfo)
+    }).catch(err => {
+        options.onError(err)
+    })
+}
+
 // 预览
 const {isShow, onPreview, file} = useFilePreview()
 
 </script>
 
 <template>
-<el-upload :action="fileService.getActionUploadUrl()"
-           :file-list="fileList"
-           :headres="fileService.getActionUploadHeaders()"
-           :on-preview="file => onPreview(file)"
-           :on-remove="onRemove"
-           :on-success="onUploadSuccess"
-           style="width: 100%;"
-           v-bind="$attrs">
-    <!-- 上传控制区域 -->
-    <slot>
-        <div v-if="$attrs.drag && $attrs.listType !== 'picture-card'">
-            <el-icon class="el-icon--upload">
-                <UploadFilled />
-            </el-icon>
-            <div class="el-upload__text">
-                将文件拖放到此处或
-                <em>点击上传</em>
+    <el-upload
+        :file-list="fileList"
+        :http-request="upLoadRequest"
+        style="width: 100%;"
+        :on-success="onUploadSuccess"
+        :on-remove="onRemove"
+        :on-preview="file => onPreview(file)"
+        v-bind="$attrs">
+        <!-- 上传控制区域 -->
+        <slot>
+            <div v-if="$attrs.drag && $attrs.listType !== 'picture-card'">
+                <el-icon class="el-icon--upload">
+                    <UploadFilled />
+                </el-icon>
+                <div class="el-upload__text">
+                    将文件拖放到此处或
+                    <em>点击上传</em>
+                </div>
             </div>
-        </div>
-        <el-icon v-else-if="$attrs.listType === 'picture-card'">
-            <Plus />
-        </el-icon>
-        <el-button v-else type="primary">点击上传</el-button>
-    </slot>
+            <el-icon v-else-if="$attrs.listType === 'picture-card'">
+                <Plus />
+            </el-icon>
+            <el-button v-else type="primary">点击上传</el-button>
+        </slot>
 
-    <!-- TIPS -->
-    <template #tip>
-        <div class="el-upload__tip">
-            {{ tips || 'jpg/png 小于 500KB 的文件。' }}
-        </div>
-    </template>
+        <!-- TIPS -->
+        <template #tip>
+            <div class="el-upload__tip">
+                {{ tips || 'jpg/png 小于 500KB 的文件。' }}
+            </div>
+        </template>
 
-    <!-- 预览弹框 -->
-    <el-dialog v-model="isShow"
-               append-to-body
-               close-on-click-modal
-               destroy-on-close
-               draggable
-               lock-scroll
-               modal
-               width="45%">
-        <ShowFile :file="file" />
-    </el-dialog>
+        <!-- 预览弹框 -->
+        <el-dialog v-model="isShow"
+                   append-to-body
+                   close-on-click-modal
+                   destroy-on-close
+                   draggable
+                   lock-scroll
+                   modal
+                   width="45%">
+            <ShowFile :file="file" />
+        </el-dialog>
 
-</el-upload>
+    </el-upload>
 </template>

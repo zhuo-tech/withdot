@@ -48,3 +48,7 @@ export async function getUserInfo(): Promise<SysUser | null> {
     }
     return res.data
 }
+
+export async function getOssSign(fileName: string,bucketName: string) {
+   return await cloud.invokeFunction('get-oss-sign-url',{fileName,bucketName})
+}
