@@ -36,7 +36,7 @@ service.getAlbumsList()
                             <span>{{ filterTime(albumsDetail.createTime) }}</span>
                         </div>
                         <div style="margin-left: 20px">播放次数
-                            <span>12.5万</span>
+                            <span>{{ albumsDetail.viewers }}</span>
                         </div>
                     </el-col>
                 </el-row>

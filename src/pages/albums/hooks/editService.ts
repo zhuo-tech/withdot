@@ -1,5 +1,6 @@
 import { cloud } from '@/cloud'
 import { CoreAlbum } from '@/model/entity/CoreAlbum'
+import { HisVodRecord } from '@/model/entity/HisVodRecord'
 import { LogicDelete } from '@/model/LogicDelete'
 import { ElMessage, FormInstance } from 'element-plus'
 import { reactive } from 'vue'
@@ -89,7 +90,20 @@ export default class EditService {
             ElMessage.error(res.error)
             return
         }
+        const viewersRes = await DB.collection(HisVodRecord.TABLE_NAME)
+            .where({albumId: this.getUrl_Id()})
+            .get()
+        if(!viewersRes.ok) {
+            throw new Error(viewersRes.error)
+        }
+        let newArr: any = []
+        newArr = viewersRes.data.filter((item, index, origin) =>
+                index === origin.findIndex((itemInner) => {
+                    return itemInner.userId === item.userId
+                }),
+        )
         this.albumsDetail = res.data
+        this.albumsDetail['viewers'] = newArr?.length ?? 0
         this.Editform.form.title = res.data.title
         this.Editform.form.cover = res.data.cover
         this.Editform.form.coverHref = res.data.coverHref
