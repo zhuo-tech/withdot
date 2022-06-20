@@ -45,7 +45,7 @@ export default class QuestionService {
         },
         loading: false,
     })
-    public showQuery = ref(false)
+    public showQuery = ref(true)
     public queryData = reactive({
         label: '',
     })

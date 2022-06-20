@@ -8,7 +8,7 @@ import { useRoute, useRouter } from 'vue-router'
 export default class AlbumsService {
     //搜索框数据 显示 隐藏
     public queryData = reactive({
-        visible: false,
+        visible: true,
         label: '',
         show() {
             this.visible = true
