@@ -96,6 +96,7 @@ export default class EditService {
         if(!viewersRes.ok) {
             throw new Error(viewersRes.error)
         }
+        //专辑播放次数
         let newArr: any = []
         newArr = viewersRes.data.filter((item, index, origin) =>
                 index === origin.findIndex((itemInner) => {
