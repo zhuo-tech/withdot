@@ -1,20 +1,21 @@
-// noinspection JSMethodCanBeStatic
-
 import { cloud } from '@/cloud'
-import { CoreStudent } from '@/model/entity/CoreStudent'
+import { CoreAlbum, CoreAlbumWork } from '@/model/entity/CoreAlbum'
+import { CoreWork } from '@/model/entity/CoreWork'
+import { HisVodRecord } from '@/model/entity/HisVodRecord'
 import { PayGoodsOrder } from '@/model/entity/PayGoodsOrder'
+import { SysUser } from '@/model/entity/SysUser'
 import { LogicDelete } from '@/model/LogicDelete'
 import { ElMessage, TabsPaneContext } from 'element-plus'
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 
-const DB = cloud.database().collection(CoreStudent.TABLE_NAME)
-const db = cloud.database().collection(PayGoodsOrder.TABLE_NAME)
+const DB = cloud.database()
 
 export default class StudentService {
     //搜索框数据 显示 隐藏
-    public queryData = reactive({
+    public queryData = reactive<QueryDataType>({
         visible: true,
         label: '',
+        isPay: '0',
         show() {
             this.visible = true
         },
@@ -25,7 +26,6 @@ export default class StudentService {
             this.label = ''
         },
     })
-
     //表格数据
     public tableData = reactive<TableDataType>({
         tableIsLoading: false,
@@ -34,14 +34,18 @@ export default class StudentService {
         payList: [],
         page: {
             current: 1,
-            size: 10,
+            size: 5,
             total: 100,
         },
     })
-
     //详情
-    public detail = reactive({
-        data: {},
+    public detail = reactive<DetailType>({
+        data: {} as any,
+        watchHistoryPage: {
+            current: 1,
+            size: 5,
+            total: 100,
+        },
         visible: false,
         collapseActiveName: '1',
         show() {
@@ -52,6 +56,7 @@ export default class StudentService {
         },
 
     })
+    private userId = reactive<any>('') as any
 
     public pageSizeChange = (val: any) => {
         this.tableData.page.size = val
@@ -61,6 +66,18 @@ export default class StudentService {
     public currentPageChange = (val: any) => {
         this.tableData.page.current = val
         this.getTableList()
+    }
+
+    public watchHistoryPageSizeChange = async (val: any) => {
+        this.detail.watchHistoryPage.size = val
+        await this.watchHistoryFn()
+
+    }
+
+    public watchHistoryCurrentPageChange = async (val: any) => {
+        this.detail.watchHistoryPage.current = val
+        await this.watchHistoryFn()
+
     }
 
     /**
@@ -74,30 +91,79 @@ export default class StudentService {
     /**
      * 查看详情
      */
-    public handleClick = (id: string) => {
+    public handleClick = async (id: string) => {
+        this.userId = id
         this.detail.show()
-        this.getDetailApi(id).then(response => {
-            console.log(response)
-            this.detail.data = response.detailData
+        try {
+            const detailRes = await this.getDetailApi(id)
+            this.detail.data = detailRes.detailData
+            await this.watchHistoryFn()
+            console.log('学生详情', this.detail.data)
 
-        }).catch(err => {
+        } catch (err: any) {
             ElMessage.error(err)
-        })
+        }
     }
 
     public getTableList = () => {
+        this.tableData.list = []
+        this.tableData.page.total = 0
         this.tableData.tableIsLoading = true
-        this.getTableDataApi(this.tableData.currentTab, this.tableData.page, this.queryData.label).then((response: any) => {
-            if (this.tableData.currentTab === '0') {
-                this.tableData.list = response.data
-            } else {
-                this.tableData.payList = response.data
-            }
+        this.getTableDataApi(this.tableData.page, this.queryData).then((response: any) => {
+            this.tableData.list = response.data
             this.tableData.page.total = response.total
             this.tableData.tableIsLoading = false
         }).catch((err: any) => {
             ElMessage.error(err)
         })
+    }
+
+    public async getStudentWatchHistory(userId: string) {
+        const countRes = await DB.collection(HisVodRecord.TABLE_NAME)
+            .where({userId})
+            .count()
+        if (!countRes.ok) {
+            throw new Error(countRes.error)
+        }
+
+        const res = await DB.collection(HisVodRecord.TABLE_NAME)
+            .where({userId})
+            .withOne({
+                query: DB.collection(CoreAlbum.TABLE_NAME)
+                    .field({
+                        title: 1,
+                    }),
+                localField: 'albumId',
+                foreignField: '_id',
+                as: 'albumName',
+            })
+            .withOne({
+                query: DB.collection(CoreWork.TABLE_NAME)
+                    .field({
+                        name: 1,
+                    }),
+                localField: 'workId',
+                foreignField: '_id',
+                as: 'workName',
+            })
+            .page({
+                current: this.detail.watchHistoryPage.current,
+                size: this.detail.watchHistoryPage.size,
+            })
+            .get()
+        if (!res.ok) {
+            throw new Error(res.error)
+        }
+        return {
+            res: res.data,
+            total: countRes.total,
+        }
+    }
+
+    private async watchHistoryFn() {
+        const schedulesRes = await this.getStudentWatchHistory(this.userId)
+        this.detail.data.schedules = schedulesRes.res
+        this.detail.watchHistoryPage.total = schedulesRes.total
     }
 
     /**
@@ -108,25 +174,19 @@ export default class StudentService {
      * @returns {Promise<{total: number, data: any[]}>}
      * @private
      */
-    private async getTableDataApi(isPay: any, page: any, params: any) {
-        let whereFlag: {}
-        if (!params) {
-            whereFlag = {
-                isPay: isPay,
-            }
-        } else {
-            whereFlag = {
-                isPay: isPay,
-                name: new RegExp(`.*${params}.*`),
-            }
+    private async getTableDataApi(page: any, params: any) {
+        const whereFlag = {
+            isPay: this.queryData.isPay,
+            username: new RegExp(`.*${this.queryData.label}.*`)
         }
-        const totalRes = await DB
+
+        const totalRes = await DB.collection(SysUser.TABLE_NAME)
             .where(whereFlag)
             .count()
         if (!totalRes.ok) {
             throw new Error(totalRes.error)
         }
-        const listRes = await DB
+        const listRes = await DB.collection(SysUser.TABLE_NAME)
             .where(whereFlag)
             .page({
                 current: page.current,
@@ -144,7 +204,7 @@ export default class StudentService {
     }
 
     private async getDetailApi(id: string) {
-        const detailRes = await DB
+        const detailRes = await DB.collection(SysUser.TABLE_NAME)
             .where({
                 _id: id,
             })
@@ -152,7 +212,7 @@ export default class StudentService {
         if (!detailRes.ok) {
             throw new Error(detailRes.error)
         }
-        const payRes = await db
+        const payRes = await DB.collection(PayGoodsOrder.TABLE_NAME)
             .where({
                 userId: id,
                 delFlag: LogicDelete.NORMAL,
@@ -195,4 +255,22 @@ type PageType = {
     current: number,
     size: number,
     total: number
+}
+
+type DetailType = {
+    data: SysUser,
+    visible: Boolean,
+    collapseActiveName: string,
+    watchHistoryPage: PageType
+    show(): void,
+    close(): void
+}
+
+type QueryDataType = {
+    visible: Boolean,
+    label: string,
+    isPay: string,
+    show(): void,
+    close(): void,
+    init(): void
 }

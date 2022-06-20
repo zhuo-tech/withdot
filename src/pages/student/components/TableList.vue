@@ -2,6 +2,7 @@
 import ShowFile from '@/components/Upload/ShowFile'
 import StudentService from '@/pages/student/StudentService'
 import { filterTime } from '@/utils/utils'
+import Detail from './Detail.vue'
 
 const props = defineProps({
     service: StudentService,
@@ -16,12 +17,12 @@ const props = defineProps({
             stripe
             style="width: 100%">
             <el-table-column label="序号" type="index" width="80" />
-            <el-table-column label="名称" min-width="200" prop="name"/>
-            <el-table-column label="头像" width="200">
-                <template #default="{row}">
-                    <ShowFile :href="row.avatar" style="height: 50px;border-radius: 5px" />
-                </template>
-            </el-table-column>
+            <el-table-column label="名称" min-width="200" prop="username"/>
+            <!--<el-table-column label="头像" width="200">-->
+            <!--    <template #default="{row}">-->
+            <!--        <ShowFile :href="row.avatar" style="height: 50px;border-radius: 5px" />-->
+            <!--    </template>-->
+            <!--</el-table-column>-->
             <el-table-column label="是否付费" min-width="100">
                 <template #default="scope">
                     <span v-if="scope.row.isPay==='0'">付费</span>
@@ -34,14 +35,15 @@ const props = defineProps({
                     <span>{{ filterTime(row.createTime) }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="最后登录时间" min-width="200">
-                <template #default="{row}">
-                    <span>{{ filterTime(row.updateTime) }}</span>
-                </template>
-            </el-table-column>
+            <!--<el-table-column label="最后登录时间" min-width="200">-->
+            <!--    <template #default="{row}">-->
+            <!--        <span>{{ filterTime(row.updateTime) }}</span>-->
+            <!--    </template>-->
+            <!--</el-table-column>-->
             <el-table-column fixed="right" label="操作" width="120">
                 <template #default="{row}">
-                    <el-button link size="small" @click="service.handleClick(row._id)">查看</el-button>
+                    <!--<el-button link size="small" @click="service.handleClick(row._id)">查看</el-button>-->
+                    <Detail :service="service" :id="row._id"></Detail>
                 </template>
             </el-table-column>
         </el-table>

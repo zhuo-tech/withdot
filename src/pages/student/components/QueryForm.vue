@@ -18,10 +18,17 @@ const props = defineProps<{
                             <el-form-item style="width: 200px">
                                 <el-input v-model="service.queryData.label" clearable placeholder="请输入学员名称"></el-input>
                             </el-form-item>
+                            <el-form-item label-width="80px">
+                                <el-radio-group v-model="service.queryData.isPay" size="large" fill @change="service.getTableList()">
+                                    <el-radio-button label="0">付款</el-radio-button>
+                                    <el-radio-button label="1">未付款</el-radio-button>
+                                </el-radio-group>
+                            </el-form-item>
                             <el-form-item>
                                 <el-button :icon="Search" type="primary" @click="service.getTableList()"></el-button>
                             </el-form-item>
                         </el-form>
+
                     </el-col>
                 </el-row>
             </el-col>
