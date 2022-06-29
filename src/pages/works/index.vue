@@ -5,6 +5,7 @@ import { Delete, Edit, Warning, Plus } from '@element-plus/icons-vue'
 import { reactive } from 'vue'
 import QueryForm from './components/QueryForm.vue'
 import Dialog from './components/Dialog.vue'
+
 const service = reactive(new WorksService())
 service.getListData()
 </script>
@@ -25,6 +26,12 @@ service.getListData()
                     <span>{{ row['materialNews']?.title }}</span>
                 </template>
             </el-table-column>
+            <el-table-column label="时长">
+                <template v-slot="{row}">
+                    <span v-if="row['materialNews']?.file.time">{{ row['materialNews']?.file.time }}秒</span>
+                    <span v-else>/</span>
+                </template>
+            </el-table-column>
             <el-table-column align="center" label="创建时间" prop="createTime" width="170">
                 <template #default="scope">
                     <span>{{ filterTime(scope.row.createTime) }}</span>
@@ -32,7 +39,10 @@ service.getListData()
             </el-table-column>
             <el-table-column align="center" fixed="right" label="操作" width="270">
                 <template #default="scope">
-                    <el-button :icon="Edit" link @click="$router.push(`/works/editor/${ scope.row._id }`)">编辑</el-button>
+                    <el-button :icon="Edit"
+                               link
+                               @click="$router.push(`/works/editor/${ scope.row._id }`)">编辑
+                    </el-button>
                     <el-divider direction="vertical" />
                     <el-popconfirm :icon="Warning"
                                    cancel-button-text="手滑了"

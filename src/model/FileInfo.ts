@@ -8,4 +8,9 @@ export class FileInfo {
     type: string
     href: string
     id: string | number
+
+    /**
+     * 时间
+     */
+    time?: number
 }

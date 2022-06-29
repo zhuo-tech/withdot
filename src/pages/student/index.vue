@@ -15,8 +15,8 @@ service.getTableList()
             <span>学员管理</span>
         </template>
         <!--搜索框 刷新-->
-        <QueryForm :service="service" />
-        <TableList :service="service" name="0" />
+            <QueryForm :service="service" />
+            <TableList :service="service" name="0" />
         <!--<Detail :service="service" />-->
     </el-card>
 </template>

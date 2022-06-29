@@ -101,6 +101,7 @@ export async function dataList(page: any, query: any) {
                 .field({
                     _id: 1,
                     title: 1,
+                    file: 1
                 }),
             localField: 'material_id',
             foreignField: '_id',
@@ -113,6 +114,7 @@ export async function dataList(page: any, query: any) {
         .orderBy('createTime', 'desc')
         .orderBy('_id', 'asc')
         .get()
+    console.log('作品列表',res)
     if (!res.ok) {
         ElMessage.error(res.error)
         return
@@ -181,12 +183,22 @@ export function addWorkToAlbums(data: any, _id: string) {
                 _id: item,
                 delFlag: LogicDelete.NORMAL,
             })
+            .withOne({
+                query: DB.collection(CoreMaterial.TABLE_NAME)
+                    .field({
+                        file: 1
+                    }),
+                localField: 'material_id',
+                foreignField: '_id',
+                as: 'materialFile'
+            })
             .getOne()
         if (!r.ok) {
             ElMessage.error(r.error)
             return
         }
         const list = r.data
+        console.log('添加的数据',list)
         const res = await DB.collection(CoreAlbum.TABLE_NAME)
             .where({
                 _id: _id,

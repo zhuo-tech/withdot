@@ -1,16 +1,18 @@
 import { cloud } from '@/cloud'
 import { CoreAlbum, CoreAlbumWork } from '@/model/entity/CoreAlbum'
+import CoreMaterial from '@/model/entity/CoreMaterial'
 import { CoreWork } from '@/model/entity/CoreWork'
 import { HisVodRecord } from '@/model/entity/HisVodRecord'
 import { PayGoodsOrder } from '@/model/entity/PayGoodsOrder'
 import { SysUser } from '@/model/entity/SysUser'
 import { LogicDelete } from '@/model/LogicDelete'
 import { ElMessage, TabsPaneContext } from 'element-plus'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 
 const DB = cloud.database()
 
 export default class StudentService {
+    public activeName = ref('1')
     //搜索框数据 显示 隐藏
     public queryData = reactive<QueryDataType>({
         visible: true,
@@ -98,7 +100,6 @@ export default class StudentService {
             const detailRes = await this.getDetailApi(id)
             this.detail.data = detailRes.detailData
             await this.watchHistoryFn()
-            console.log('学生详情', this.detail.data)
 
         } catch (err: any) {
             ElMessage.error(err)
@@ -130,8 +131,12 @@ export default class StudentService {
             .where({userId})
             .withOne({
                 query: DB.collection(CoreAlbum.TABLE_NAME)
-                    .field({
-                        title: 1,
+                    .with({
+                        query: DB.collection(HisVodRecord.TABLE_NAME),
+                        localField: '_id',
+                        foreignField: 'albumId',
+                        as: 'albumSchedule',
+                        one: false
                     }),
                 localField: 'albumId',
                 foreignField: '_id',
@@ -141,15 +146,26 @@ export default class StudentService {
                 query: DB.collection(CoreWork.TABLE_NAME)
                     .field({
                         name: 1,
+                        material_id: 1,
+                    }).withOne({
+                        query: DB.collection(CoreMaterial.TABLE_NAME)
+                            .field({
+                                file: 1,
+                            }),
+                        localField: 'material_id',
+                        foreignField: '_id',
+                        as: 'file',
                     }),
                 localField: 'workId',
                 foreignField: '_id',
                 as: 'workName',
+
             })
             .page({
                 current: this.detail.watchHistoryPage.current,
                 size: this.detail.watchHistoryPage.size,
             })
+            .orderBy('updateTime', 'desc')
             .get()
         if (!res.ok) {
             throw new Error(res.error)
@@ -177,7 +193,7 @@ export default class StudentService {
     private async getTableDataApi(page: any, params: any) {
         const whereFlag = {
             isPay: this.queryData.isPay,
-            username: new RegExp(`.*${this.queryData.label}.*`)
+            username: new RegExp(`.*${this.queryData.label}.*`),
         }
 
         const totalRes = await DB.collection(SysUser.TABLE_NAME)
@@ -228,6 +244,22 @@ export default class StudentService {
                 payData: payRes.data,
             },
         }
+    }
+
+    /**
+     * 学生详情 浏览历史 专辑完成进度
+     * @param row
+     * @returns {string | string}
+     */
+    public albumProgress = (row: any) => {
+        if(row.workList?.length !== row.albumSchedule?.length){
+            return '未完成'
+        }
+        return  row.albumName.albumSchedule?.findIndex((item: any) => item.workStatus === 1) === -1 ? '完成': '未完成'
+    }
+
+    public closedDialog = () => {
+        this.activeName.value = String(1)
     }
 }
 

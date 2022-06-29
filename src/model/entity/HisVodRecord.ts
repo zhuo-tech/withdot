@@ -29,4 +29,19 @@ export class HisVodRecord {
      */
     createTime: number
 
+    /**
+     * 跟新时间
+     */
+    updateTime: number
+
+    /**
+     * 完成时间
+     */
+    finishTime: number
+
+    /**
+     * 是否完成
+     * @type {Boolean}
+     */
+    isFinish: Boolean
 }

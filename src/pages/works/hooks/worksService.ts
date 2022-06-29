@@ -1,4 +1,6 @@
 import { dataList, del } from '@/api/works'
+import CoreMaterial from '@/model/entity/CoreMaterial'
+import { CoreWork } from '@/model/entity/CoreWork'
 import { ElMessage } from 'element-plus/es'
 import { reactive, ref } from 'vue'
 
@@ -17,7 +19,7 @@ export class WorksService {
             this.label = ''
         },
     })
-    public data = ref()
+    public data = ref<Array<CoreWork & {materialNews: CoreMaterial}>>()
     public loading = ref(false)
     public page = reactive({               //分页器参数
         current: 1,

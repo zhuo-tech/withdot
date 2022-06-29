@@ -5,6 +5,11 @@ export function filterTime(time: number): string {
     return dayjs(time).format('YYYY-MM-DD HH:mm')
 }
 
+export function getSchedule(workTime: number, watchTime: number) {
+    // @ts-ignore
+    return (Math.floor(watchTime)/Math.floor(workTime)).toFixed(2) * 100 + '%'
+}
+
 /**
  * 获取对象中的属性
  * @param obj 源对象

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import ShowFile from '@/components/Upload/ShowFile'
 import StudentService from '@/pages/student/StudentService'
 import { filterTime } from '@/utils/utils'
 import Detail from './Detail.vue'
@@ -43,7 +42,9 @@ const props = defineProps({
             <el-table-column fixed="right" label="操作" width="120">
                 <template #default="{row}">
                     <!--<el-button link size="small" @click="service.handleClick(row._id)">查看</el-button>-->
-                    <Detail :service="service" :id="row._id"></Detail>
+                    <div>
+                        <Detail :service="service" :id="row._id"></Detail>
+                    </div>
                 </template>
             </el-table-column>
         </el-table>

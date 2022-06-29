@@ -10,7 +10,7 @@ import { FileService, INJECT_KEY_FILE_SERVICE } from '@/service/FileService'
 // noinspection ES6UnusedImports
 import { UploadFilled } from '@element-plus/icons-vue'
 import { UploadFile, UploadFiles, UploadProps, UploadRequestOptions, UploadUserFile } from 'element-plus'
-import { CollUtil, ObjectUtil, StrUtil } from 'typescript-util'
+import { CollUtil, ObjectUtil, StrUtil, TimeUnit } from 'typescript-util'
 import { inject, reactive, watchEffect } from 'vue'
 
 /**
@@ -115,6 +115,9 @@ function updateModel(fileList: UploadFiles, propValue: typeof props) {
     }
     const fileInfo = fileList.filter(i => i.status === 'success')
         .map(i => (i.response) as FileInfo)
+
+    console.log('上传完成后的 文件列表', fileInfo)
+
     const value = fileInfo.map(i => i.href)
     log.trace('v-model 更新', value, fileInfo)
 
@@ -125,19 +128,57 @@ function updateModel(fileList: UploadFiles, propValue: typeof props) {
     emits('input', fileList)
 }
 
+const getFileDuration = (file: File, fileSrc: string): Promise<number> => {
+    const type = file.type
+    let tagName = ''
+    if (type.startsWith('video')) {
+      tagName = 'video'
+    }
+    if(type.startsWith('audio')){
+        tagName = 'audio'
+    }
+    if (!tagName) {
+        return new Promise(ok => ok(0))
+    }
+
+    const vE: HTMLMediaElement = document.createElement(tagName) as any
+
+    vE.src = fileSrc
+    vE.autoplay = true
+    vE.controls = true
+    vE.muted = true
+    vE['width'] = 300
+
+    vE.style.position = 'fixed'
+    vE.style.width = '300px'
+    vE.style.zIndex = '3000'
+    vE.style.top = '0'
+    vE.style.left = '0'
+    vE.style.visibility = 'hidden'
+
+    return new Promise((ok, err) => vE.onloadedmetadata = (ev) => ok(Math.floor(vE.duration)))
+}
+
 const upLoadRequest = (options: UploadRequestOptions) => {
-    const file = options.file
-    const {name, size, type} = file
-    uploadApi(file, (event: ProgressEvent) => {
-        options.onProgress({
-            ...event,
-            percent: event.loaded / event.total * 100,
-        } as any)
-    }).then(href => {
-        options.onSuccess({id: file['uid'] || Date.now(), href, name, size, type,} as FileInfo)
-    }).catch(err => {
-        options.onError(err)
-    })
+
+    const action = async () => {
+        const file = options.file
+        const videoSrc = URL.createObjectURL(file)
+        const time = await getFileDuration(file, videoSrc)
+        console.log('playing => 视频时长: ', time, '秒')
+
+        const {name, size, type} = file
+
+        const onUploadProgress = (event: ProgressEvent) => {
+            options.onProgress({...event, percent: event.loaded / event.total * 100} as any)
+        }
+
+        const href = await uploadApi(file, onUploadProgress)
+            .catch(err => options.onError(err))
+
+        options.onSuccess({id: file['uid'] || Date.now(), href, name, size, type, time} as FileInfo)
+    }
+    action()
 }
 
 // 预览
@@ -149,10 +190,10 @@ const {isShow, onPreview, file} = useFilePreview()
     <el-upload
         :file-list="fileList"
         :http-request="upLoadRequest"
-        style="width: 100%;"
-        :on-success="onUploadSuccess"
-        :on-remove="onRemove"
         :on-preview="file => onPreview(file)"
+        :on-remove="onRemove"
+        :on-success="onUploadSuccess"
+        style="width: 100%;"
         v-bind="$attrs">
         <!-- 上传控制区域 -->
         <slot>

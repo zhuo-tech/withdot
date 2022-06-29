@@ -180,7 +180,7 @@ export default class EditService {
         list.forEach((item: any) => {
             if (item._id === row._id) {
                 item.isPay = row.isPay
-                item.trialTime = row.trialTime
+                item.trialTime = item.isPay === 0 ? row.trialTime : 0
             }
         })
         const res = await DB.collection(CoreAlbum.TABLE_NAME)

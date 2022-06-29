@@ -69,6 +69,12 @@ service.getAlbumsList()
                     style="width: 100%">
                     <el-table-column type="index" width="100"></el-table-column>
                     <el-table-column label="作品名" prop="name" width="300"></el-table-column>
+                    <el-table-column label="时长">
+                        <template v-slot="{ row }">
+                            <span v-if="row.materialFile?.file.time">{{ row.materialFile?.file.time }}秒</span>
+                            <span v-else>/</span>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="是否收费" prop="isPay" width="300">
                         <template #default="{row}">
                             <el-switch v-model="row.isPay"
@@ -81,7 +87,13 @@ service.getAlbumsList()
                     </el-table-column>
                     <el-table-column label="试看时长" prop="trialTime" width="300">
                         <template #default="{ row}">
-                            <el-input-number v-if="row.isPay === 0" v-model="row.trialTime" :controls="false" :min="1" size="small" @change="service.changeSwitch(row)"/>
+                            <el-input-number v-if="row.isPay === 0"
+                                             v-model="row.trialTime"
+                                             :controls="false"
+                                             :min="0"
+                                             :max="row.materialFile?.file.time"
+                                             size="small"
+                                             @change="service.changeSwitch(row)" />
                             <div v-if="row.isPay === 0" style="display: inline-block">秒</div>
                             <div v-if="row.isPay === 1">/</div>
                         </template>
@@ -109,7 +121,10 @@ service.getAlbumsList()
             </el-col>
         </el-row>
     </el-card>
-    <Dialog :alreadyWorkList="albumsDetail.workList" :service="service" :subassembly="subassembly" @getNewList="service.getAlbumsList()"></Dialog>
+    <Dialog :alreadyWorkList="albumsDetail.workList"
+            :service="service"
+            :subassembly="subassembly"
+            @getNewList="service.getAlbumsList()"></Dialog>
     <Form :service="service"></Form>
 </template>
 <style lang="less" scoped>
