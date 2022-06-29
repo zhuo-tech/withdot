@@ -51,19 +51,19 @@ const show = () => {
                         <el-table
                             :data="service.detail.data.schedules"
                             style="width: 100%">
-                            <el-table-column label="专辑名称" width="280">
+                            <el-table-column label="专辑名称" width="200">
                                 <template #default="{ row }">{{ row.albumName.title }}</template>
                             </el-table-column>
-                            <el-table-column label="作品名称" width="180">
+                            <el-table-column label="作品名称" width="200">
                                 <template #default="{ row }">{{ row.workName?.name }}</template>
                             </el-table-column>
-                            <el-table-column label="专辑学习状态" prop="status" width="200">
+                            <el-table-column label="专辑学习状态" prop="status" width="180">
                                 <template #default="{ row }">{{ service.albumProgress(row) }}</template>
                             </el-table-column>
-                            <el-table-column label="作品学习状态" prop="workStatus" width="200">
+                            <el-table-column label="作品学习状态" prop="workStatus" width="180">
                                 <template #default="{ row}">{{ StudyType[row.workStatus] }}</template>
                             </el-table-column>
-                            <el-table-column label="学习进度" prop="ratio" width="200">
+                            <el-table-column label="学习进度" prop="ratio" width="150">
                                 <template #default="{row}">
                                     <span v-if="row.workStatus === 0">100%</span>
                                     <span v-else>{{ getSchedule(row.workName.file.file.time,row.createTime) }}</span>
