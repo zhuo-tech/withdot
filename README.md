@@ -1,15 +1,62 @@
-# Vue 3 + Typescript + Vite
+# 微草轻课
+  微草轻课是一个基于laf开发的`交互式视频`产品。
 
-This template should help get you started developing with Vue 3 and Typescript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out
-the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+# 技术选型
+## **`Laf`**  [lafyun](https://www.lafyun.com)
+  `Life is short, you need laf :) 像写博客一样写函数，随手上线`
+   `Vue 3 + Typescript + Vite`
 
-## Recommended IDE Setup
+# 模块说明
+    withdot
+    ├── .vscode -- vscode配置
+    ├── env -- 环境配置
+    ├── public   -- 公共资源目录
+    ├── src -- 源代码
+    ├    ├── api -- 云函数接口
+    ├    ├── assets  -- 静态资源
+    ├    ├── components -- 公共组件库
+    ├    ├── mixin -- 通用 CRUD 管理页面
+    ├    ├── model -- 通用模型定义
+    ├    ├── pages -- 页面布局&数据逻辑处理
+	├	 ├     └── accounts --账户管理
+	├	 ├     └── albums -- 专辑管理	
+    ├	 ├     └── Error -- 错误处理	
+    ├	 ├     └── home -- 首页数据看板
+    ├	 ├     └── materials -- 素材管理（图片、视频、音频等）
+    ├	 ├     └── pay -- 支付管理（支付渠道｜商品订单｜交易流水｜支付通知）
+    ├	 ├     └── question -- 题目管理（判断题｜解答题｜选择题｜填空题｜单选题｜多选题）
+    ├	 ├     └── settings -- 通用配置
+    ├	 ├     └── student -- 学员管理
+    ├	 ├     └── system -- 通用用户权限管理
+    ├	 ├     └── weixin -- 微信公众平台管理
+    ├	 ├     └── works -- 制作作品
+    ├    ├── service -- 通用服务
+    ├    ├── store -- 状态
+    ├    ├── tool -- 工具
+    ├    ├── utils -- 常用的帮助工具类
+    ├    ├── App.tsx -- 应用配置
+    ├    ├── cloud.ts -- laf集成
+    ├    ├── config.ts -- 应用通用配置
+    ├    ├── env.d.ts -- 环境配置
+    ├    ├── index.css -- 样式
+    ├    ├── main.ts -- 入口
+    ├    ├── router.ts -- 路由
+    ├    ├── shims-vue.d.ts - 忽略
+    ├    ├── types.ts -- 类型定义
+    ├── .editorconfig  -- 开发配置
+    ├── .gitattributes
+    ├── .gitignore
+    ├── index.html
+    ├── package.json
+    ├── tailwind.config.js
+    ├── tsconfig.json
+    ├── tsconfig.node.json
+    ├── vite.config.ts
 
-- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar)
 
-## Type Support For `.vue` Imports in TS
 
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this
-is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for
-example to get props validation when using manual `h(...)` calls), you can enable Volar's `.vue` type support plugin by
-running `Volar: Switch TS Plugin on/off` from VSCode command palette.
+# 功能预览
+![image](https://user-images.githubusercontent.com/11770232/177938839-2224f47e-d461-4636-8f82-c74aa15a3dc6.png)
+![image](https://user-images.githubusercontent.com/11770232/177939129-3f2836da-8c56-456f-bf43-126f8c6dd302.png)
+![image](https://user-images.githubusercontent.com/11770232/177939258-b9ba0133-0df3-4279-9404-6c47408faf97.png)
+![image](https://user-images.githubusercontent.com/11770232/177938743-9eaef5b6-c2a1-4c96-bc65-04b8aa2322aa.png)
