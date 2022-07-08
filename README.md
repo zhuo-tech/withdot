@@ -2,9 +2,9 @@
   基于laf开发的`交互式视频`创作平台
  
 # 技术选型
-## **`Laf`**  [lafyun](https://www.lafyun.com)
+## [lafyun](https://www.lafyun.com)
   `Life is short, you need laf :) 像写博客一样写函数，随手上线`
-   `Vue 3 + Typescript + Vite`
+  `Vue 3 + Typescript + Vite`
 
 # 模块说明
     withdot
